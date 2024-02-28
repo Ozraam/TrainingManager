@@ -6,7 +6,8 @@
             "title": "Alert Zone",
             "description": "You can see reminder of training",
             "expired": "The training '{training}' has expired on {date} and should be renewed",
-            "renew": "Renew"
+            "renew": "Renew",
+            "viewPerson": "View profil"
         }
     }
 }

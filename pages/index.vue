@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const sp = useSupabaseClient()
-const user = useSupabaseUser()
 
 // add class to body
 useHead({

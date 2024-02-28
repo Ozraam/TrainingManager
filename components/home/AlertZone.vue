@@ -80,6 +80,7 @@ function addDays(date: Date, days: number) {
                         />
 
                         <UAlert
+                            icon="i-heroicons-exclamation-triangle-16-solid"
                             type="error"
                             :title="v.Person.name + ' ' + v.Person.surname"
                             :description="$t('home.alertZone.expired', {
@@ -93,9 +94,19 @@ function addDays(date: Date, days: number) {
                                         class="text-center"
                                     >{{ description }}</span>
 
-                                    <UButton
-                                        :label="$t('home.alertZone.renew')"
-                                    />
+                                    <div class="flex gap-2">
+                                        <UButton
+                                            icon="i-heroicons-user-circle"
+                                            :to="`/operator/${v.Person.id_pers}`"
+                                        >
+                                            {{ $t('home.alertZone.viewPerson') }}
+                                        </UButton>
+
+                                        <UButton
+                                            icon="i-heroicons-arrow-path-20-solid"
+                                            :label="$t('home.alertZone.renew')"
+                                        />
+                                    </div>
                                 </div>
                             </template>
                         </UAlert>
