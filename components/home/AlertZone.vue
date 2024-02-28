@@ -88,7 +88,7 @@ function addDays(date: Date, days: number) {
                             })"
                         >
                             <template #description="{ description }">
-                                <div class="flex justify-between">
+                                <div class="flex justify-between items-center">
                                     <span
                                         class="text-center"
                                     >{{ description }}</span>
