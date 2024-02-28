@@ -5,6 +5,7 @@ export default defineNuxtConfig({
         '@nuxtjs/supabase',
         '@nuxtjs/eslint-module',
         '@nuxt/ui',
+        '@nuxtjs/i18n'
     ],
 
     eslint: {
@@ -27,5 +28,17 @@ export default defineNuxtConfig({
                 }
             }
         }
+    },
+
+    i18n: {
+        locales: [
+            {
+                code: 'en',
+                file: 'en-US.json'
+            },
+        ],
+        defaultLocale: 'en',
+        lazy: true,
+        langDir: 'locales/'
     }
 })

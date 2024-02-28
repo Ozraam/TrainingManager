@@ -1,16 +1,25 @@
 <script setup lang="ts">
-const route = useRoute()
+const sp = useSupabaseClient()
+const user = useSupabaseUser()
+
+// add class to body
+useHead({
+    bodyAttrs: {
+        class: 'bg-gray-100 dark:bg-gray-900',
+    },
+})
+
+// TODO : Replace with proper login form, this is just for testing and development
+sp.auth.signInWithPassword({
+    email: 'lhgrillepain@gmail.com',
+    password: 'salutlafamille'
+})
 </script>
 
 <template>
     <div>
-        <h1>Nuxt Routing set up successfully!</h1>
+        <PageHeader :title="$t('home.title')" />
 
-        <p>Current route: {{ route.path }}</p>
-
-        <a
-            href="https://nuxt.com/docs/getting-started/routing"
-            target="_blank"
-        >Learn more about Nuxt Routing</a>
+        <HomeAlertZone />
     </div>
 </template>
