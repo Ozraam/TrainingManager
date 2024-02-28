@@ -2,6 +2,7 @@
 const sp = useSupabaseClient()
 
 const validity = ref<any[]>([])
+const expired = ref<any[]>([])
 
 onMounted(async () => {
     const { data, error } = await sp.from('Validity').select('*, Person (*), Competence (*, Training (*))')
@@ -37,7 +38,7 @@ onMounted(async () => {
     }
 
     // filter out not expired
-    validity.value = validity.value.filter((v: any) => {
+    expired.value = validity.value.filter((v: any) => {
         const now = new Date()
         const date = new Date(v.date)
         const diff = now.getTime() - date.getTime()
@@ -46,6 +47,8 @@ onMounted(async () => {
         // tmp_validity is in days
         return days > v.Competence.Training[0].tmp_validity
     })
+
+    // TODO: filter out near expiration (30 days) or select how many days
 })
 
 function addDays(date: Date, days: number) {
@@ -70,8 +73,8 @@ function addDays(date: Date, days: number) {
         <div>
             <ul class="gap-2 flex flex-col">
                 <li
-                    v-for="v in validity"
-                    :key="v.id_pers"
+                    v-for="p in expired"
+                    :key="p.id_pers"
                 >
                     <div>
                         <UIcon
@@ -82,10 +85,10 @@ function addDays(date: Date, days: number) {
                         <UAlert
                             icon="i-heroicons-exclamation-triangle-16-solid"
                             type="error"
-                            :title="v.Person.name + ' ' + v.Person.surname"
+                            :title="p.Person.name + ' ' + p.Person.surname"
                             :description="$t('home.alertZone.expired', {
-                                training: v.Competence.Training[0].name,
-                                date: addDays(new Date(v.date), v.Competence.Training[0].tmp_validity).toLocaleDateString(),
+                                training: p.Competence.Training[0].name,
+                                date: addDays(new Date(p.date), p.Competence.Training[0].tmp_validity).toLocaleDateString(),
                             })"
                         >
                             <template #description="{ description }">
@@ -97,7 +100,7 @@ function addDays(date: Date, days: number) {
                                     <div class="flex gap-2">
                                         <UButton
                                             icon="i-heroicons-user-circle"
-                                            :to="`/operator/${v.Person.id_pers}`"
+                                            :to="`/operator/${p.Person.id_pers}`"
                                         >
                                             {{ $t('home.alertZone.viewPerson') }}
                                         </UButton>

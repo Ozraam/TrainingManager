@@ -4,10 +4,14 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    titleLink: {
+        type: String,
+        default: '/',
+    },
 })
 
 const links = [
-    { label: props.title, to: '/', icon: '' },
+    { label: props.title, to: props.titleLink, icon: '' },
 ]
 </script>
 
