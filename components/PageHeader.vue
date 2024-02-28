@@ -8,11 +8,25 @@ const props = defineProps({
         type: String,
         default: '/',
     },
+
+    actions: {
+        type: Array as PropType<{ label: string, callBack: () => void }[]>,
+        default: () => [],
+    },
 })
 
 const links = [
     { label: props.title, to: props.titleLink, icon: '' },
 ]
+
+links.push(...props.actions.map((action) => {
+    return {
+        label: action.label,
+        to: '',
+        icon: '',
+        callBack: action.callBack,
+    }
+}))
 </script>
 
 <template>

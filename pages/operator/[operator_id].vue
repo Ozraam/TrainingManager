@@ -9,6 +9,12 @@ const operatorId = route.params.operator_id.toString()
         <PageHeader
             title="Operator"
             :title-link="`/operator/${operatorId}`"
+            :actions="[
+                {
+                    label: $t('operator.add'),
+                    callBack: () => navigateTo('/operator/add')
+                },
+            ]"
         />
 
         <div class="flex grow">

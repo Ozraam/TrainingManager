@@ -13,6 +13,7 @@
     "operator": {
         "competence": "Competence",
         "renew": "This competence has expired and should be renewed",
-        "not_verified": "This competence has not been acquired yet"
+        "not_verified": "This competence has not been acquired yet",
+        "add": "Add a operator"
     }
 }

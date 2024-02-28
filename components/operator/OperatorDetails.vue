@@ -36,7 +36,7 @@ const operator : Ref<{
 } | null> = ref(data?.[0] ?? null)
 
 // filter out competences that are operator doesn't have, operator can have competences from different roles
-const competenceFilter : { id_comp: number, name: string, id_role: number }[] = computed(() => {
+const competenceFilter : Ref<{ id_comp: number, name: string, id_role: number }[] | undefined> = computed(() => {
     return dataCompetence?.filter(competecence => !operator.value?.Validity.some(validity => validity.Competence.id_comp === competecence.id_comp))
 })
 </script>
