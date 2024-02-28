@@ -8,5 +8,9 @@ useHead({
 </script>
 
 <template>
-    <NuxtPage />
+    <section class="flex">
+        <AppNavBar />
+
+        <NuxtPage class="grow" />
+    </section>
 </template>

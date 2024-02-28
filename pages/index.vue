@@ -9,7 +9,7 @@ sp.auth.signInWithPassword({
 </script>
 
 <template>
-    <div>
+    <div class="h-screen">
         <PageHeader :title="$t('home.title')" />
 
         <HomeAlertZone />
