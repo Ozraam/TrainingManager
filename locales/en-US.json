@@ -9,5 +9,9 @@
             "renew": "Renew",
             "viewPerson": "View profil"
         }
+    },
+    "operator": {
+        "competence": "Competence",
+        "renew": "This competence has expired and should be renewed"
     }
 }
