@@ -19,10 +19,10 @@ const dataBudget = computed(() => ({
     datasets: [
         {
             label: 'Budget',
-            data: props.yearsStat[props.currentPage - 1]
+            data: props.yearsStat[props.currentPage]
                 ? [
-                    props.yearsStat[props.currentPage - 1].budget - props.yearsStat[props.currentPage - 1].expenses,
-                    props.yearsStat[props.currentPage - 1].expenses,
+                    props.yearsStat[props.currentPage].budget - props.yearsStat[props.currentPage].expenses,
+                    props.yearsStat[props.currentPage].expenses,
                 ]
                 : [0, 0],
             backgroundColor: ['#4CAF50', '#FF5252'],
@@ -35,10 +35,10 @@ const dataTraining = computed(() => ({
     datasets: [
         {
             label: 'Training',
-            data: props.yearsStat[props.currentPage - 1]
+            data: props.yearsStat[props.currentPage]
                 ? [
-                    props.yearsStat[props.currentPage - 1].trainingPlanned - props.yearsStat[props.currentPage - 1].trainingDone,
-                    props.yearsStat[props.currentPage - 1].trainingDone,
+                    props.yearsStat[props.currentPage].trainingPlanned - props.yearsStat[props.currentPage].trainingDone,
+                    props.yearsStat[props.currentPage].trainingDone,
                 ]
                 : [0, 0],
             backgroundColor: ['#2196F3', '#FFC107'],
@@ -57,7 +57,7 @@ const dataTraining = computed(() => ({
             </h2>
 
             <span>
-                {{ props.yearsStat[props.currentPage - 1]?.expenses }} € / {{ props.yearsStat[props.currentPage - 1]?.budget }} €
+                {{ props.yearsStat[props.currentPage]?.expenses }} € / {{ props.yearsStat[props.currentPage]?.budget }} €
             </span>
 
             <Pie
@@ -72,7 +72,7 @@ const dataTraining = computed(() => ({
             </h2>
 
             <span>
-                {{ props.yearsStat[props.currentPage - 1]?.trainingDone }} {{ $t("home.chart.done") }} / {{ props.yearsStat[props.currentPage - 1]?.trainingPlanned }} {{ $t("home.chart.planned") }}
+                {{ props.yearsStat[props.currentPage]?.trainingDone }} {{ $t("home.chart.done") }} / {{ props.yearsStat[props.currentPage ]?.trainingPlanned }} {{ $t("home.chart.planned") }}
             </span>
 
             <Pie

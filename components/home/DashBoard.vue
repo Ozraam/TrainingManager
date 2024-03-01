@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const years = ref([2021, 2022, 2023, 2024, 2025, 2026])
-const currentPage = ref(1)
+const currentPage = ref(0)
 
 const yearsStat = ref(years.value.map((year) => {
     const budget = Math.floor(Math.random() * 10000)
@@ -22,12 +22,11 @@ const yearsStat = ref(years.value.map((year) => {
             {{ $t('home.welcome') }}
         </h1>
 
-        <UPagination
+        <HomeYearPagination
             v-model="currentPage"
-            :max="5"
-            :total="years.length"
-            :page-count="1"
-        /> <!-- TODO : create custom pagination to show year -->
+            :years="years"
+            class="mt-3"
+        />
 
         <HomeChart
             :years-stat="yearsStat"

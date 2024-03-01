@@ -163,7 +163,7 @@ const competences = [
         </h2>
 
         <UCard
-            v-for="competence in competences[currentPage - 1]?.competences"
+            v-for="competence in competences[currentPage]?.competences"
             :key="competence.name"
         >
             <template #header>
