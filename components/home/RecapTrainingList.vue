@@ -162,72 +162,10 @@ const competences = [
             {{ $t('home.recapTrainingList.title') }}
         </h2>
 
-        <UCard
-            v-for="competence in competences[currentPage]?.competences"
+        <HomeSumupCompetence
+            v-for="competence in competences[currentPage].competences"
             :key="competence.name"
-        >
-            <template #header>
-                <div class="flex justify-between items-center">
-                    <h3>
-                        {{ competence.name }}
-                    </h3>
-
-                    <UButton
-                        label="See Competence"
-                        variant="link"
-                        :to="`/competence/${competence.id}`"
-                    />
-                </div>
-            </template>
-
-            <h3>
-                {{ $t('home.recapTrainingList.training') }}
-            </h3>
-
-            <div class="flex flex-col gap-2">
-                <UCard
-                    v-for="training in competence.Training"
-                    :key="training.name"
-                >
-                    <template #header>
-                        <div class="flex justify-between items-center">
-                            <h3>
-                                {{ training.name }}
-                            </h3>
-
-                            <UButton
-                                label="See Training"
-                                :to="`/training/${training.id}`"
-                                variant="link"
-                            />
-                        </div>
-                    </template>
-
-                    <div class="flex flex-col gap-2">
-                        <div
-                            v-for="operator in training.Operators"
-                            :key="operator.name"
-                            class="flex items-center gap-3 justify-between"
-                        >
-                            <p>{{ operator.name }} : {{ operator.status }}</p>
-
-                            <div class="flex gap-2">
-                                <UButton
-                                    v-if="operator.status !== 'Done'"
-                                    label="Mark as done"
-                                    icon="i-heroicons-check"
-                                />
-
-                                <UButton
-                                    label="View profile"
-                                    icon="i-heroicons-user-circle"
-                                    :to="`/operator/${operator.id}`"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </UCard>
-            </div>
-        </UCard>
+            :competence="competence"
+        />
     </section>
 </template>
