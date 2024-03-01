@@ -12,6 +12,6 @@ sp.auth.signInWithPassword({
     <div class="h-screen">
         <PageHeader :title="$t('home.title')" />
 
-        <HomeAlertZone />
+        <HomeDashBoard />
     </div>
 </template>
