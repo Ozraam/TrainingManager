@@ -15,6 +15,10 @@
         "chart": {
             "done": "Done",
             "planned": "Planned"
+        },
+        "recapTrainingList": {
+            "title": "Compentences",
+            "training": "Training"
         }
     },
     "operator": {
