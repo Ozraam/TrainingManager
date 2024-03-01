@@ -1,12 +1,10 @@
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
     training: {
         type: Object,
         required: true
     }
 })
-
-console.log(props.training)
 </script>
 
 <template>

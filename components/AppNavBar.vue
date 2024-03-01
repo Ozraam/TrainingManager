@@ -21,7 +21,7 @@ const links = computed(() => [
         },
         {
             label: 'Competences',
-            to: '/competences',
+            to: '/competence/0',
             icon: 'i-heroicons-clipboard'
         },
         {
