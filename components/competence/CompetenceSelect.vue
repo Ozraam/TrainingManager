@@ -20,8 +20,6 @@ const roles : {id_role: number, name: string}[] | null = data
 
 roles?.unshift({ id_role: 0, name: 'All' })
 
-console.log(roles)
-
 const currentCompetenceUserFriendly = ref(props.currentCompetence)
 
 const UTableRoles = roles?.map((role) => {

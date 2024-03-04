@@ -21,19 +21,19 @@ const links = computed(() => [
         },
         {
             label: 'Competences',
-            to: '/competence/0',
+            to: '/competence/1',
             icon: 'i-heroicons-clipboard'
         },
         {
             label: 'Training',
-            to: '/training',
+            to: '/training/1',
             icon: 'i-heroicons-academic-cap'
         }
     ],
     [
         {
             label: 'Settings',
-            to: '/settings',
+            to: '',
             icon: 'i-heroicons-cog'
         }
     ]

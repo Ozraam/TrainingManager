@@ -89,6 +89,6 @@ const competenceFilter : Ref<{ id_comp: number, name: string, id_role: number }[
     </div>
 
     <div v-else>
-        Error
+        Error TODO
     </div>
 </template>

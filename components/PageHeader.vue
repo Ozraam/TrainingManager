@@ -24,7 +24,7 @@ links.push(...props.actions.map((action) => {
         label: action.label,
         to: '',
         icon: '',
-        callBack: action.callBack,
+        click: action.callBack,
     }
 }))
 </script>

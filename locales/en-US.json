@@ -33,6 +33,13 @@
         "add": "Add a competence",
         "edit": "Edit a competence",
         "delete": "Delete a competence",
-        "name": "Name"
+        "name": "Name",
+        "training": {
+            "title": "Associated Training",
+            "edit": "View training"
+        },
+        "frequency": "Frequency",
+        "position": "Position",
+        "days": "Days"
     }
 }
