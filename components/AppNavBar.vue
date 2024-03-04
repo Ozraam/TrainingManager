@@ -20,6 +20,11 @@ const links = computed(() => [
             icon: 'i-heroicons-user-group'
         },
         {
+            label: 'Position',
+            to: '/position/1',
+            icon: 'i-heroicons-user'
+        },
+        {
             label: 'Competences',
             to: '/competence/1',
             icon: 'i-heroicons-clipboard'
@@ -28,6 +33,21 @@ const links = computed(() => [
             label: 'Training',
             to: '/training/1',
             icon: 'i-heroicons-academic-cap'
+        },
+        {
+            label: 'Forecast',
+            to: '/forecast',
+            icon: 'i-heroicons-calendar'
+        },
+        {
+            label: 'History',
+            to: '/history',
+            icon: 'i-heroicons-clock'
+        },
+        {
+            label: 'Study Plan',
+            to: '/study-plan',
+            icon: 'i-heroicons-book-open'
         }
     ],
     [
