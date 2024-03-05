@@ -8,26 +8,53 @@ const props = defineProps({
 
 const sp = useSupabaseClient()
 
-const { data } = await sp.from('Competence').select('*').eq('id_comp', props.currentCompetence)
+const { data } = await sp.from('Competences').select('*, Position_comp(*)').eq('id_comp', props.currentCompetence)
 
-// TODO : Change this File when new data structure is available
+const competecence : Ref<{
+    id_comp: number,
+    name: string,
+    tmp_validity: number,
+    Position_comp: {
+        id_comp: number,
+        id_pos: number,
+        mandatory: boolean
+    }[]
+} | null> = ref(data?.[0] ?? null)
 
-const competecence : Ref<{ id_comp: number, name: string, id_role: number, frequency: number } | null> = ref(data?.[0] ?? null)
+const { data: data2 } = await sp.from('Position').select('*')
 
-const { data: data2 } = await sp.from('Role').select('*')
+const positions : Ref<{ id_pos: number, name: string, check: boolean }[] | null> = ref(data2)
 
-const roles : Ref<{ id_role: number, name: string, check: boolean }[] | null> = ref(data2)
-
-roles.value?.forEach((role) => {
-    role.check = competecence.value?.id_role === role.id_role
+positions.value?.forEach((position) => {
+    position.check = competecence.value?.Position_comp.some(comp => comp.id_pos === position.id_pos) ?? false
 })
 
+const initialPosition = positions.value?.map((position) => {
+    return {
+        id_pos: position.id_pos,
+        check: position.check
+    }
+})
+
+const isPositionChanged = computed(() => {
+    return positions.value?.some((position, index) => {
+        return position.check !== initialPosition?.[index].check
+    })
+})
+
+function savePosition() {
+    // TODO : This is a placeholder for the real save
+}
+
 // TODO : This lack of data for the full structure of the competence, this is a placeholder
-const { data: data3 } = await sp.from('Training').select('*').eq('id_comp', props.currentCompetence)
+const { data: trainings } = await sp.from('Training').select('cost, date, name, duration, Registration(Operators(name, surname, id_op)), Teacher(name, surname)').eq('id_comp', props.currentCompetence)
 
-const trainings : Ref<{ id_train: number, name: string }[] | null> = ref(data3)
-
-competecence.value!.frequency = 365
+const items = ref(trainings.map((t) => {
+    return {
+        label: t.name,
+        training: t
+    }
+}))
 </script>
 
 <template>
@@ -42,7 +69,7 @@ competecence.value!.frequency = 365
         <div class="flex gap-10">
             <h3 class="gap-1">
                 {{ $t('competence.frequency') }}: <UInput
-                    v-model="competecence.frequency"
+                    v-model="competecence.tmp_validity"
                     type="number"
                 >
                     <template #trailing>
@@ -52,44 +79,33 @@ competecence.value!.frequency = 365
             </h3>
 
             <div>
-                <h4>{{ $t('competence.position') }}</h4>
+                <h4>{{ $t('competence.position.title') }}</h4>
 
                 <ul>
                     <li
-                        v-for="role in roles"
-                        :key="role.id_role"
+                        v-for="position in positions"
+                        :key="position.id_pos"
                     >
                         <UCheckbox
-                            v-model="role.check"
-                            :name="role.name"
-                            :label="role.name"
+                            v-model="position.check"
+                            :name="position.name"
+                            :label="position.name"
                         />
                     </li>
                 </ul>
+
+                <UButton
+                    v-if="isPositionChanged"
+                    :label="$t('competence.position.save')"
+                    @click="savePosition"
+                />
             </div>
         </div>
 
         <div class="mt-3">
             <h4>{{ $t('competence.training.title') }}</h4>
 
-            <ul>
-                <li
-                    v-for="training in trainings"
-                    :key="training.id_train"
-                >
-                    <UCard class="flex gap-5">
-                        <div class="flex gap-5">
-                            <p>{{ training.name }}</p>
-
-                            <UButton
-                                :label="$t('competence.training.edit')"
-                                :to="`/training/${training.id_train}`"
-                                variant="link"
-                            />
-                        </div>
-                    </UCard>
-                </li>
-            </ul>
+            <UAccordion :items="items" />
         </div>
     </div>
 

@@ -39,7 +39,11 @@
             "edit": "View training"
         },
         "frequency": "Frequency",
-        "position": "Position",
+        "position": {
+            "title": "Position",
+            "edit": "View position",
+            "save": "Save"
+        },
         "days": "Days"
     }
 }
