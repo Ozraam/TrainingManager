@@ -1,12 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-    yearsStat: {
-        year: number
-        budget: number
-        expenses: number
-        trainingPlanned: number
-        trainingDone: number
-    }[],
+    yearsStat: YearData[],
     currentPage: number
 }>()
 
