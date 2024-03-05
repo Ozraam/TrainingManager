@@ -10,61 +10,61 @@ const props = defineProps({
 
 const route = useRoute()
 
-const selectedRole = ref(
-    route.query.role ? parseInt(route.query.role as string) : 0
+const selectedPosition = ref(
+    route.query.position ? parseInt(route.query.position as string) : 0
 )
 
-const { data } = await sp.from('Role').select('*')
+const { data } = await sp.from('Position').select('*')
 
-const roles : {id_role: number, name: string}[] | null = data
+const positions : {id_pos: number, name: string}[] | null = data
 
-roles?.unshift({ id_role: 0, name: 'All' })
+positions?.unshift({ id_pos: 0, name: 'All' })
 
 const currentOperatorUserFriendly = ref(props.currentOperator)
 
-const UTableRoles = roles?.map((role) => {
+const UTableRoles = positions?.map((position) => {
     return {
-        role: role.id_role
+        position: position.id_pos
     }
 })
 
-function selectRole(row: { role: number }) {
-    selectedRole.value = row.role
+function selectRole(row: { position: number }) {
+    selectedPosition.value = row.position
 }
 
 function selectOperator(row: { operator: number }) {
     currentOperatorUserFriendly.value = row.operator.toString()
-    navigateTo(`/operator/${row.operator}?role=${selectedRole.value}`)
+    navigateTo(`/operator/${row.operator}?position=${selectedPosition.value}`)
 }
 
 function firstLetterToUpperCase(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-const { data: dataOp } = await sp.from('Person').select('*')
+const { data: dataOp } = await sp.from('Operators').select('*')
 
-const operators : {id_pers: number, name: string, surname: String, id_role: number}[] | null = dataOp
+const operators : {id_op: number, name: string, surname: String, id_pos: number}[] | null = dataOp
 
 // const operator = operators?.find(operator => operator.id_pers.toString() === props.currentOperator)
 
 const UTableOperators = operators?.map((operator) => {
     return {
-        operator: operator.id_pers
+        operator: operator.id_op
     }
 })
 
 const filteredOperators = computed(() => {
-    if (selectedRole.value === 0) {
+    if (selectedPosition.value === 0) {
         return UTableOperators
     }
 
     return UTableOperators?.filter((operatorT) => {
-        return operators!.find(operator => operator.id_pers === operatorT.operator)!.id_role === selectedRole.value
+        return operators!.find(operator => operator.id_op === operatorT.operator)!.id_pos === selectedPosition.value
     })
 })
 
 function getOperatorFullName(operatorId: number) {
-    return operators!.find(operator => operator.id_pers === operatorId)!.name + ' ' + operators!.find(operator => operator.id_pers === operatorId)!.surname
+    return operators!.find(operator => operator.id_op === operatorId)!.name + ' ' + operators!.find(operator => operator.id_op === operatorId)!.surname
 }
 </script>
 
@@ -77,11 +77,11 @@ function getOperatorFullName(operatorId: number) {
                 class="border-r-2 border-gray-200 dark:border-gray-800"
                 @select="selectRole"
             >
-                <template #role-data="{ row }">
+                <template #position-data="{ row }">
                     <div
-                        :class="{ 'text-primary': selectedRole == row.role }"
+                        :class="{ 'text-primary': selectedPosition == row.position }"
                     >
-                        {{ firstLetterToUpperCase(roles![row.role].name) }}
+                        {{ firstLetterToUpperCase(positions![row.position].name) }}
                     </div>
                 </template>
             </UTable>
