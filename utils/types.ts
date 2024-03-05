@@ -1,9 +1,11 @@
 export type Operator = {
+    id: number,
     name: string;
     status: string;
 };
 
 export type Training = {
+    id: number,
     name: string;
     cost: number;
     duration: number;
@@ -12,6 +14,7 @@ export type Training = {
 };
 
 export type Competence = {
+    id: number,
     name: string;
     trainings: Training[];
 };

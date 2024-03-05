@@ -4,12 +4,11 @@ import { Chart as ChartJS, registerables } from 'chart.js'
 ChartJS.register(...registerables)
 
 const props = defineProps<{
-    yearsStat: YearData[],
-    currentPage: number
+    yearsStat: YearData,
 }>()
 
 const expenses = computed(() => {
-    const year = props.yearsStat[props.currentPage]
+    const year = props.yearsStat
     return year.competences.reduce((acc, competence) => {
         return acc + competence.trainings.reduce((acc, training) => {
             return acc + training.cost
@@ -18,7 +17,7 @@ const expenses = computed(() => {
 })
 
 const plannedTrainning = computed(() => {
-    const year = props.yearsStat[props.currentPage]
+    const year = props.yearsStat
     return year.competences.reduce((acc, competence) => {
         return acc + competence.trainings.reduce((acc, training) => {
             return acc + training.operators.length
@@ -27,7 +26,7 @@ const plannedTrainning = computed(() => {
 })
 
 const doneTrainning = computed(() => {
-    const year = props.yearsStat[props.currentPage]
+    const year = props.yearsStat
     return year.competences.reduce((acc, competence) => {
         return acc + competence.trainings.reduce((acc, training) => {
             return acc + training.operators.filter(operator => operator.status === 'Done').length
@@ -36,7 +35,7 @@ const doneTrainning = computed(() => {
 })
 
 const delayTrainning = computed(() => {
-    const year = props.yearsStat[props.currentPage]
+    const year = props.yearsStat
     return year.competences.reduce((acc, competence) => {
         return acc + competence.trainings.reduce((acc, training) => {
             return acc + training.operators.filter(operator => operator.status === 'Delayed').length
@@ -49,9 +48,9 @@ const dataBudget = computed(() => ({
     datasets: [
         {
             label: 'Budget',
-            data: props.yearsStat[props.currentPage]
+            data: props.yearsStat
                 ? [
-                    props.yearsStat[props.currentPage].budget - expenses.value,
+                    props.yearsStat.budget - expenses.value,
                     expenses.value,
                 ]
                 : [0, 0],
@@ -65,7 +64,7 @@ const dataTraining = computed(() => ({
     datasets: [
         {
             label: 'Training',
-            data: props.yearsStat[props.currentPage]
+            data: props.yearsStat
                 ? [
                     plannedTrainning.value - doneTrainning.value - delayTrainning.value,
                     doneTrainning.value,
@@ -88,7 +87,7 @@ const dataTraining = computed(() => ({
             </h2>
 
             <span>
-                {{ expenses }} € / {{ props.yearsStat[props.currentPage]?.budget }} €
+                {{ expenses }} € / {{ props.yearsStat?.budget }} €
             </span>
 
             <Pie

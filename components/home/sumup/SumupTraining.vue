@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps({
     training: {
-        type: Object,
+        type: Object as PropType<Training>,
         required: true
     }
 })
@@ -25,7 +25,7 @@ defineProps({
 
         <div class="flex flex-col gap-2">
             <div
-                v-for="operator in training.Operators"
+                v-for="operator in training.operators"
                 :key="operator.name"
                 class="flex items-center gap-3 justify-between"
             >

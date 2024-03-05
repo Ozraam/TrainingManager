@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps({
     competence: {
-        type: Object,
+        type: Object as PropType<Competence>,
         required: true
     },
 })
@@ -29,7 +29,7 @@ defineProps({
 
         <div class="flex flex-col gap-2">
             <HomeSumupTraining
-                v-for="training in competence.Training"
+                v-for="training in competence.trainings"
                 :key="training.name"
                 :training="training"
             />

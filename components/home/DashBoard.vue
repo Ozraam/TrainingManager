@@ -8,57 +8,63 @@
 //     throw new Error('Error while fetching years' + error.message) // TODO: handle error
 // }
 
-const data = ref([
+const data : Ref<YearData[]> = ref([
     {
         year: 2021,
         budget: 1000,
         competences: [
             {
+                id: 1,
                 name: 'welding',
                 trainings: [
                     {
+                        id: 1,
                         name: 'welding 101',
                         cost: 100,
                         duration: 10,
                         date: '2021-01-01',
                         operators: [
-                            { name: 'John Doe', status: 'Done' },
-                            { name: 'Jane Doe', status: 'Planned' }
+                            { name: 'John Doe', status: 'Done', id: 1 },
+                            { name: 'Jane Doe', status: 'Planned', id: 2 }
                         ]
                     },
                     {
+                        id: 2,
                         name: 'welding 102',
                         cost: 200,
                         duration: 20,
                         date: '2021-02-01',
                         operators: [
-                            { name: 'John Doe', status: 'Delayed' },
-                            { name: 'Jane Doe', status: 'Planned' }
+                            { name: 'John Doe', status: 'Delayed', id: 1 },
+                            { name: 'Jane Doe', status: 'Planned', id: 2 }
                         ]
                     }
                 ]
             },
             {
+                id: 2,
                 name: 'plumbing',
                 trainings: [
                     {
+                        id: 3,
                         name: 'plumbing 101',
                         cost: 100,
                         duration: 10,
                         date: '2021-01-01',
                         operators: [
-                            { name: 'John Doe', status: 'Done' },
-                            { name: 'Jane Doe', status: 'Planned' }
+                            { name: 'John Doe', status: 'Done', id: 1 },
+                            { name: 'Jane Doe', status: 'Planned', id: 2 }
                         ]
                     },
                     {
+                        id: 4,
                         name: 'plumbing 102',
                         cost: 200,
                         duration: 20,
                         date: '2021-02-01',
                         operators: [
-                            { name: 'John Doe', status: 'Delayed' },
-                            { name: 'Jane Doe', status: 'Planned' }
+                            { name: 'John Doe', status: 'Delayed', id: 1 },
+                            { name: 'Jane Doe', status: 'Planned', id: 2 }
                         ]
                     }
                 ]
@@ -70,51 +76,57 @@ const data = ref([
         budget: 2000,
         competences: [
             {
+                id: 1,
                 name: 'welding',
                 trainings: [
                     {
+                        id: 1,
                         name: 'welding 101',
                         cost: 100,
                         duration: 10,
                         date: '2022-01-01',
                         operators: [
-                            { name: 'John Doe', status: 'Delayed' },
-                            { name: 'Jane Doe', status: 'Planned' }
+                            { name: 'John Doe', status: 'Delayed', id: 1 },
+                            { name: 'Jane Doe', status: 'Planned', id: 2 }
                         ]
                     },
                     {
+                        id: 2,
                         name: 'welding 102',
                         cost: 200,
                         duration: 20,
                         date: '2022-02-01',
                         operators: [
-                            { name: 'John Doe', status: 'Delayed' },
-                            { name: 'Jane Doe', status: 'Planned' }
+                            { name: 'John Doe', status: 'Delayed', id: 1 },
+                            { name: 'Jane Doe', status: 'Planned', id: 2 }
                         ]
                     }
                 ]
             },
             {
+                id: 2,
                 name: 'plumbing',
                 trainings: [
                     {
+                        id: 3,
                         name: 'plumbing 101',
                         cost: 100,
                         duration: 10,
                         date: '2022-01-01',
                         operators: [
-                            { name: 'John Doe', status: 'Done' },
-                            { name: 'Jane Doe', status: 'Planned' }
+                            { name: 'John Doe', status: 'Done', id: 1 },
+                            { name: 'Jane Doe', status: 'Planned', id: 2 }
                         ]
                     },
                     {
+                        id: 4,
                         name: 'plumbing 102',
                         cost: 200,
                         duration: 20,
                         date: '2022-02-01',
                         operators: [
-                            { name: 'John Doe', status: 'Delayed' },
-                            { name: 'Jane Doe', status: 'Planned' }
+                            { name: 'John Doe', status: 'Delayed', id: 1 },
+                            { name: 'Jane Doe', status: 'Planned', id: 2 }
                         ]
                     }
                 ]
@@ -141,14 +153,12 @@ const currentPage = ref(years.value.length - 1)
         />
 
         <HomeChart
-            :years-stat="data"
-            :current-page="currentPage"
+            :years-stat="data[currentPage]"
             class="mt-3"
         />
 
         <HomeRecapTrainingList
-            :years-stat="data"
-            :current-page="currentPage"
+            :years-stat="data[currentPage]"
             class="mt-10"
         />
     </section>
