@@ -20,7 +20,7 @@ const competenceId = route.params.competence_id.toString()
         <div class="flex grow">
             <CompetenceSelect :current-competence="competenceId" />
 
-            <CompetenceDetails :current-competence="competenceId" />
+            <!-- <CompetenceDetails :current-competence="competenceId" /> -->
         </div>
     </main>
 </template>
