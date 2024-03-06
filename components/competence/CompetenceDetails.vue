@@ -47,7 +47,11 @@ function savePosition() {
 }
 
 // TODO : This lack of data for the full structure of the competence, this is a placeholder
-const { data: trainings } = await sp.from('Training').select('cost, date, name, duration, Registration(Operators(name, surname, id_op)), Teacher(name, surname)').eq('id_comp', props.currentCompetence)
+const { data: trainings, error } = await sp.from('Training').select('cost, date, name, duration, Registration(Operators(name, surname, id_op), State(name)), Teacher(name, surname, id_teacher)').eq('id_comp', props.currentCompetence)
+
+if (error) {
+    throw error // TODO : Handle error
+}
 
 const items = ref(trainings.map((t) => {
     return {
@@ -105,7 +109,65 @@ const items = ref(trainings.map((t) => {
         <div class="mt-3">
             <h4>{{ $t('competence.training.title') }}</h4>
 
-            <UAccordion :items="items" />
+            <UAccordion :items="items">
+                <template #item="{ item }">
+                    <div>
+                        <h5 class="text-xl">
+                            {{ $t('competence.training.info') }}
+                        </h5>
+
+                        <div class="flex gap-5 items-center">
+                            <p>
+                                <strong>{{ $t('competence.training.instructor') }}</strong>
+
+                                : <UButton
+                                    :to="`/teacher/${item.training.Teacher.id_teacher}`"
+                                    variant="link"
+                                >
+                                    {{ item.training.Teacher.name }} {{ item.training.Teacher.surname }}
+                                </UButton>
+                            </p>
+
+                            <p>
+                                <strong>{{ $t('competence.training.date') }}</strong> : {{ item.training.date }}
+                            </p>
+
+                            <p>
+                                <strong>{{ $t('competence.training.duration') }}</strong> : {{ item.training.duration }} {{ $t('competence.training.hours') }}
+                            </p>
+
+                            <p>
+                                <strong>{{ $t('competence.training.cost') }}</strong> : {{ item.training.cost }} €
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="text-xl">
+                            {{ $t('competence.training.operators') }}
+                        </h5>
+
+                        <ul v-if="item.training.Registration.length > 0">
+                            <li
+                                v-for="operator in item.training.Registration"
+                                :key="operator.id_op"
+                            >
+                                {{ operator.Operators.name }} {{ operator.Operators.surname }} - {{ operator.State.name }}
+                            </li>
+                        </ul>
+
+                        <p v-else>
+                            {{ $t('competence.training.noOperators') }}
+                        </p>
+                    </div>
+
+                    <UButton
+                        :label="$t('competence.training.edit')"
+                        :to="`/training/${item.training.id_training}`"
+                        variant="link"
+                    />
+                </template>
+            </UAccordion>
         </div>
     </div>
 

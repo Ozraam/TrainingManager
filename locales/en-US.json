@@ -36,7 +36,15 @@
         "name": "Name",
         "training": {
             "title": "Associated Training",
-            "edit": "View training"
+            "info": "Training Information",
+            "edit": "View training",
+            "instructor": "Instructor",
+            "date": "Date",
+            "duration": "Duration",
+            "cost": "Cost",
+            "hours": "Hours",
+            "operators": "Operators",
+            "noOperators": "No operators have register for this training yet"
         },
         "frequency": "Frequency",
         "position": {

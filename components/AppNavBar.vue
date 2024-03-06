@@ -21,17 +21,17 @@ const links = computed(() => [
         },
         {
             label: 'Position',
-            to: '/position/1',
+            to: route.path.startsWith('/position') ? route.path : '/position/1',
             icon: 'i-heroicons-user'
         },
         {
             label: 'Competences',
-            to: '/competence/1',
+            to: route.path.startsWith('/competence') ? route.path : '/competence/1',
             icon: 'i-heroicons-clipboard'
         },
         {
             label: 'Training',
-            to: '/training/1',
+            to: route.path.startsWith('/training') ? route.path : '/training/1',
             icon: 'i-heroicons-academic-cap'
         },
         {
@@ -48,6 +48,11 @@ const links = computed(() => [
             label: 'Study Plan',
             to: '/study-plan',
             icon: 'i-heroicons-book-open'
+        },
+        {
+            label: 'Teacher',
+            to: route.path.startsWith('/teacher') ? route.path : '/teacher/1',
+            icon: 'i-heroicons-academic-cap'
         }
     ],
     [
