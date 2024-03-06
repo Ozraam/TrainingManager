@@ -14,6 +14,8 @@ const links = computed(() => [
             to: '/',
             icon: 'i-heroicons-home'
         },
+    ],
+    [
         {
             label: 'Operators',
             to: route.path.startsWith('/operator') ? route.path : '/operator/1',
@@ -35,6 +37,13 @@ const links = computed(() => [
             icon: 'i-heroicons-academic-cap'
         },
         {
+            label: 'Teacher',
+            to: route.path.startsWith('/teacher') ? route.path : '/teacher/1',
+            icon: 'i-heroicons-academic-cap'
+        },
+    ],
+    [
+        {
             label: 'Forecast',
             to: '/forecast',
             icon: 'i-heroicons-calendar'
@@ -49,11 +58,6 @@ const links = computed(() => [
             to: '/study-plan',
             icon: 'i-heroicons-book-open'
         },
-        {
-            label: 'Teacher',
-            to: route.path.startsWith('/teacher') ? route.path : '/teacher/1',
-            icon: 'i-heroicons-academic-cap'
-        }
     ],
     [
         {
