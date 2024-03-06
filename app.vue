@@ -12,5 +12,7 @@ useHead({
         <AppNavBar />
 
         <NuxtPage class="grow" />
+
+        <UNotifications />
     </section>
 </template>

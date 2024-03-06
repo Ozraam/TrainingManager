@@ -8,7 +8,9 @@ const props = defineProps({
 
 const sp = useSupabaseClient()
 
-const { data } = await sp.from('Operators').select('*, Position(*, Position_comp(Competences(*))), Registration(*, State(*), Training(name))').eq('id_op', props.currentOperator)
+const toast = useToast()
+
+const { data } = await sp.from('Operators').select('*, Position(*, Position_comp(Competences(*))), Registration(*, State(*), Training(name, duration))').eq('id_op', props.currentOperator)
 
 const operator : Ref<{
     id_op: number,
@@ -33,7 +35,8 @@ const operator : Ref<{
             name: string
         },
         Training: {
-            name: string
+            name: string,
+            duration: number
         }
     }[]
 } | null> = ref(data![0] ?? null)
@@ -61,125 +64,146 @@ const isPositionChanged = computed(() => {
 
 function savePosition() {
     // TODO : This is a placeholder for the real save
+    toast.add({
+        title: 'Position saved - TODO',
+        timeout: 2000,
+        icon: 'i-heroicons-face-frown-16-solid'
+    })
 }
 
-const trainingDone = computed(() => {
-    return operator.value?.Registration.filter((registration) => {
-        return registration.State.name === 'done'
-    })
-})
+const { data: stateData } = await sp.from('State').select('name, id_state')
 
-const trainingInProgress = computed(() => {
-    return operator.value?.Registration.filter((registration) => {
-        return registration.State.name === 'in progress'
-    })
-})
+const accordeon = ref(stateData?.map((state) => {
+    const o = {
+        label: state.name,
+        items: operator.value?.Registration.filter(reg => reg.State.id_state === state.id_state) ?? [],
+        defaultOpen: false
+    }
 
-const trainingPlanned = computed(() => {
-    return operator.value?.Registration.filter((registration) => {
-        return registration.State.name === 'planned'
-    })
-})
+    o.defaultOpen = o.items.length > 0 && state.name !== 'expired'
 
-const trainingDelayed = computed(() => {
-    return operator.value?.Registration.filter((registration) => {
-        return registration.State.name === 'delayed'
+    return o
+}))
+
+function downloadPDF() {
+    // TODO : This is a placeholder for the real save
+    toast.add({
+        title: 'PDF downloaded - TODO',
+        timeout: 2000,
+        icon: 'i-heroicons-face-frown-16-solid'
     })
-})
+}
 </script>
 
 <template>
-    <section class="m-3">
-        <div v-if="operator">
-            <h1 class="text-2xl font-bold">
-                {{ operator.name }} {{ operator.surname }}
-            </h1>
-
-            <h2 class="flex gap-2">
-                <USelectMenu
-                    v-model="selectedPosition"
-                    :options="positionsSelect"
-                />
-
-                <UButton
-                    v-if="isPositionChanged"
-                    label="Save"
-                    @click="savePosition"
-                />
-            </h2>
-
+    <section class="m-3 w-full">
+        <div
+            v-if="operator"
+            class="flex justify-between"
+        >
             <div>
-                <h3>
-                    Competences
-                </h3>
+                <h1 class="text-2xl font-bold">
+                    {{ operator.name }} {{ operator.surname }}
+                </h1>
 
-                <ul>
-                    <li
-                        v-for="competence in operator.Position.Position_comp"
-                        :key="competence.Competences.id_comp"
-                    >
-                        <OperatorCompetence
-                            :competence="competence.Competences"
-                        />
-                    </li>
-                </ul>
+                <h2 class="flex gap-2">
+                    <USelectMenu
+                        v-model="selectedPosition"
+                        :options="positionsSelect"
+                    />
 
-                <h3>
-                    Trainings
-                </h3>
+                    <UButton
+                        v-if="isPositionChanged"
+                        label="Save"
+                        @click="savePosition"
+                    />
+                </h2>
 
                 <div>
-                    <h4 class="text-green-500">
-                        Done
-                    </h4>
+                    <h3>
+                        Competences
+                    </h3>
 
-                    <ul class="ml-5">
+                    <ul>
                         <li
-                            v-for="training in trainingDone"
-                            :key="training.id_reg"
+                            v-for="competence in operator.Position.Position_comp"
+                            :key="competence.Competences.id_comp"
                         >
-                            {{ training.Training.name }}
+                            <OperatorCompetence
+                                :competence="competence.Competences"
+                            />
                         </li>
                     </ul>
 
-                    <h4 class="text-blue-500">
-                        In progress
-                    </h4>
+                    <h3>
+                        Trainings
+                    </h3>
 
-                    <ul class="ml-5">
-                        <li
-                            v-for="training in trainingInProgress"
-                            :key="training.id_reg"
+                    <div>
+                        <UAccordion
+                            :items="accordeon"
+                            multiple
                         >
-                            {{ training.Training.name }} {{ training.date }}
-                        </li>
-                    </ul>
+                            <template #default="{ item, open }">
+                                <UButton
+                                    color="gray"
+                                    variant="ghost"
+                                    class="my-1 border-b-2 border-gray-200 dark:border-gray-800"
+                                    :ui="{ rounded: 'rounded-none' }"
+                                >
+                                    <template #leading>
+                                        <UIcon
+                                            name="i-heroicons-chevron-right-20-solid"
+                                            class="w-5 h-5 transform transition-transform duration-200"
+                                            :class="[open && 'rotate-90']"
+                                        />
+                                    </template>
 
-                    <h4 class="text-green-500">
-                        Planned
-                    </h4>
+                                    <span class="truncate">{{ item.label }}</span>
 
-                    <ul class="ml-5">
-                        <li
-                            v-for="training in trainingPlanned"
-                            :key="training.id_reg"
-                        >
-                            {{ training.Training.name }}
-                        </li>
-                    </ul>
+                                    <template #trailing>
+                                        <span class="ms-auto">{{ item.items.length }}</span>
+                                    </template>
+                                </UButton>
+                            </template>
 
-                    <h4 class="text-red-500">
-                        Delayed
-                    </h4>
+                            <template #item="{ item }">
+                                <div>
+                                    <ul v-if="item.items.length > 0">
+                                        <li
+                                            v-for="training in item.items"
+                                            :key="training.id_reg"
+                                        >
+                                            <OperatorTraining
+                                                :training="training"
+                                            />
+                                        </li>
+                                    </ul>
 
-                    <ul class="ml-5">
-                        <li
-                            v-for="training in trainingDelayed"
-                            :key="training.id_reg"
-                        >
-                            {{ training.Training.name }}
-                        </li>
-                    </ul>
+                                    <div v-else>
+                                        <p>
+                                            No trainings found
+                                        </p>
+                                    </div>
+                                </div>
+                            </template>
+                        </UAccordion>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex gap-3 items-center">
+                    <h2 class="">
+                        Study plan
+                    </h2>
+
+                    <UButton
+                        label="Download as PDF"
+                        size="xs"
+                        variant="ghost"
+                        @click="downloadPDF"
+                    />
                 </div>
             </div>
         </div>
