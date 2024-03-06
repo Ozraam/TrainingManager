@@ -8,6 +8,8 @@ const props = defineProps({
     },
 })
 
+const emit = defineEmits(['load-operator'])
+
 const route = useRoute()
 
 const selectedPosition = ref(
@@ -33,6 +35,11 @@ function selectRole(row: { position: number }) {
 }
 
 function selectOperator(row: { operator: number }) {
+    if (row.operator.toString() === currentOperatorUserFriendly.value) {
+        return
+    }
+
+    emit('load-operator')
     currentOperatorUserFriendly.value = row.operator.toString()
     navigateTo(`/operator/${row.operator}?position=${selectedPosition.value}`)
 }

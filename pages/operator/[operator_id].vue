@@ -2,6 +2,8 @@
 const route = useRoute()
 
 const operatorId = route.params.operator_id.toString()
+
+const loadOperator = ref(false)
 </script>
 
 <template>
@@ -18,9 +20,22 @@ const operatorId = route.params.operator_id.toString()
         />
 
         <div class="flex grow">
-            <OperatorSelect :current-operator="operatorId" />
+            <OperatorSelect
+                :current-operator="operatorId"
+                @load-operator="loadOperator = true"
+            />
 
-            <OperatorDetails :current-operator="operatorId" />
+            <OperatorDetails
+                v-if="!loadOperator"
+                :current-operator="operatorId"
+            />
+
+            <div
+                v-else
+                class="w-full flex justify-center items-center"
+            >
+                <CircleLoader />
+            </div>
         </div>
     </main>
 </template>

@@ -46,7 +46,6 @@ function savePosition() {
     // TODO : This is a placeholder for the real save
 }
 
-// TODO : This lack of data for the full structure of the competence, this is a placeholder
 const { data: trainings, error } = await sp.from('Training').select('cost, date, name, duration, Registration(Operators(name, surname, id_op), State(name)), Teacher(name, surname, id_teacher)').eq('id_comp', props.currentCompetence)
 
 if (error) {
