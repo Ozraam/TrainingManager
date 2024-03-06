@@ -21,7 +21,7 @@ const links = computed(() => [
         },
         {
             label: 'Position',
-            to: route.path.startsWith('/position') ? route.path : '/position/1',
+            to: route.path.startsWith('/position') ? route.path : '/position',
             icon: 'i-heroicons-user'
         },
         {
