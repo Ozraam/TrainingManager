@@ -1,21 +1,27 @@
 export type Operator = {
-    id: number,
+    id_op: number;
     name: string;
+    surname: string;
     status: string;
 };
 
 export type Training = {
-    id: number,
+    id_train: number;
     name: string;
-    cost: number;
-    duration: number;
     date: string;
+    duration: number;
+    cost: number;
+    id_teacher: number;
+    id_comp: number;
+    id_type_train: number;
+    topic: string;
     operators: Operator[];
 };
 
 export type Competence = {
-    id: number,
+    id_comp: number;
     name: string;
+    tmp_validity: number;
     trainings: Training[];
 };
 
@@ -23,4 +29,11 @@ export type YearData = {
     year: number;
     budget: number;
     competences: Competence[];
+};
+
+export type Registration = {
+    id_op: number;
+    id_train: number;
+    date: string;
+    id_state: number;
 };
