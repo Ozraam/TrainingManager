@@ -74,6 +74,18 @@ const filteredCompetence = computed(() => {
         )
     })
 })
+
+const stageSelectorObject = {
+    label: 'Position',
+    items: positions!.map((position) => {
+        return {
+            id: position.id_pos,
+            name: position.name,
+            filterId: 0
+        }
+    }),
+    selected: 0,
+}
 </script>
 
 <template>
@@ -81,6 +93,7 @@ const filteredCompetence = computed(() => {
         <div class="flex h-full">
             <UTable
                 :rows="UTableRoles"
+                label="Role"
                 class="border-r-2 border-gray-200 dark:border-gray-800"
                 @select="selectRole"
             >
