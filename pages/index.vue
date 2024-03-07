@@ -6,20 +6,6 @@ sp.auth.signInWithPassword({
     email: 'lhgrillepain@gmail.com',
     password: 'salutlafamille'
 })
-
-async function a() {
-    const { data } = await $fetch('/api/DashBordHelper', {
-        method: 'GET',
-        headers: useRequestHeaders(['cookie']),
-        // body: JSON.stringify({
-        //     id_op: 1
-        // })
-    })
-
-    // eslint-disable-next-line no-console
-    console.log(data)
-}
-a()
 </script>
 
 <template>

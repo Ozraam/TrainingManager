@@ -10,11 +10,14 @@ sp.auth.signInWithPassword({
 const dataR : Ref<any | null> = ref(null)
 
 async function a() {
-    const { data } = await $fetch('/api/DashBordHelper', {
+    const { data } = await $fetch('/api/CompInfos', {
         method: 'GET',
         headers: useRequestHeaders(['cookie']),
         // body: JSON.stringify({
-        //     id_op: 1
+        //     id_op: 1,
+        //     id_train: 1,
+        //     date: '2023-12-10',
+        //     id_state: 1
         // })
     })
 
