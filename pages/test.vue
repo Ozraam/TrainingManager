@@ -10,12 +10,12 @@ sp.auth.signInWithPassword({
 const dataR : Ref<any | null> = ref(null)
 
 async function a() {
-    const { data } = await $fetch('/api/OpCompValid', {
-        method: 'POST',
+    const { data } = await $fetch('/api/DashBordHelper', {
+        method: 'GET',
         headers: useRequestHeaders(['cookie']),
-        body: JSON.stringify({
-            id_op: 1
-        })
+        // body: JSON.stringify({
+        //     id_op: 1
+        // })
     })
 
     dataR.value = data
