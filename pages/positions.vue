@@ -42,12 +42,13 @@ onMounted(fetchPositions)
 </script>
 
 <template>
-    <section class="m-3">
-        <h1 class="text-xl">
-            Positions
-        </h1>
+    <section class="">
+        <PageHeader
+            title="Positions"
+            title-link="/positions"
+        />
 
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-3 m-3">
             <PositionDetail
                 v-for="position in positions"
                 :key="position.id_pos"
