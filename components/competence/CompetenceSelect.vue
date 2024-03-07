@@ -8,33 +8,32 @@ const props = defineProps({
     },
 })
 
+const emit = defineEmits(['load-operator'])
+
 const route = useRoute()
 
-const selectedRole = ref(
-    route.query.position ? parseInt(route.query.position as string) : 0
+const selectedPosition = ref(
+    route.query.position ? parseInt(route.query.position as string) : undefined
 )
 
 const { data } = await sp.from('Position').select('*')
 
 const positions : {id_pos: number, name: string}[] | null = data
-
-positions?.unshift({ id_pos: 0, name: 'All' })
-
+const selectedItem = ref<Array<number | undefined>>([selectedPosition.value, parseInt(props.currentCompetence)])
 const currentCompetenceUserFriendly = ref(props.currentCompetence)
 
-const UTableRoles = positions?.map((position) => {
-    return {
-        position: position.id_pos
+function selectCompetence(row: Array<number | undefined>) {
+    selectedItem.value = row
+    if (row[1]!.toString() === currentCompetenceUserFriendly.value) {
+        return
     }
-})
 
-function selectRole(row: { position: number }) {
-    selectedRole.value = row.position
-}
+    emit('load-operator')
+    currentCompetenceUserFriendly.value = row[1]!.toString()
 
-function selectCompetence(row: { competence: number }) {
-    currentCompetenceUserFriendly.value = row.competence.toString()
-    navigateTo(`/competence/${row.competence}?position=${selectedRole.value}`)
+    const position = row[0] ? `?position=${row[0]}` : ''
+
+    navigateTo(`/competence/${row[1]}${position}`)
 }
 
 function firstLetterToUpperCase(str: string) {
@@ -55,58 +54,33 @@ const competences : {
     }[]
 }[] | null = dataCo
 
-// const operator = operators?.find(operator => operator.id_pers.toString() === props.currentOperator)
-
-const UTableCompetence = competences?.map((competence) => {
-    return {
-        competence: competence.id_comp
+const stageSelectorObject = {
+    label: 'Position',
+    items: positions!.map((position) => {
+        return {
+            id: position.id_pos,
+            name: firstLetterToUpperCase(position.name),
+            filterIds: [0]
+        }
+    }),
+    next: {
+        label: 'Competence',
+        items: competences!.map((competence) => {
+            return {
+                id: competence.id_comp,
+                name: competence.name,
+                filterIds: competence.Position_comp.map(position => position.id_pos)
+            }
+        }),
+        next: null
     }
-})
-
-const filteredCompetence = computed(() => {
-    if (selectedRole.value === 0) {
-        return UTableCompetence
-    }
-
-    return UTableCompetence?.filter((competenceT) => {
-        return competences!.find(competence => competence.id_comp === competenceT.competence)!.Position_comp.some(
-            position => position.id_pos === selectedRole.value
-        )
-    })
-})
+}
 </script>
 
 <template>
-    <section>
-        <div class="flex h-full">
-            <UTable
-                :rows="UTableRoles"
-                class="border-r-2 border-gray-200 dark:border-gray-800"
-                @select="selectRole"
-            >
-                <template #position-data="{ row }">
-                    <div
-                        :class="{ 'text-primary': selectedRole == row.position }"
-                    >
-                        {{ firstLetterToUpperCase(positions![row.position].name) }}
-                    </div>
-                </template>
-            </UTable>
-
-            <UTable
-                :rows="filteredCompetence"
-                label="Role"
-                class="border-r-2 border-gray-200 dark:border-gray-800"
-                @select="selectCompetence"
-            >
-                <template #competence-data="{ row }">
-                    <div
-                        :class="{ 'text-primary': currentCompetenceUserFriendly == row.competence }"
-                    >
-                        {{ firstLetterToUpperCase(competences!.find(competence => competence.id_comp === row.competence)!.name) }}
-                    </div>
-                </template>
-            </UTable>
-        </div>
-    </section>
+    <StageSelector
+        :stages="stageSelectorObject"
+        :selected="selectedItem"
+        @select="selectCompetence"
+    />
 </template>

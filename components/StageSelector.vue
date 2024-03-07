@@ -75,34 +75,32 @@ function childSelectStage(selected: (number | undefined)[]) {
 </script>
 
 <template>
-    <section>
-        <div class="flex h-full">
-            <UTable
-                :rows="rows"
-                class="border-r-2 border-gray-200 dark:border-gray-800"
-                @select="selectStage"
-            >
-                <template #item-header>
-                    <span>
-                        {{ props.stages.label }}
-                    </span>
-                </template>
+    <section class="flex h-full">
+        <UTable
+            :rows="rows"
+            class="border-r-2 border-gray-200 dark:border-gray-800"
+            @select="selectStage"
+        >
+            <template #item-header>
+                <span>
+                    {{ props.stages.label }}
+                </span>
+            </template>
 
-                <template #item-data="{ row }">
-                    <span :class="{ 'text-primary': row.item === selected[0] }">
-                        {{ row.item == undefined ? 'All' : props.stages.items.find(item => item.id === row.item)?.name }}
-                    </span>
-                </template>
-            </UTable>
+            <template #item-data="{ row }">
+                <span :class="{ 'text-primary': row.item === selected[0] }">
+                    {{ row.item == undefined ? 'All' : props.stages.items.find(item => item.id === row.item)?.name }}
+                </span>
+            </template>
+        </UTable>
 
-            <StageSelector
-                v-if="props.stages.next"
-                ref="next"
-                :stages="props.stages.next"
-                :filter-id="selected[0]"
-                :selected="selected.slice(1)"
-                @select="childSelectStage"
-            />
-        </div>
+        <StageSelector
+            v-if="props.stages.next"
+            ref="next"
+            :stages="props.stages.next"
+            :filter-id="selected[0]"
+            :selected="selected.slice(1)"
+            @select="childSelectStage"
+        />
     </section>
 </template>

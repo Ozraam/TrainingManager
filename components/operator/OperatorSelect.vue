@@ -70,13 +70,9 @@ const stageSelectorObject = {
 </script>
 
 <template>
-    <section>
-        <div class="flex h-full">
-            <StageSelector
-                :stages="stageSelectorObject"
-                :selected="selectedItem"
-                @select="selectOperator"
-            />
-        </div>
-    </section>
+    <StageSelector
+        :stages="stageSelectorObject"
+        :selected="selectedItem"
+        @select="selectOperator"
+    />
 </template>
