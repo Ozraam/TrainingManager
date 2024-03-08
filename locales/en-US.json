@@ -1,0 +1,57 @@
+{
+    "home": {
+        "title": "Home",
+        "description": "Welcome to the home page",
+        "welcome": "Welcome to the dashboard",
+        "alertZone": {
+            "title": "Alert Zone",
+            "description": "You can see reminder of training",
+            "expired": "The training '{training}' has expired on {date} and should be renewed",
+            "renew": "Renew",
+            "viewPerson": "View profil"
+        },
+        "budget": "Budget",
+        "training": "Training",
+        "chart": {
+            "done": "Done",
+            "planned": "Planned"
+        },
+        "recapTrainingList": {
+            "title": "Compentences",
+            "training": "Training"
+        }
+    },
+    "operator": {
+        "competence": "Competence",
+        "renew": "This competence has expired and should be renewed",
+        "not_verified": "This competence has not been acquired yet",
+        "add": "Add a operator"
+    },
+    "competence": {
+        "title": "Competence",
+        "description": "Welcome to the competence page",
+        "add": "Add a competence",
+        "edit": "Edit a competence",
+        "delete": "Delete a competence",
+        "name": "Name",
+        "training": {
+            "title": "Associated Training",
+            "info": "Training Information",
+            "edit": "View training",
+            "instructor": "Instructor",
+            "date": "Date",
+            "duration": "Duration",
+            "cost": "Cost",
+            "hours": "Hours",
+            "operators": "Operators",
+            "noOperators": "No operators have register for this training yet"
+        },
+        "frequency": "Frequency",
+        "position": {
+            "title": "Position",
+            "edit": "View position",
+            "save": "Save"
+        },
+        "days": "Days"
+    }
+}
