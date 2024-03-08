@@ -34,7 +34,12 @@ function downloadCertificate() {
     <div>
         <div class="flex items-center">
             <p>
-                {{ training.Training.name }} - {{ new Date(training.date).toLocaleDateString() }}&nbsp;
+                <UButton
+                    variant="link"
+                    :to="`/training/${training.id_train}`"
+                >
+                    {{ training.Training.name }}
+                </UButton> - {{ new Date(training.date).toLocaleDateString() }}&nbsp;
             </p>
 
             <p v-if="training.State.id_state !== 1">

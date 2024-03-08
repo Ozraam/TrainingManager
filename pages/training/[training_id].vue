@@ -20,7 +20,7 @@ const trainingId = route.params.training_id.toString()
         <div class="flex grow">
             <TrainingSelect :current-training="trainingId" />
 
-            <!-- <CompetenceDetails :current-competence="trainingId" /> -->
+            <TrainingDetails :current-training="trainingId" />
         </div>
     </main>
 </template>

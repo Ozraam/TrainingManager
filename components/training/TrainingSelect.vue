@@ -44,10 +44,6 @@ function selectTraining(row: Array<number | undefined>) {
     navigateTo(`/training/${row[2]}${query}`)
 }
 
-function firstLetterToUpperCase(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
 const { data: dataCo } = await sp.from('Competences').select('*, Position_comp(*)')
 
 // TODO : Refactor this to have TS types
@@ -88,7 +84,7 @@ const stageSelectorObject = {
         items: competences!.map((competence) => {
             return {
                 id: competence.id_comp,
-                name: competence.name,
+                name: firstLetterToUpperCase(competence.name),
                 filterIds: competence.Position_comp.map(position => position.id_pos)
             }
         }),
@@ -97,7 +93,7 @@ const stageSelectorObject = {
             items: trainings!.map((training) => {
                 return {
                     id: training.id_train,
-                    name: training.name,
+                    name: firstLetterToUpperCase(training.name),
                     filterIds: [training.Competences.id_comp]
                 }
             }),
