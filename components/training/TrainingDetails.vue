@@ -83,7 +83,7 @@ function downloadCertificate() {
 
                     <UButton
                         variant="link"
-                        to="/teacher"
+                        :to="'/teacher?search=' + training?.Teacher.name + ' ' + training?.Teacher.surname"
                     >
                         {{ training?.Teacher.name }} {{ training?.Teacher.surname }}
                     </UButton>
