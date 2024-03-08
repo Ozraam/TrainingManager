@@ -2,43 +2,46 @@
 const sp = useSupabaseClient()
 
 const props = defineProps({
-    currentCompetence: {
+    currentTraining: {
         type: String,
         required: true,
     },
 })
 
+const emit = defineEmits(['load-operator'])
+
 const route = useRoute()
 
-const selectedRole = ref(
-    route.query.position ? parseInt(route.query.position as string) : 0
+const selectedPosition = ref(
+    route.query.position ? parseInt(route.query.position as string) : undefined
+)
+
+const selectedCompetence = ref(
+    route.query.competence ? parseInt(route.query.competence as string) : undefined
 )
 
 const { data } = await sp.from('Position').select('*')
 
 const positions : {id_pos: number, name: string}[] | null = data
+const selectedItem = ref<Array<number | undefined>>([selectedPosition.value, selectedCompetence.value, parseInt(props.currentTraining)])
+const currentTrainingUserFriendly = ref(props.currentTraining)
 
-positions?.unshift({ id_pos: 0, name: 'All' })
+function selectTraining(row: Array<number | undefined>) {
+    selectedItem.value = row
 
-const currentCompetenceUserFriendly = ref(props.currentCompetence)
-
-const UTableRoles = positions?.map((position) => {
-    return {
-        position: position.id_pos
+    if (row[2]!.toString() === currentTrainingUserFriendly.value) {
+        return
     }
-})
 
-function selectRole(row: { position: number }) {
-    selectedRole.value = row.position
-}
+    emit('load-operator')
+    currentTrainingUserFriendly.value = row[2]!.toString()
 
-function selectCompetence(row: { competence: number }) {
-    currentCompetenceUserFriendly.value = row.competence.toString()
-    navigateTo(`/competence/${row.competence}?position=${selectedRole.value}`)
-}
+    const position = row[0] ? `position=${row[0]}` : ''
+    const competence = row[1] ? `competence=${row[1]}` : ''
 
-function firstLetterToUpperCase(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1)
+    const query = position && competence ? `?${position}&${competence}` : position || competence ? `?${position || competence}` : ''
+
+    navigateTo(`/training/${row[2]}${query}`)
 }
 
 const { data: dataCo } = await sp.from('Competences').select('*, Position_comp(*)')
@@ -55,71 +58,55 @@ const competences : {
     }[]
 }[] | null = dataCo
 
-// const operator = operators?.find(operator => operator.id_pers.toString() === props.currentOperator)
+const { data: dataTr } = await sp.from('Training').select('*, Competences(*)')
 
-const UTableCompetence = competences?.map((competence) => {
-    return {
-        competence: competence.id_comp
+const trainings : {
+    id_train: number,
+    name: string,
+    Competences: {
+        id_comp: number,
+        name: string,
+        tmp_validity: number,
     }
-})
-
-const filteredCompetence = computed(() => {
-    if (selectedRole.value === 0) {
-        return UTableCompetence
-    }
-
-    return UTableCompetence?.filter((competenceT) => {
-        return competences!.find(competence => competence.id_comp === competenceT.competence)!.Position_comp.some(
-            position => position.id_pos === selectedRole.value
-        )
-    })
-})
+}[] | null = dataTr
 
 const stageSelectorObject = {
     label: 'Position',
     items: positions!.map((position) => {
         return {
             id: position.id_pos,
-            name: position.name,
-            filterId: 0
+            name: firstLetterToUpperCase(position.name),
+            filterIds: [0]
         }
     }),
-    selected: 0,
+    next: {
+        label: 'Competence',
+        items: competences!.map((competence) => {
+            return {
+                id: competence.id_comp,
+                name: firstLetterToUpperCase(competence.name),
+                filterIds: competence.Position_comp.map(position => position.id_pos)
+            }
+        }),
+        next: {
+            label: 'Training',
+            items: trainings!.map((training) => {
+                return {
+                    id: training.id_train,
+                    name: firstLetterToUpperCase(training.name),
+                    filterIds: [training.Competences.id_comp]
+                }
+            }),
+            next: null
+        }
+    }
 }
 </script>
 
 <template>
-    <section>
-        <div class="flex h-full">
-            <UTable
-                :rows="UTableRoles"
-                label="Role"
-                class="border-r-2 border-gray-200 dark:border-gray-800"
-                @select="selectRole"
-            >
-                <template #position-data="{ row }">
-                    <div
-                        :class="{ 'text-primary': selectedRole == row.position }"
-                    >
-                        {{ firstLetterToUpperCase(positions![row.position].name) }}
-                    </div>
-                </template>
-            </UTable>
-
-            <UTable
-                :rows="filteredCompetence"
-                label="Role"
-                class="border-r-2 border-gray-200 dark:border-gray-800"
-                @select="selectCompetence"
-            >
-                <template #competence-data="{ row }">
-                    <div
-                        :class="{ 'text-primary': currentCompetenceUserFriendly == row.competence }"
-                    >
-                        {{ firstLetterToUpperCase(competences!.find(competence => competence.id_comp === row.competence)!.name) }}
-                    </div>
-                </template>
-            </UTable>
-        </div>
-    </section>
+    <StageSelector
+        :stages="stageSelectorObject"
+        :selected="selectedItem"
+        @select="selectTraining"
+    />
 </template>

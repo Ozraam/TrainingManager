@@ -38,7 +38,7 @@ const links = computed(() => [
         },
         {
             label: 'Teacher',
-            to: route.path.startsWith('/teacher') ? route.path : '/teacher/1',
+            to: '/teacher',
             icon: 'i-heroicons-academic-cap'
         },
     ],

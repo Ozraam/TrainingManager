@@ -1,5 +1,26 @@
+<script setup lang="ts">
+const route = useRoute()
+
+const trainingId = route.params.training_id.toString()
+</script>
+
 <template>
-    <TodoPage
-        title="Training"
-    />
+    <main class="h-screen flex flex-col">
+        <PageHeader
+            title="Training"
+            :title-link="`/training/${trainingId}`"
+            :actions="[
+                {
+                    label: $t('training.add'),
+                    callBack: () => navigateTo('/training/add')
+                },
+            ]"
+        />
+
+        <div class="flex grow">
+            <TrainingSelect :current-training="trainingId" />
+
+            <TrainingDetails :current-training="trainingId" />
+        </div>
+    </main>
 </template>
