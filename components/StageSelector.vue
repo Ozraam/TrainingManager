@@ -39,10 +39,10 @@ function selectStage(row: { item: number | undefined }) {
 }
 
 function getSelected() {
-    const selectedList = [props.selected[0]]
+    let selectedList = [props.selected[0]]
 
     if (next.value) {
-        selectedList.concat(next.value.getSelected())
+        selectedList = selectedList.concat(next.value.getSelected())
     }
 
     return selectedList
