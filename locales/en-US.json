@@ -53,5 +53,10 @@
             "save": "Save"
         },
         "days": "Days"
+    },
+    "training": {
+        "title": "Training",
+        "description": "Welcome to the training page",
+        "add": "Add a training"
     }
 }
