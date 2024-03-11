@@ -63,11 +63,20 @@ const isPositionChanged = computed(() => {
 })
 
 function savePosition() {
-    // TODO : This is a placeholder for the real save
-    toast.add({
-        title: 'Position saved - TODO',
-        timeout: 2000,
-        icon: 'i-heroicons-face-frown-16-solid'
+    sp.from('Operators').update({ id_pos: selectedPosition.value?.id } as never).eq('id_op', operator.value?.id_op as never).then(({ error }) => {
+        if (error) {
+            toast.add({
+                title: 'Error',
+                description: 'An error occurred while saving the position',
+                color: 'red',
+            })
+        } else {
+            toast.add({
+                title: 'Success',
+                description: 'The position has been saved',
+            })
+            reloadNuxtApp()
+        }
     })
 }
 
