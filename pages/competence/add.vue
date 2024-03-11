@@ -103,7 +103,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 
         <div>
             <h2 class="text-xl text-center mb-5">
-                Add new teacher
+                Add new competence
             </h2>
 
             <UForm
