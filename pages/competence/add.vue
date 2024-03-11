@@ -51,7 +51,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
         }
     ]
 
-    const { data, error } = await sp.from('Competences').insert(insert as never).select()
+    const { data, error } = await sp.from('Competences').insert(insert as never).select('id_comp')
 
     if (error) {
         loading.value = false

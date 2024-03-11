@@ -94,7 +94,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 
         <div>
             <h2 class="text-xl text-center mb-5">
-                Add new competence
+                Add new operator
             </h2>
 
             <UForm
