@@ -89,11 +89,13 @@ function onSubmit(event: FormSubmitEvent<State>) {
                 <UFormGroup
                     label="Name"
                     name="name"
+                    required
                 >
                     <UInput v-model="state.name" />
                 </UFormGroup>
 
                 <UFormGroup
+                    required
                     label="Surname"
                     name="surname"
                 >
