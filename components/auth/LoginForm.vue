@@ -19,7 +19,7 @@ async function login() {
     <div class="min-h-screen">
         <div class="flex justify-center items-center">
             <div class="w-50">
-                <label class="text-2xl font-bold">{{ $t('login.title') }}</label>
+                <label class="text-2xl font-bold">{{ $t('login.email') }}</label>
 
                 <UInput
                     v-model="mail"
@@ -27,7 +27,7 @@ async function login() {
                     type="email"
                 />
 
-                <label class="text-2l text-gray-500">{{ $t('login.email') }}</label>
+                <label class="text-2l text-gray-500">{{ $t('login.password') }}</label>
 
                 <UInput
                     v-model="password"
