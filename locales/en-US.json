@@ -58,5 +58,20 @@
         "title": "Training",
         "description": "Welcome to the training page",
         "add": "Add a training"
+    },
+    "login":{
+        "title": "Login",
+        "description": "Welcome to the login page",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Submit"
+    },
+    "signup":{
+        "title": "Sign Up",
+        "description": "Welcome to the sign up page",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "submit": "Submit"
     }
 }
