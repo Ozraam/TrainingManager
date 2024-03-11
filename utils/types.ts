@@ -1,8 +1,11 @@
+/* eslint-disable no-use-before-define */
 export type Operator = {
     id_op: number;
     name: string;
     surname: string;
     status: string;
+    Position: Position;
+    Registration: Registration[];
 };
 
 export type Training = {
@@ -19,6 +22,7 @@ export type Training = {
 };
 
 export type Competence = {
+    valid: boolean;
     id_comp: number;
     name: string;
     tmp_validity: number;
@@ -32,8 +36,21 @@ export type YearData = {
 };
 
 export type Registration = {
+    Training: Training;
     id_op: number;
     id_train: number;
     date: string;
     id_state: number;
+};
+
+export type PositionComp = {
+    id_pos: number;
+    id_comp: number;
+    Competences: Competence;
+};
+
+export type Position = {
+    id_pos: number;
+    name: string;
+    Position_comp: PositionComp[];
 };
