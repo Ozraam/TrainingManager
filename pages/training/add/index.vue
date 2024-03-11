@@ -231,7 +231,12 @@ const { data: type_training } = await sp.from('Type_training').select('id_type_t
                 >
                     <USelectMenu
                         v-model="state.id_teacher"
-                        :options="teachers"
+                        :options="teachers?.map((t) => {
+                            return {
+                                id_teacher: t.id_teacher,
+                                name: t.name + ' ' + t.surname,
+                            }
+                        })"
                         placeholder="Select a teacher"
                         option-attribute="name"
                         value-attribute="id_teacher"
