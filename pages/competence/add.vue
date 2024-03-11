@@ -14,7 +14,7 @@ const { data: positions } = await sp.from('Position').select('id_pos, name')
 const state = reactive({
     name: undefined,
     tmp_validity: 365,
-    position: positions.map(() => false),
+    position: positions!.map(() => false),
 })
 
 function validate(state: State): FormError[] {
@@ -39,7 +39,11 @@ function validate(state: State): FormError[] {
 
 const toast = useToast()
 
+const loading = ref(false)
+
 async function onSubmit(event: FormSubmitEvent<State>) {
+    if (loading.value) { return }
+    loading.value = true
     const insert = [
         {
             name: event.data.name!,
@@ -50,6 +54,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     const { data, error } = await sp.from('Competences').insert(insert as never).select()
 
     if (error) {
+        loading.value = false
         console.error(error)
         toast.add({
             title: 'Error',
@@ -60,7 +65,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     } else {
         const idComp = data?.[0]?.id_comp
         if (idComp) {
-            const insert = positions.filter((_, i) => event.data.position[i]).map(pos => ({
+            const insert = positions!.filter((_, i) => event.data.position[i]).map(pos => ({
                 id_comp: idComp,
                 id_pos: pos.id_pos,
                 mandatory: false,
@@ -69,6 +74,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
             const { error } = await sp.from('Position_comp').insert(insert as never).select()
 
             if (error) {
+                loading.value = false
                 sp.from('Competences').delete().eq('id_comp', idComp).then(() => {})
                 console.error(error)
                 toast.add({
@@ -145,6 +151,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                 </UFormGroup>
 
                 <UButton
+                    :loading="loading"
                     type="submit"
                     label="Add"
                 />

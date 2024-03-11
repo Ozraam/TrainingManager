@@ -30,7 +30,11 @@ function validate(state: State): FormError[] {
 
 const toast = useToast()
 
+const loading = ref(false)
+
 async function onSubmit(event: FormSubmitEvent<State>) {
+    if (loading.value) { return }
+    loading.value = true
     const insert = [
         {
             name: event.data.name!,
@@ -40,6 +44,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     const { data, error } = await sp.from('Position').insert(insert as never).select('id_pos')
 
     if (error) {
+        loading.value = false
         console.error(error)
         toast.add({
             title: 'Error',
@@ -61,6 +66,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
         const { error } = await sp.from('Position_comp').insert(insert as never)
 
         if (error) {
+            loading.value = false
             console.error(error)
             sp.from('Position').delete().eq('id_pos', idPos).then(() => {})
             toast.add({
@@ -128,6 +134,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                 </UFormGroup>
 
                 <UButton
+                    :loading="loading"
                     type="submit"
                     label="Add"
                 />
