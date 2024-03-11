@@ -3,6 +3,7 @@
 const sp = useSupabaseClient()
 const mail = ref('')
 const password = ref('')
+const erreur = ref(false)
 
 async function login() {
     console.log(mail.value, password.value)
@@ -11,6 +12,12 @@ async function login() {
         password: password.value,
     })
 
+    if (user.error) {
+        console.log(user.error)
+        erreur.value = true
+        return
+    }
+
     console.log(user)
 }
 </script>
@@ -18,7 +25,10 @@ async function login() {
 <template>
     <div class="min-h-screen">
         <div class="flex justify-center items-center">
-            <div class="w-50">
+            <form
+                class="w-50"
+                @submit.prevent="login"
+            >
                 <label class="text-2xl font-bold">{{ $t('login.email') }}</label>
 
                 <UInput
@@ -35,12 +45,20 @@ async function login() {
                     type="password"
                 />
 
+                <span
+                    v-if="erreur"
+                    class="text-red-500"
+                >{{ $t('login.Error') }}
+                </span>
+
+                <br>
+
                 <UButton
                     class="mt-3"
+                    type="submit"
                     :label="$t('login.submit')"
-                    @click="login"
                 />
-            </div>
+            </form>
         </div>
     </div>
 </template>

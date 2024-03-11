@@ -64,7 +64,8 @@
         "description": "Welcome to the login page",
         "email": "Email",
         "password": "Password",
-        "submit": "Submit"
+        "submit": "Submit",
+        "Error": "Email or password is incorrect"
     },
     "signup":{
         "title": "Sign Up",
@@ -72,6 +73,8 @@
         "email": "Email",
         "password": "Password",
         "confirmPassword": "Confirm Password",
-        "submit": "Submit"
+        "submit": "Submit",
+        "ConfirmError": "Password and confirm password are not the same",
+        "Error": "a problem has occured, please try again later"
     }
 }
