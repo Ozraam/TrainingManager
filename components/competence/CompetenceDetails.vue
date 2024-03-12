@@ -29,21 +29,63 @@ positions.value?.forEach((position) => {
     position.check = competecence.value?.Position_comp.some(comp => comp.id_pos === position.id_pos) ?? false
 })
 
-const initialPosition = positions.value?.map((position) => {
+const initialPosition = ref(positions.value?.map((position) => {
     return {
         id_pos: position.id_pos,
         check: position.check
     }
-})
+}))
 
 const isPositionChanged = computed(() => {
     return positions.value?.some((position, index) => {
-        return position.check !== initialPosition?.[index].check
+        return position.check !== initialPosition.value![index].check
     })
 })
 
-function savePosition() {
-    // TODO : This is a placeholder for the real save
+const positionChangeLoading = ref(false)
+
+async function savePosition() {
+    if (positionChangeLoading.value) { return }
+    positionChangeLoading.value = true
+
+    const oldPositions = competecence.value?.Position_comp.filter(c => positions.value?.some(p => p.id_pos === c.id_pos && p.check) ?? false) ?? []
+
+    await sp.from('Position_comp').delete().eq('id_comp', competecence.value?.id_comp as never).select('*')
+    await sp.from('Position_comp').insert(oldPositions.map((p) => {
+        return {
+            id_comp: competecence.value?.id_comp,
+            id_pos: p.id_pos,
+            mandatory: p.mandatory
+        }
+    }) as never)
+
+    const { error } = await sp.from('Position_comp').insert(positions.value?.filter(p => p.check && !oldPositions.some(op => op.id_pos === p.id_pos)).map((p) => {
+        return {
+            id_comp: competecence.value?.id_comp,
+            id_pos: p.id_pos,
+            mandatory: false
+        }
+    }) as never)
+
+    if (!error) {
+        useToast().add({
+            title: 'success',
+            description: 'Position saved',
+        })
+
+        initialPosition.value!.forEach((position, index) => {
+            position.check = positions.value![index].check
+        })
+
+        positionChangeLoading.value = false
+    } else {
+        useToast().add({
+            title: 'error',
+            description: 'An error occurred while saving the position',
+        })
+
+        positionChangeLoading.value = false
+    }
 }
 
 const { data: trainings, error } = await sp.from('Training').select('cost, date, name, duration, Registration(Operators(name, surname, id_op), State(name)), Teacher(name, surname, id_teacher)').eq('id_comp', props.currentCompetence)
@@ -100,6 +142,7 @@ const items = ref(trainings.map((t) => {
                 <UButton
                     v-if="isPositionChanged"
                     :label="$t('competence.position.save')"
+                    :loading="positionChangeLoading"
                     @click="savePosition"
                 />
             </div>
@@ -120,7 +163,7 @@ const items = ref(trainings.map((t) => {
                                 <strong>{{ $t('competence.training.instructor') }}</strong>
 
                                 : <UButton
-                                    :to="`/teacher/${item.training.Teacher.id_teacher}`"
+                                    :to="`/teacher?search=${item.training.Teacher.name} ${item.training.Teacher.surname}`"
                                     variant="link"
                                 >
                                     {{ item.training.Teacher.name }} {{ item.training.Teacher.surname }}
