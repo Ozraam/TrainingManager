@@ -111,9 +111,17 @@ function downloadCertificate() {
             </div>
 
             <div>
-                <h3 class="text-xl">
-                    Registrations
-                </h3>
+                <div class="flex gap-4">
+                    <h3 class="text-xl">
+                        Registrations
+                    </h3>
+
+                    <UButton
+                        label="Add new registration"
+                        variant="link"
+                        :to="`/training/add/registration?training=${training?.id_train}`"
+                    />
+                </div>
 
                 <UTable
                     :rows="training?.Registration.map((r) => {

@@ -3,19 +3,17 @@ import type { FormError, FormSubmitEvent } from '#ui/types'
 
 const sp = useSupabaseClient()
 
-const { data: positions } = await sp.from('Position').select('id_pos, name')
+type State = {
+    name: string | undefined,
+    competences: number[],
+}
+
+const { data: competences } = await sp.from('Competences').select('id_comp, name')
 
 const state = reactive({
     name: undefined,
-    surname: undefined,
-    idPos: undefined,
+    competences: [],
 })
-
-type State = {
-    name: string | undefined,
-    surname: string | undefined,
-    idPos: number | undefined
-}
 
 function validate(state: State): FormError[] {
     const errors: FormError[] = []
@@ -24,20 +22,6 @@ function validate(state: State): FormError[] {
         errors.push({
             path: 'name',
             message: 'Name is required',
-        })
-    }
-
-    if (state.surname ? state.surname.trim() === '' : true) {
-        errors.push({
-            path: 'surname',
-            message: 'Surname is required',
-        })
-    }
-
-    if (state.idPos === undefined) {
-        errors.push({
-            path: 'idPos',
-            message: 'Position is required',
         })
     }
 
@@ -54,12 +38,10 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     const insert = [
         {
             name: event.data.name!,
-            surname: event.data.surname!,
-            id_pos: event.data.idPos!,
         }
     ]
 
-    const { data, error } = await sp.from('Operators').insert(insert as never).select('id_op')
+    const { data, error } = await sp.from('Position').insert(insert as never).select('id_pos')
 
     if (error) {
         loading.value = false
@@ -71,12 +53,36 @@ async function onSubmit(event: FormSubmitEvent<State>) {
             color: 'red',
         })
     } else {
-        toast.add({
-            title: 'Operator added',
-            description: 'The operator has been added',
-            icon: 'i-icon-park-solid-success',
+        // link competences
+        const idPos = data![0].id_pos
+        const insert = event.data.competences.map((idComp: number) => {
+            return {
+                id_pos: idPos,
+                id_comp: idComp,
+                mandatory: true,
+            }
         })
-        navigateTo('/operator/' + data![0].id_op)
+
+        const { error } = await sp.from('Position_comp').insert(insert as never)
+
+        if (error) {
+            loading.value = false
+            console.error(error)
+            sp.from('Position').delete().eq('id_pos', idPos).then(() => {})
+            toast.add({
+                title: 'Error',
+                description: 'An error occurred',
+                icon: 'i-heroicons-face-frown-solid',
+                color: 'red',
+            })
+        } else {
+            toast.add({
+                title: 'Position added',
+                description: 'The position has been added',
+                icon: 'i-icon-park-solid-success',
+            })
+            navigateTo('/positions')
+        }
     }
 }
 </script>
@@ -84,17 +90,17 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 <template>
     <section>
         <PageHeader
-            title="Opetators"
-            title-link="/operator/1"
+            title="Positions"
+            title-link="/positions"
             :other-links="[{
-                label: 'Add new operator',
-                to: '/operator/add'
+                label: 'Add new position',
+                to: '/positions/add'
             }]"
         />
 
         <div>
             <h2 class="text-xl text-center mb-5">
-                Add new operator
+                Add new position
             </h2>
 
             <UForm
@@ -112,26 +118,18 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                 </UFormGroup>
 
                 <UFormGroup
-                    required
-                    label="Surname"
-                    name="surname"
-                >
-                    <UInput v-model="state.surname" />
-                </UFormGroup>
-
-                <UFormGroup
                     label="Position"
-                    name="idPos"
+                    name="position"
                     class="min-w-40"
-                    required
+                    hint="Optional"
                 >
                     <USelectMenu
-                        v-model="state.idPos"
-                        :options="positions"
-                        placeholder="Select a position"
+                        v-model="state.competences"
+                        :options="competences"
+                        placeholder="Select a competence"
                         option-attribute="name"
-                        value-attribute="id_pos"
-                        searchable
+                        value-attribute="id_comp"
+                        multiple
                     />
                 </UFormGroup>
 

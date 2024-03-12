@@ -42,7 +42,7 @@ function firstLetterToUpperCase(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-const { data: dataOp } = await sp.from('Operators').select('*')
+const { data: dataOp } = await sp.from('Operators').select('*').order('name')
 
 const operators : {id_op: number, name: string, surname: String, id_pos: number}[] | null = dataOp
 

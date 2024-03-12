@@ -40,6 +40,12 @@ onMounted(fetchPositions)
         <PageHeader
             title="Teachers"
             title-link="/teacher"
+            :actions="[
+                {
+                    label: 'Add new teacher',
+                    callBack: () => navigateTo('/teacher/add')
+                }
+            ]"
         />
 
         <div class="flex justify-center mt-1">

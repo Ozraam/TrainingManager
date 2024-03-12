@@ -13,6 +13,11 @@ const props = defineProps({
         type: Array as PropType<{ label: string, callBack: () => void }[]>,
         default: () => [],
     },
+
+    otherLinks: {
+        type: Array as PropType<{ label: string, to: string }[]>,
+        default: () => [],
+    },
 })
 
 const links = [
@@ -25,6 +30,14 @@ links.push(...props.actions.map((action) => {
         to: '',
         icon: '',
         click: action.callBack,
+    }
+}))
+
+links.push(...props.otherLinks.map((link) => {
+    return {
+        label: link.label,
+        to: link.to,
+        icon: '',
     }
 }))
 </script>

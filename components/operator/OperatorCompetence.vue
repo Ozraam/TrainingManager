@@ -25,7 +25,7 @@ defineProps({
             </p>
 
             <p>
-                Valid
+                Valid <!-- TODO : check validity-->
             </p>
         </div>
     </div>

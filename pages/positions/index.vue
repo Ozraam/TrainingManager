@@ -46,6 +46,12 @@ onMounted(fetchPositions)
         <PageHeader
             title="Positions"
             title-link="/positions"
+            :other-links="[
+                {
+                    label: 'Add new position',
+                    to: '/positions/add'
+                }
+            ]"
         />
 
         <div class="flex flex-wrap gap-3 m-3">
