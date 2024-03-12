@@ -58,5 +58,24 @@
         "title": "Training",
         "description": "Welcome to the training page",
         "add": "Add a training"
+    },
+    "login":{
+        "title": "Login",
+        "description": "Welcome to the login page",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Submit",
+        "Error": "Email or password is incorrect"
+    },
+    "signup":{
+        "title": "Sign Up",
+        "description": "Welcome to the sign up page",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "submit": "Submit",
+        "ConfirmError": "Password and confirm password are not the same",
+        "Error": "a problem has occured, please try again later",
+        "LenghtError": "Password must be at least 6 characters long"
     }
 }

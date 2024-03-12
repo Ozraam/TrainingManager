@@ -10,7 +10,7 @@ sp.auth.signInWithPassword({
 const dataR : Ref<any | null> = ref(null)
 
 async function a() {
-    const { data } = await $fetch('/api/OperatorsInfos', {
+    const { data } = await $fetch('/api/StudyPlanHelper', {
         method: 'GET',
         headers: useRequestHeaders(['cookie']),
         // body: JSON.stringify({
@@ -32,7 +32,7 @@ async function a() {
         />
 
         <pre>
-        {{ dataR }}
-    </pre>
+            {{ dataR }}
+        </pre>
     </div>
 </template>

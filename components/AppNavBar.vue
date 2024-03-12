@@ -61,6 +61,18 @@ const links = computed(() => [
     ],
     [
         {
+            label: 'Log in',
+            to: '/auth/login',
+            icon: 'i-heroicons-arrow-right-end-on-rectangle'
+        },
+        {
+            label: 'Sign up',
+            to: '/auth/signup',
+            icon: 'i-heroicons-user-plus'
+        },
+    ],
+    [
+        {
             label: 'Settings',
             to: '',
             icon: 'i-heroicons-cog'
