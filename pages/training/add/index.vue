@@ -132,21 +132,19 @@ async function onSubmit(event: FormSubmitEvent<State>) {
         }
     ]
 
-    const { error, data } = await sp.from('Training').insert(insert).select('id_train')
+    const { error, data } = await sp.from('Training').insert(insert as never).select('id_train')
 
     if (error) {
         loading.value = false
         toast.add({
             title: 'Error',
             description: 'An error occurred while adding the training',
-            duration: 500,
             color: 'red',
         })
     } else {
         toast.add({
             title: 'Success',
             description: 'Training added successfully',
-            duration: 500,
             color: 'green',
         })
         navigateTo('/training/' + data![0].id_train)
@@ -156,7 +154,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 const { data: teachers } = await sp.from('Teacher').select('id_teacher, name, surname')
 const { data: competences } = await sp.from('Competences').select('id_comp, name')
 const { data: confirmation } = await sp.from('Type_confirmation').select('id_conf, name')
-const { data: type_training } = await sp.from('Type_training').select('id_type_train, name')
+const { data: typeTraining } = await sp.from('Type_training').select('id_type_train, name')
 </script>
 
 <template>
@@ -284,7 +282,7 @@ const { data: type_training } = await sp.from('Type_training').select('id_type_t
                 >
                     <USelectMenu
                         v-model="state.id_type_training"
-                        :options="type_training"
+                        :options="typeTraining"
                         placeholder="Select a type of training"
                         option-attribute="name"
                         value-attribute="id_type_train"
