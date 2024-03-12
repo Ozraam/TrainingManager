@@ -78,7 +78,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
             id_train: event.data.id_train!,
             id_op: event.data.id_op!,
             date: event.data.date!,
-            state: event.data.state!,
+            id_state: event.data.state!,
         }
     ] as never[]
 

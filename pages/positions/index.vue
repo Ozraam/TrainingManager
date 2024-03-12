@@ -32,6 +32,7 @@ const positions : Ref<Position[]> = ref([])
 const fetchPositions = async () => {
     const { data, error } = await sp.from('Position').select('*, Position_comp(*, Competences(*)), Operators(*)')
     if (error) {
+        // eslint-disable-next-line no-console
         console.error(error)
     } else {
         positions.value = data

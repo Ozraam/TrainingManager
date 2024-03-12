@@ -51,7 +51,7 @@ const toast = useToast()
 
 const emit = defineEmits(['deleted'])
 
-async function deleteOperator() {
+async function deletePosition() {
     const { data } = await sp.from('Operators').select('id_op').eq('id_pos', props.position.id_pos)
     if (data?.length) {
         toast.add({
@@ -94,7 +94,7 @@ function askConfirmation() {
     const actions = [
         {
             label: 'Delete Position',
-            click: () => deleteOperator()
+            click: () => deletePosition()
         }, {
             label: 'Cancel',
             click: () => toast.remove(confirmationId.value!)
