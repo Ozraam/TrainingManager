@@ -38,61 +38,62 @@ async function signup() {
 
 <template>
     <div class="min-h-screen">
-        <div class="flex justify-center items-center">
-            <form
-                class="w-50"
-                @submit.prevent="signup"
-            >
-                <label class="text-2xl font-bold">{{ $t('signup.email') }}</label>
+        <form
+            class="flex flex-col items-center w-50 m-7"
+            @submit.prevent="signup"
+        >
+            <label class="text-2xl font-bold">{{ $t('signup.email') }}</label>
 
-                <UInput
-                    v-model="mail"
-                    label="Email"
-                    type="email"
-                />
+            <UInput
+                v-model="mail"
+                label="Email"
+                type="email"
+                required
+            />
 
-                <label class="text-2l text-gray-500">{{ $t('signup.password') }}</label>
+            <label class="text-2l text-gray-500">{{ $t('signup.password') }}</label>
 
-                <UInput
-                    v-model="password"
-                    label="Password"
-                    type="password"
-                />
+            <UInput
+                v-model="password"
+                label="Password"
+                type="password"
+                required
+            />
 
-                <label class="text-2l text-gray-500">{{ $t('signup.confirmPassword') }}</label>
+            <label class="text-2l text-gray-500">{{ $t('signup.confirmPassword') }}</label>
 
-                <UInput
-                    v-model="confirmPassword"
-                    label="Confirm Password"
-                    type="password"
-                />
+            <UInput
+                v-model="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                required
+            />
 
-                <span
-                    v-if="erreur.confirmPassword"
-                    class="text-red-500"
-                >{{ $t('signup.ConfirmError') }}
-                </span>
+            <span
+                v-if="erreur.confirmPassword"
+                class="text-red-500"
+            >{{ $t('signup.ConfirmError') }}
+            </span>
 
-                <span
-                    v-if="erreur.password"
-                    class="text-red-500"
-                >{{ $t('signup.Error') }}
-                </span>
+            <span
+                v-if="erreur.password"
+                class="text-red-500"
+            >{{ $t('signup.Error') }}
+            </span>
 
-                <span
-                    v-if="erreur.lenght"
-                    class="text-red-500"
-                >{{ $t('signup.LenghtError') }}
-                </span>
+            <span
+                v-if="erreur.lenght"
+                class="text-red-500"
+            >{{ $t('signup.LenghtError') }}
+            </span>
 
-                <br>
+            <br>
 
-                <UButton
-                    class="mt-3"
-                    :label="$t('signup.submit')"
-                    type="submit"
-                />
-            </form>
-        </div>
+            <UButton
+                class="mt-3"
+                :label="$t('signup.submit')"
+                type="submit"
+            />
+        </form>
     </div>
 </template>
