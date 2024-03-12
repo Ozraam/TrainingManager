@@ -8,12 +8,15 @@ const erreur = ref({ confirmPassword: false, password: false, lenght: false })
 
 async function signup() {
     console.log(mail.value, password.value, confirmPassword.value)
-
+    erreur.value = { confirmPassword: false, password: false, lenght: false }
     if (password.value !== confirmPassword.value) {
         erreur.value.confirmPassword = true
         return
-    } else if (password.value.length < 8) {
-        erreur.value.confirmPassword = false
+    }
+
+    if (password.value.length < 8) {
+        erreur.value.lenght = true
+        return
     }
 
     const user = await sp.auth.signUp({
@@ -25,6 +28,8 @@ async function signup() {
         console.log(user.error)
         erreur.value.password = true
         return
+    } else {
+        location.href = '/'
     }
 
     console.log(user)
@@ -72,6 +77,12 @@ async function signup() {
                     v-if="erreur.password"
                     class="text-red-500"
                 >{{ $t('signup.Error') }}
+                </span>
+
+                <span
+                    v-if="erreur.lenght"
+                    class="text-red-500"
+                >{{ $t('signup.LenghtError') }}
                 </span>
 
                 <br>

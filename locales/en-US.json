@@ -75,6 +75,7 @@
         "confirmPassword": "Confirm Password",
         "submit": "Submit",
         "ConfirmError": "Password and confirm password are not the same",
-        "Error": "a problem has occured, please try again later"
+        "Error": "a problem has occured, please try again later",
+        "LenghtError": "Password must be at least 6 characters long"
     }
 }

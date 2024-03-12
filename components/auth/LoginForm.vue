@@ -7,6 +7,8 @@ const erreur = ref(false)
 
 async function login() {
     console.log(mail.value, password.value)
+    erreur.value = false
+
     const user = await sp.auth.signInWithPassword({
         email: mail.value,
         password: password.value,
@@ -15,10 +17,9 @@ async function login() {
     if (user.error) {
         console.log(user.error)
         erreur.value = true
-        return
+    } else {
+        location.href = '/'
     }
-
-    console.log(user)
 }
 </script>
 
