@@ -18,7 +18,7 @@ const links = computed(() => [
     [
         {
             label: 'Operators',
-            to: route.path.startsWith('/operator') ? route.path : '/operator/1',
+            to: route.path.startsWith('/operator') ? route.path : '/operator',
             icon: 'i-heroicons-user-group'
         },
         {
@@ -28,12 +28,12 @@ const links = computed(() => [
         },
         {
             label: 'Competences',
-            to: route.path.startsWith('/competence') ? route.path : '/competence/1',
+            to: route.path.startsWith('/competence') ? route.path : '/competence',
             icon: 'i-heroicons-clipboard'
         },
         {
             label: 'Training',
-            to: route.path.startsWith('/training') ? route.path : '/training/1',
+            to: route.path.startsWith('/training') ? route.path : '/training',
             icon: 'i-heroicons-academic-cap'
         },
         {

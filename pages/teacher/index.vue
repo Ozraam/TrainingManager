@@ -11,7 +11,7 @@ const teachers : Ref<{
     }[]
 }[]> = ref([])
 
-const fetchPositions = async () => {
+const fetchTeacher = async () => {
     const { data, error } = await sp.from('Teacher').select('*, Training(name, id_train)')
     if (error) {
         // eslint-disable-next-line no-console
@@ -33,7 +33,7 @@ const filteredTeachers = computed(() => {
     })
 })
 
-onMounted(fetchPositions)
+onMounted(fetchTeacher)
 </script>
 
 <template>
@@ -74,6 +74,7 @@ onMounted(fetchPositions)
                 v-for="teacher in filteredTeachers"
                 :key="teacher.id_teacher"
                 :teacher="teacher"
+                @deleted="fetchTeacher"
             />
         </div>
     </section>
