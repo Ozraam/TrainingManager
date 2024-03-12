@@ -59,6 +59,7 @@ onMounted(fetchPositions)
                 v-for="position in positions"
                 :key="position.id_pos"
                 :position="position"
+                @deleted="fetchPositions"
             />
         </div>
     </section>

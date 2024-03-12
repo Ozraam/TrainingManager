@@ -14,6 +14,7 @@ const teachers : Ref<{
 const fetchPositions = async () => {
     const { data, error } = await sp.from('Teacher').select('*, Training(name, id_train)')
     if (error) {
+        // eslint-disable-next-line no-console
         console.error(error)
     } else {
         teachers.value = data
