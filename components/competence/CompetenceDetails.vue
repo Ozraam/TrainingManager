@@ -88,11 +88,13 @@ async function savePosition() {
     }
 }
 
-const { data: trainings, error } = await sp.from('Training').select('cost, date, name, duration, Registration(Operators(name, surname, id_op), State(name)), Teacher(name, surname, id_teacher)').eq('id_comp', props.currentCompetence)
+const { data: trainings, error } = await sp.from('Training').select('id_train, cost, date, name, duration, Registration(Operators(name, surname, id_op), State(name)), Teacher(name, surname, id_teacher)').eq('id_comp', props.currentCompetence)
 
 if (error) {
     throw error // TODO : Handle error
 }
+
+const toast = useToast()
 
 const items = ref(trainings.map((t) => {
     return {
@@ -100,6 +102,80 @@ const items = ref(trainings.map((t) => {
         training: t
     }
 }))
+
+function deleteCompetence() {
+    // delete competence, you need to delete Position_comp first, Training, registration of the training and then the competence
+
+    const deleteTraining = async (idTraining: number) => {
+        const { error } = await sp.from('Registration').delete().eq('id_train', idTraining).select('*')
+        if (error) {
+            toast.add({
+                title: 'Error',
+                description: 'An error occurred while deleting the training',
+                color: 'red',
+            })
+        } else {
+            const { error } = await sp.from('Training').delete().eq('id_train', idTraining).select('*')
+            if (error) {
+                toast.add({
+                    title: 'Error',
+                    description: 'An error occurred while deleting the training',
+                    color: 'red',
+                })
+            }
+        }
+    }
+
+    sp.from('Position_comp').delete().eq('id_comp', props.currentCompetence).then(async ({ error }) => {
+        if (error) {
+            toast.add({
+                title: 'Error',
+                description: 'An error occurred while deleting the competence',
+                color: 'red',
+            })
+        } else {
+            for (const training of trainings!) {
+                await deleteTraining(training.id_train)
+            }
+
+            sp.from('Competences').delete().eq('id_comp', props.currentCompetence).then(({ error }) => {
+                if (error) {
+                    toast.add({
+                        title: 'Error',
+                        description: 'An error occurred while deleting the competence',
+                        color: 'red',
+                    })
+                } else {
+                    toast.add({
+                        title: 'Success',
+                        description: 'The competence has been deleted',
+                    })
+                    navigateTo('/competence')
+                }
+            })
+        }
+    })
+}
+
+const confirmationId = ref<string | null>(null)
+
+function askConfirmation() {
+    const actions = [
+        {
+            label: 'Delete competence',
+            click: () => deleteCompetence()
+        }, {
+            label: 'Cancel',
+            click: () => toast.remove(confirmationId.value!)
+        }
+    ]
+    confirmationId.value = toast.add({
+        title: 'Are you sure?',
+        description: 'This action cannot be undone',
+        actions,
+        color: 'red',
+    }).id
+}
 </script>
 
 <template>
@@ -107,9 +183,20 @@ const items = ref(trainings.map((t) => {
         v-if="competecence"
         class="m-3 grow"
     >
-        <h2 class="text-2xl">
-            {{ competecence!.name }}
-        </h2>
+        <div class="flex">
+            <h2 class="text-2xl">
+                {{ competecence!.name }}
+            </h2>
+
+            <UButton
+                label="Delete"
+                size="2xs"
+                variant="ghost"
+                color="red"
+                icon="i-heroicons-trash-20-solid"
+                @click="askConfirmation"
+            />
+        </div>
 
         <div class="flex gap-10">
             <h3 class="gap-1">
