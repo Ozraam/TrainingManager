@@ -1,5 +1,7 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
 const route = useRoute()
+const user = useSupabaseUser()
 
 const links = computed(() => [
     [
@@ -60,11 +62,18 @@ const links = computed(() => [
         },
     ],
     [
-        {
-            label: 'Log in',
-            to: '/auth/login',
-            icon: 'i-heroicons-arrow-right-end-on-rectangle'
-        },
+
+        user.value
+            ? {
+                label: 'Log out',
+                to: '/auth/logout',
+                icon: 'i-heroicons-arrow-left-start-on-rectangle'
+            }
+            : {
+                label: 'Log in',
+                to: '/auth/login',
+                icon: 'i-heroicons-arrow-right-end-on-rectangle'
+            },
         {
             label: 'Sign up',
             to: '/auth/signup',
