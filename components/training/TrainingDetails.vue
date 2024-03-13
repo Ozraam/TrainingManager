@@ -52,14 +52,60 @@ function changeState() {
     alert('State changed - TODO')
 }
 
-function deleteTraining() {
-    // TODO : This is a placeholder for the real save
-    alert('Training deleted - TODO')
-}
-
 function downloadCertificate() {
     // TODO : This is a placeholder for the real save
     alert('Certificate downloaded - TODO')
+}
+
+const toast = useToast()
+
+function deleteTraining() {
+    // maybe not the right way for deleting an Operators but we are intern
+    sp.from('Registration').delete().eq('id_train', props.currentTraining).then(({ error }) => {
+        if (error) {
+            toast.add({
+                title: 'Error',
+                description: 'An error occurred while deleting the operator',
+                color: 'red',
+            })
+        } else {
+            sp.from('Training').delete().eq('id_train', props.currentTraining).then(({ error }) => {
+                if (error) {
+                    toast.add({
+                        title: 'Error',
+                        description: 'An error occurred while deleting the operator',
+                        color: 'red',
+                    })
+                } else {
+                    toast.add({
+                        title: 'Success',
+                        description: 'The training has been deleted',
+                    })
+                    navigateTo('/training')
+                }
+            })
+        }
+    })
+}
+
+const confirmationId = ref<string | null>(null)
+
+function askConfirmation() {
+    const actions = [
+        {
+            label: 'Delete training',
+            click: () => deleteTraining()
+        }, {
+            label: 'Cancel',
+            click: () => toast.remove(confirmationId.value!)
+        }
+    ]
+    confirmationId.value = toast.add({
+        title: 'Are you sure?',
+        description: 'This action cannot be undone',
+        actions,
+        color: 'red',
+    }).id
 }
 </script>
 
@@ -68,9 +114,20 @@ function downloadCertificate() {
         v-if="training"
         class="m-3"
     >
-        <h2 class="text-2xl underline">
-            {{ firstLetterToUpperCase(training?.name) }}
-        </h2>
+        <div class="flex">
+            <h2 class="text-2xl underline">
+                {{ firstLetterToUpperCase(training?.name) }}
+            </h2>
+
+            <UButton
+                label="Delete"
+                size="2xs"
+                variant="ghost"
+                color="red"
+                icon="i-heroicons-trash-20-solid"
+                @click="askConfirmation"
+            />
+        </div>
 
         <div class="flex justify-between gap-20">
             <div>
@@ -165,12 +222,6 @@ function downloadCertificate() {
         </div>
 
         <div class="flex gap-3">
-            <UButton
-                label="Delete"
-                color="red"
-                @click="deleteTraining"
-            />
-
             <UButton
                 label="Edit"
                 @click="deleteTraining"

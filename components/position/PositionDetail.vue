@@ -45,12 +45,87 @@ const UTableOperators = props.position.Operators.map((operator: Operator) => {
         Operator: operator.id_op,
     }
 })
+
+const sp = useSupabaseClient()
+const toast = useToast()
+
+const emit = defineEmits(['deleted'])
+
+async function deletePosition() {
+    const { data } = await sp.from('Operators').select('id_op').eq('id_pos', props.position.id_pos)
+    if (data?.length) {
+        toast.add({
+            title: 'Error',
+            description: 'There are operators assigned to this position',
+            color: 'red',
+        })
+        return
+    }
+    sp.from('Position_comp').delete().eq('id_pos', props.position.id_pos).then(({ error }) => {
+        if (error) {
+            toast.add({
+                title: 'Error',
+                description: 'An error occurred while deleting the position',
+                color: 'red',
+            })
+        } else {
+            sp.from('Position').delete().eq('id_pos', props.position.id_pos).then(({ error }) => {
+                if (error) {
+                    toast.add({
+                        title: 'Error',
+                        description: 'An error occurred while deleting the position',
+                        color: 'red',
+                    })
+                } else {
+                    toast.add({
+                        title: 'Success',
+                        description: 'The position has been deleted',
+                    })
+                    emit('deleted')
+                }
+            })
+        }
+    })
+}
+
+const confirmationId = ref<string | null>(null)
+
+function askConfirmation() {
+    const actions = [
+        {
+            label: 'Delete Position',
+            click: () => deletePosition()
+        }, {
+            label: 'Cancel',
+            click: () => toast.remove(confirmationId.value!)
+        }
+    ]
+    confirmationId.value = toast.add({
+        title: 'Are you sure?',
+        description: 'This action cannot be undone',
+        actions,
+        color: 'red',
+    }).id
+}
 </script>
 
 <template>
     <UCard>
-        <template #header>
-            <h2>{{ position.name }}</h2>
+        <template
+            #header
+        >
+            <div class="flex">
+                <h2>{{ position.name }}</h2>
+
+                <UButton
+                    label="Delete"
+                    size="2xs"
+                    variant="ghost"
+                    color="red"
+                    icon="i-heroicons-trash-20-solid"
+                    @click="askConfirmation"
+                />
+            </div>
         </template>
 
         <div class="flex gap-3">

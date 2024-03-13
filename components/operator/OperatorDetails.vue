@@ -102,6 +102,55 @@ function downloadPDF() {
         icon: 'i-heroicons-face-frown-16-solid'
     })
 }
+
+function deleteOperator() {
+    // maybe not the right way for deleting an Operators but we are intern
+    sp.from('Registration').delete().eq('id_op', operator.value?.id_op as never).then(({ error }) => {
+        if (error) {
+            toast.add({
+                title: 'Error',
+                description: 'An error occurred while deleting the operator',
+                color: 'red',
+            })
+        } else {
+            sp.from('Operators').delete().eq('id_op', operator.value?.id_op as never).then(({ error }) => {
+                if (error) {
+                    toast.add({
+                        title: 'Error',
+                        description: 'An error occurred while deleting the operator',
+                        color: 'red',
+                    })
+                } else {
+                    toast.add({
+                        title: 'Success',
+                        description: 'The operator has been deleted',
+                    })
+                    navigateTo('/operator')
+                }
+            })
+        }
+    })
+}
+
+const confirmationId = ref<string | null>(null)
+
+function askConfirmation() {
+    const actions = [
+        {
+            label: 'Delete operator',
+            click: () => deleteOperator()
+        }, {
+            label: 'Cancel',
+            click: () => toast.remove(confirmationId.value!)
+        }
+    ]
+    confirmationId.value = toast.add({
+        title: 'Are you sure?',
+        description: 'This action cannot be undone',
+        actions,
+        color: 'red',
+    }).id
+}
 </script>
 
 <template>
@@ -111,9 +160,20 @@ function downloadPDF() {
             class="flex justify-between"
         >
             <div>
-                <h1 class="text-2xl font-bold">
-                    {{ operator.name }} {{ operator.surname }}
-                </h1>
+                <div class="flex">
+                    <h1 class="text-2xl font-bold">
+                        {{ operator.name }} {{ operator.surname }}
+                    </h1>
+
+                    <UButton
+                        label="Delete"
+                        size="2xs"
+                        variant="ghost"
+                        color="red"
+                        icon="i-heroicons-trash-20-solid"
+                        @click="askConfirmation"
+                    />
+                </div>
 
                 <h2 class="flex gap-2">
                     <USelectMenu
