@@ -61,25 +61,27 @@ const links = computed(() => [
             icon: 'i-heroicons-book-open'
         },
     ],
-    [
-
-        user.value
-            ? {
+    user.value
+        ? [
+            {
                 label: 'Log out',
                 to: '/auth/logout',
                 icon: 'i-heroicons-arrow-left-start-on-rectangle'
             }
-            : {
+
+        ]
+        : [
+            {
                 label: 'Log in',
                 to: '/auth/login',
                 icon: 'i-heroicons-arrow-right-end-on-rectangle'
             },
-        {
-            label: 'Sign up',
-            to: '/auth/signup',
-            icon: 'i-heroicons-user-plus'
-        },
-    ],
+            {
+                label: 'Sign up',
+                to: '/auth/signup',
+                icon: 'i-heroicons-user-plus'
+            },
+        ],
     [
         {
             label: 'Settings',
