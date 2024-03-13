@@ -81,10 +81,22 @@ function askConfirmation() {
         color: 'red',
     }).id
 }
+
+const isEditing = ref(false)
+function toggleEdit() {
+    isEditing.value = !isEditing.value
+}
 </script>
 
 <template>
     <UCard>
+        <TeacherEdit
+            :teacher="teacher"
+            :is-editing="isEditing"
+            @close="toggleEdit"
+            @update="$emit('deleted')"
+        />
+
         <template #header>
             <div class="flex">
                 <h2>{{ teacher.name }} {{ teacher.surname }}</h2>
@@ -96,6 +108,14 @@ function askConfirmation() {
                     color="red"
                     icon="i-heroicons-trash-20-solid"
                     @click="askConfirmation"
+                />
+
+                <UButton
+                    label="Edit"
+                    size="2xs"
+                    variant="ghost"
+                    icon="i-heroicons-pencil-20-solid"
+                    @click="toggleEdit"
                 />
             </div>
         </template>
