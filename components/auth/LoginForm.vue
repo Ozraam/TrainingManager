@@ -1,22 +1,58 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
-const sp = useSupabaseClient()
-const mail = ref('')
-const password = ref('')
-const erreur = ref(false)
+import type { FormError, FormSubmitEvent } from '#ui/types'
 
-async function login() {
-    console.log(mail.value, password.value)
-    erreur.value = false
+const sp = useSupabaseClient()
+
+const loading = ref(false)
+const error = ref(false)
+
+const state = reactive({
+    mail: undefined,
+    password: undefined,
+})
+
+type State = {
+    mail: string | undefined,
+    password: string | undefined,
+}
+
+function validate(state: State): FormError[] {
+    const errors: FormError[] = []
+
+    if (state.mail ? state.mail.trim() === '' : true) {
+        errors.push({
+            path: 'mail',
+            message: 'Mail is required',
+        })
+    }
+
+    if (state.password ? state.password.trim() === '' : true) {
+        errors.push({
+            path: 'password',
+            message: 'Password is required',
+        })
+    }
+
+    return errors
+}
+
+async function login(event: FormSubmitEvent<State>) {
+    if (loading.value) { return }
+    loading.value = true
+    error.value = false
+    console.log(state.mail, state.password)
 
     const user = await sp.auth.signInWithPassword({
-        email: mail.value,
-        password: password.value,
+        email: event.data.mail!,
+        password: event.data.password!,
     })
+    // console.log(user)
 
     if (user.error) {
-        console.log(user.error)
-        erreur.value = true
+        // console.log(user.error, 'fuck you')
+        loading.value = false
+        error.value = true
     } else {
         location.href = '/'
     }
@@ -25,41 +61,47 @@ async function login() {
 
 <template>
     <div class="min-h-screen">
-        <div class="flex justify-center items-center">
-            <form
-                class="w-50"
-                @submit.prevent="login"
+        <UForm
+            class="flex flex-col items-center w-50 m-7"
+            :state="state"
+            :validate="validate"
+            @submit="login"
+        >
+            <UFormGroup
+                class="font-30"
+                name="mail"
+                label="Email"
+                type="email"
+                required
             >
-                <label class="text-2xl font-bold">{{ $t('login.email') }}</label>
+                <UInput v-model="state.mail" />
+            </UFormGroup>
 
+            <UFormGroup
+                name="password"
+                label="Password"
+                type="password"
+                required
+            >
                 <UInput
-                    v-model="mail"
-                    label="Email"
-                    type="email"
-                />
-
-                <label class="text-2l text-gray-500">{{ $t('login.password') }}</label>
-
-                <UInput
-                    v-model="password"
-                    label="Password"
+                    v-model="state.password"
                     type="password"
                 />
+            </UFormGroup>
 
-                <span
-                    v-if="erreur"
-                    class="text-red-500"
-                >{{ $t('login.Error') }}
-                </span>
+            <UError
+                v-if="error"
+                class="mt-3 text-red-500"
+            >
+                {{ $t('login.Error') }}
+            </UError>
 
-                <br>
-
-                <UButton
-                    class="mt-3"
-                    type="submit"
-                    :label="$t('login.submit')"
-                />
-            </form>
-        </div>
+            <UButton
+                class="mt-3"
+                type="submit"
+                :label="$t('login.submit')"
+                :loading="loading"
+            />
+        </UForm>
     </div>
 </template>

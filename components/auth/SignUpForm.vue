@@ -1,98 +1,134 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
+import type { FormError, FormSubmitEvent } from '#ui/types'
+
 const sp = useSupabaseClient()
-const mail = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-const erreur = ref({ confirmPassword: false, password: false, lenght: false })
+const loading = ref(false)
+const error = ref(false)
 
-async function signup() {
-    console.log(mail.value, password.value, confirmPassword.value)
-    erreur.value = { confirmPassword: false, password: false, lenght: false }
-    if (password.value !== confirmPassword.value) {
-        erreur.value.confirmPassword = true
-        return
+const state = reactive({
+    mail: undefined,
+    password: undefined,
+    confirmPassword: undefined
+})
+
+type State = {
+    mail: string | undefined,
+    password: string | undefined,
+    confirmPassword: string | undefined
+}
+
+function validate(state: State): FormError[] {
+    const errors: FormError[] = []
+
+    if (state.mail ? state.mail.trim() === '' : true) {
+        errors.push({
+            path: 'mail',
+            message: 'Mail is required',
+        })
     }
 
-    if (password.value.length < 8) {
-        erreur.value.lenght = true
-        return
+    if (state.password ? state.password.trim() === '' : true) {
+        errors.push({
+            path: 'password',
+            message: 'Password is required',
+        })
     }
+
+    if (state.confirmPassword ? state.confirmPassword.trim() === '' : true) {
+        errors.push({
+            path: 'confirmPassword',
+            message: 'Password is required',
+        })
+    }
+
+    if (state.password !== state.confirmPassword) {
+        errors.push({
+            path: 'confirmPassword',
+            message: 'Passwords do not match',
+        })
+    }
+
+    if (state.password && state.password.length < 8) {
+        errors.push({
+            path: 'password',
+            message: 'Password must be at least 8 characters long',
+        })
+    }
+
+    return errors
+}
+
+async function signup(event: FormSubmitEvent<State>) {
+    if (loading.value) { return }
+    loading.value = true
 
     const user = await sp.auth.signUp({
-        email: mail.value,
-        password: password.value,
+        email: event.data.mail!,
+        password: event.data.password!,
     })
 
     if (user.error) {
         console.log(user.error)
-        erreur.value.password = true
-        return
+        error.value = true
     } else {
         location.href = '/'
     }
-
-    console.log(user)
 }
 </script>
 
 <template>
     <div class="min-h-screen">
-        <div class="flex justify-center items-center">
-            <form
-                class="w-50"
-                @submit.prevent="signup"
+        <UForm
+            class="flex flex-col items-center w-50 m-7"
+            :loading="loading"
+            :state="state"
+            :validate="validate"
+            @submit="signup"
+        >
+            <UFormGroup
+                name="mail"
+                label="Mail"
+                type="mail"
+                required
             >
-                <label class="text-2xl font-bold">{{ $t('signup.email') }}</label>
+                <UInput v-model="state.mail" />
+            </UFormGroup>
 
+            <UFormGroup
+                name="password"
+                label="Password"
+                required
+            >
                 <UInput
-                    v-model="mail"
-                    label="Email"
-                    type="email"
-                />
-
-                <label class="text-2l text-gray-500">{{ $t('signup.password') }}</label>
-
-                <UInput
-                    v-model="password"
-                    label="Password"
+                    v-model="state.password"
                     type="password"
                 />
+            </UFormGroup>
 
-                <label class="text-2l text-gray-500">{{ $t('signup.confirmPassword') }}</label>
-
+            <UFormGroup
+                name="confirmPassword"
+                label="Confirm Password"
+                required
+            >
                 <UInput
-                    v-model="confirmPassword"
-                    label="Confirm Password"
+                    v-model="state.confirmPassword"
                     type="password"
                 />
+            </UFormGroup>
 
-                <span
-                    v-if="erreur.confirmPassword"
-                    class="text-red-500"
-                >{{ $t('signup.ConfirmError') }}
-                </span>
+            <UError
+                v-if="error"
+                class="mt-3 text-red-500"
+            >
+                {{ $t('signup.Error') }}
+            </UError>
 
-                <span
-                    v-if="erreur.password"
-                    class="text-red-500"
-                >{{ $t('signup.Error') }}
-                </span>
-
-                <span
-                    v-if="erreur.lenght"
-                    class="text-red-500"
-                >{{ $t('signup.LenghtError') }}
-                </span>
-
-                <br>
-
-                <UButton
-                    class="mt-3"
-                    :label="$t('signup.submit')"
-                    type="submit"
-                />
-            </form>
-        </div>
+            <UButton
+                class="mt-3"
+                :label="$t('signup.submit')"
+                type="submit"
+            />
+        </UForm>
     </div>
 </template>

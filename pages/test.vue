@@ -11,11 +11,11 @@ const dataR : Ref<any | null> = ref(null)
 
 async function a() {
     const { data } = await $fetch('/api/StudyPlanHelper', {
-        method: 'GET',
+        method: 'POST',
         headers: useRequestHeaders(['cookie']),
-        // body: JSON.stringify({
-        //     id_op: 1,
-        // })
+        body: JSON.stringify({
+            nbday: 50,
+        })
     })
 
     dataR.value = data
