@@ -10,7 +10,7 @@ const links = computed(() => [
             },
         },
         {
-            label: 'Home',
+            label: 'Dashboard',
             to: '/',
             icon: 'i-heroicons-home'
         },
