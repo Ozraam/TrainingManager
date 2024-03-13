@@ -85,7 +85,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     <section>
         <PageHeader
             title="Opetators"
-            title-link="/operator/1"
+            title-link="/operator"
             :other-links="[{
                 label: 'Add new operator',
                 to: '/operator/add'

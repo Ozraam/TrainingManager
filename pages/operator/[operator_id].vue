@@ -11,10 +11,10 @@ const loadOperator = ref(false)
         <PageHeader
             title="Operator"
             :title-link="`/operator/${operatorId}`"
-            :actions="[
+            :other-links="[
                 {
                     label: $t('operator.add'),
-                    callBack: () => navigateTo('/operator/add')
+                    to: '/operator/add'
                 },
             ]"
         />
