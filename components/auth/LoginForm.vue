@@ -50,7 +50,7 @@ async function login(event: FormSubmitEvent<State>) {
     // console.log(user)
 
     if (user.error) {
-        console.log(user.error, 'fuck you')
+        // console.log(user.error, 'fuck you')
         loading.value = false
         error.value = true
     } else {
@@ -89,11 +89,12 @@ async function login(event: FormSubmitEvent<State>) {
                 />
             </UFormGroup>
 
-            <UFormGroup v-if="error">
-                <span class="red">
-                    {{ $t('login.Error') }}
-                </span>
-            </UFormGroup>
+            <UError
+                v-if="error"
+                class="mt-3 text-red-500"
+            >
+                {{ $t('login.Error') }}
+            </UError>
 
             <UButton
                 class="mt-3"
