@@ -55,7 +55,6 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 
     if (error) {
         loading.value = false
-        console.error(error)
         toast.add({
             title: 'Error',
             description: 'An error occurred',
@@ -76,7 +75,6 @@ async function onSubmit(event: FormSubmitEvent<State>) {
             if (error) {
                 loading.value = false
                 sp.from('Competences').delete().eq('id_comp', idComp).then(() => {})
-                console.error(error)
                 toast.add({
                     title: 'Error',
                     description: 'An error occurred',

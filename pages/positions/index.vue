@@ -17,7 +17,7 @@ type Competence = {
 type PositionComp = {
   id_pos: number;
   id_comp: number;
-  madatory: boolean;
+  mandatory: boolean;
   Competences: Competence;
 };
 
@@ -30,7 +30,7 @@ type Position = {
 
 const positions : Ref<Position[]> = ref([])
 const fetchPositions = async () => {
-    const { data, error } = await sp.from('Position').select('*, Position_comp(*, Competences(*)), Operators(*)')
+    const { data, error } = await sp.from('Position').select('*, Position_comp(*, Competences(*)), Operators(*)').order('id_pos')
     if (error) {
         // eslint-disable-next-line no-console
         console.error(error)

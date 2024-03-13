@@ -15,7 +15,7 @@ type Competence = {
 type PositionComp = {
   id_pos: number;
   id_comp: number;
-  madatory: boolean;
+  mandatory: boolean;
   Competences: Competence;
 };
 
@@ -33,11 +33,13 @@ const props = defineProps({
     }
 })
 
-const UTableCompetences = props.position.Position_comp.map((positionComp: PositionComp) => {
-    return {
-        Competence: positionComp.Competences.id_comp,
-        Mandatory: positionComp.madatory ? 'Yes' : 'No',
-    }
+const UTableCompetences = computed(() => {
+    return props.position.Position_comp.map((positionComp: PositionComp) => {
+        return {
+            Competence: positionComp.Competences.id_comp,
+            Mandatory: positionComp.mandatory ? 'Yes' : 'No',
+        }
+    })
 })
 
 const UTableOperators = props.position.Operators.map((operator: Operator) => {
@@ -107,10 +109,21 @@ function askConfirmation() {
         color: 'red',
     }).id
 }
+const isEditing = ref(false)
+function toggleEdit() {
+    isEditing.value = !isEditing.value
+}
 </script>
 
 <template>
     <UCard>
+        <PositionEdit
+            :position="position"
+            :is-editing="isEditing"
+            @close="toggleEdit"
+            @update="$emit('deleted')"
+        />
+
         <template
             #header
         >
@@ -124,6 +137,14 @@ function askConfirmation() {
                     color="red"
                     icon="i-heroicons-trash-20-solid"
                     @click="askConfirmation"
+                />
+
+                <UButton
+                    label="Edit"
+                    size="2xs"
+                    variant="ghost"
+                    icon="i-heroicons-pencil-20-solid"
+                    @click="toggleEdit"
                 />
             </div>
         </template>
