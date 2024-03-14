@@ -1,21 +1,39 @@
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from '#ui/types'
 
-const sp = useSupabaseClient()
-
-const { data: positions } = await sp.from('Position').select('id_pos, name')
-
-const state = reactive({
-    name: undefined,
-    surname: undefined,
-    idPos: undefined,
+const props = defineProps({
+    teacher: {
+        type: Object,
+        required: true,
+    },
+    isEditing: {
+        type: Boolean,
+        default: false,
+    },
 })
+const isOpen = computed({
+    get: () => props.isEditing,
+    set: (value) => {
+        if (!value) {
+            emit('update')
+            emit('close')
+        }
+    },
+})
+
+const emit = defineEmits(['update', 'close'])
+
+const sp = useSupabaseClient()
 
 type State = {
     name: string | undefined,
     surname: string | undefined,
-    idPos: number | undefined
 }
+
+const state = reactive({
+    name: props.teacher.name,
+    surname: props.teacher.surname,
+})
 
 function validate(state: State): FormError[] {
     const errors: FormError[] = []
@@ -34,13 +52,6 @@ function validate(state: State): FormError[] {
         })
     }
 
-    if (state.idPos === undefined) {
-        errors.push({
-            path: 'idPos',
-            message: 'Position is required',
-        })
-    }
-
     return errors
 }
 
@@ -55,46 +66,47 @@ async function onSubmit(event: FormSubmitEvent<State>) {
         {
             name: event.data.name!,
             surname: event.data.surname!,
-            id_pos: event.data.idPos!,
         }
     ]
 
-    const { data, error } = await sp.from('Operators').insert(insert as never).select('id_op')
+    const { error } = await sp.from('Teacher').update(insert as never).eq('id_teacher', props.teacher.id_teacher).select()
 
     if (error) {
-        loading.value = false
         toast.add({
             title: 'Error',
-            description: 'An error occurred',
-            icon: 'i-heroicons-face-frown-solid',
+            description: 'An error occurred while updating the teacher',
             color: 'red',
         })
     } else {
         toast.add({
-            title: 'Operator added',
-            description: 'The operator has been added',
-            icon: 'i-icon-park-solid-success',
+            title: 'Success',
+            description: 'The teacher has been updated',
         })
-        navigateTo('/operator/' + data![0].id_op)
     }
+
+    loading.value = false
+    isOpen.value = false
 }
 </script>
 
 <template>
-    <section>
-        <PageHeader
-            title="Opetators"
-            title-link="/operator"
-            :other-links="[{
-                label: 'Add new operator',
-                to: '/operator/add'
-            }]"
-        />
+    <UModal v-model="isOpen">
+        <UCard>
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        Edit operator
+                    </h3>
 
-        <div>
-            <h2 class="text-xl text-center mb-5">
-                Add new operator
-            </h2>
+                    <UButton
+                        color="gray"
+                        variant="ghost"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="-my-1"
+                        @click="isOpen = false"
+                    />
+                </div>
+            </template>
 
             <UForm
                 class="space-y-4 flex flex-col items-center"
@@ -118,28 +130,12 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                     <UInput v-model="state.surname" />
                 </UFormGroup>
 
-                <UFormGroup
-                    label="Position"
-                    name="idPos"
-                    class="min-w-40"
-                    required
-                >
-                    <USelectMenu
-                        v-model="state.idPos"
-                        :options="positions"
-                        placeholder="Select a position"
-                        option-attribute="name"
-                        value-attribute="id_pos"
-                        searchable
-                    />
-                </UFormGroup>
-
                 <UButton
                     :loading="loading"
                     type="submit"
                     label="Add"
                 />
             </UForm>
-        </div>
-    </section>
+        </UCard>
+    </UModal>
 </template>

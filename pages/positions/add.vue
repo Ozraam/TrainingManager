@@ -45,7 +45,6 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 
     if (error) {
         loading.value = false
-        console.error(error)
         toast.add({
             title: 'Error',
             description: 'An error occurred',
@@ -67,7 +66,6 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 
         if (error) {
             loading.value = false
-            console.error(error)
             sp.from('Position').delete().eq('id_pos', idPos).then(() => {})
             toast.add({
                 title: 'Error',

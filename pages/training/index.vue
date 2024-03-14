@@ -1,13 +1,14 @@
 <script setup lang="ts">
 const sp = useSupabaseClient()
+onMounted(async () => {
+    const { data } = await sp.from('Training').select('id_train').order('name')
 
-const { data } = await sp.from('Training').select('id_train').order('name')
+    if (data!.length === 0) {
+        navigateTo('/training/add')
+    }
 
-if (data!.length === 0) {
-    navigateTo('/training/add')
-}
-
-navigateTo(`/training/${data![0].id_train}`)
+    navigateTo(`/training/${data![0].id_train}`)
+})
 </script>
 
 <template>

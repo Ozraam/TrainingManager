@@ -1,13 +1,14 @@
 <script setup lang="ts">
 const sp = useSupabaseClient()
+onMounted(() => {
+    sp.from('Operators').select('id_op').order('name').then(({ data }) => {
+        if (!data || (data && data.length)) {
+            navigateTo('/operator/add')
+        }
 
-const { data } = await sp.from('Operators').select('id_op').order('name')
-
-if (data!.length === 0) {
-    navigateTo('/operator/add')
-}
-
-navigateTo(`/operator/${data![0].id_op}`)
+        navigateTo(`/operator/${data![0].id_op}`)
+    })
+})
 </script>
 
 <template>

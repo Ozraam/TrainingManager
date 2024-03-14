@@ -7,8 +7,24 @@ const props = defineProps({
 })
 
 const sp = useSupabaseClient()
+async function fetchCompetecence() {
+    const { data } = await sp.from('Competences').select('*, Position_comp(*)').eq('id_comp', props.currentCompetence)
 
-const { data } = await sp.from('Competences').select('*, Position_comp(*)').eq('id_comp', props.currentCompetence)
+    if (data) {
+        competecence.value = data[0]
+
+        positions.value?.forEach((position) => {
+            position.check = competecence.value?.Position_comp.some(comp => comp.id_pos === position.id_pos) ?? false
+
+            initialPosition.value = positions.value?.map((position) => {
+                return {
+                    id_pos: position.id_pos,
+                    check: position.check
+                }
+            })
+        })
+    }
+}
 
 const competecence : Ref<{
     id_comp: number,
@@ -19,22 +35,15 @@ const competecence : Ref<{
         id_pos: number,
         mandatory: boolean
     }[]
-} | null> = ref(data?.[0] ?? null)
+} | null> = ref(null)
+
+onMounted(fetchCompetecence)
 
 const { data: data2 } = await sp.from('Position').select('*')
 
 const positions : Ref<{ id_pos: number, name: string, check: boolean }[] | null> = ref(data2)
 
-positions.value?.forEach((position) => {
-    position.check = competecence.value?.Position_comp.some(comp => comp.id_pos === position.id_pos) ?? false
-})
-
-const initialPosition = ref(positions.value?.map((position) => {
-    return {
-        id_pos: position.id_pos,
-        check: position.check
-    }
-}))
+const initialPosition = ref<{ id_pos: number; check: boolean; }[] | undefined>([])
 
 const isPositionChanged = computed(() => {
     return positions.value?.some((position, index) => {
@@ -176,6 +185,10 @@ function askConfirmation() {
         color: 'red',
     }).id
 }
+const isEditing = ref(false)
+function toggleEdit() {
+    isEditing.value = !isEditing.value
+}
 </script>
 
 <template>
@@ -183,6 +196,13 @@ function askConfirmation() {
         v-if="competecence"
         class="m-3 grow"
     >
+        <CompetenceEdit
+            :competence="competecence"
+            :is-editing="isEditing"
+            @close="toggleEdit"
+            @update="fetchCompetecence"
+        />
+
         <div class="flex">
             <h2 class="text-2xl">
                 {{ competecence!.name }}
@@ -195,6 +215,14 @@ function askConfirmation() {
                 color="red"
                 icon="i-heroicons-trash-20-solid"
                 @click="askConfirmation"
+            />
+
+            <UButton
+                label="Edit"
+                size="2xs"
+                variant="ghost"
+                icon="i-heroicons-pencil-20-solid"
+                @click="toggleEdit"
             />
         </div>
 

@@ -25,6 +25,7 @@ const training = ref<{
             name: string,
         },
         date: string,
+        filename: string,
     }[],
     Type_training: {
         name: string,
@@ -43,18 +44,42 @@ const training = ref<{
     },
 } | null>(null)
 
-const { data } = await sp.from('Training').select('*, Registration(*, State(*), Operators(*)), Competences(*), Type_confirmation(*), Type_training(*), Teacher(*)').eq('id_train', props.currentTraining)
+async function fetchTraining() {
+    const { data } = await sp.from('Training').select('*, Registration(*, State(*), Operators(*)), Competences(*), Type_confirmation(*), Type_training(*), Teacher(*)').eq('id_train', props.currentTraining)
 
-training.value = data?.[0] ?? null
+    training.value = data?.[0] ?? null
 
-function changeState() {
-    // TODO : This is a placeholder for the real save
-    alert('State changed - TODO')
+    if (training.value) {
+        isRegistrationEditing.value = Array(training.value.Registration.length).fill(false)
+    }
 }
 
-function downloadCertificate() {
-    // TODO : This is a placeholder for the real save
-    alert('Certificate downloaded - TODO')
+onMounted(fetchTraining)
+
+const loadingDownload = ref(false)
+
+function downloadCertificate(reg: Registration) {
+    if (loadingDownload.value) { return }
+    loadingDownload.value = true
+    const filepath = `registration/${reg.id_train}/${reg.id_op}/${reg.date}/${reg.filename}`
+
+    sp.storage.from('Registration_certificate').download(filepath).then(({ data, error }) => {
+        if (error) {
+            toast.add({
+                title: 'Error',
+                description: 'An error occurred while downloading the certificate',
+                color: 'red',
+            })
+        } else {
+            const url = URL.createObjectURL(data)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = reg.filename
+            a.click()
+            URL.revokeObjectURL(url)
+        }
+        loadingDownload.value = false
+    })
 }
 
 const toast = useToast()
@@ -107,6 +132,15 @@ function askConfirmation() {
         color: 'red',
     }).id
 }
+const isEditing = ref(false)
+function toggleEdit() {
+    isEditing.value = !isEditing.value
+}
+
+const isRegistrationEditing: Ref<boolean[]> = ref([])
+function toggleRegistrationEdit(index: number) {
+    isRegistrationEditing.value[index] = !isRegistrationEditing.value[index]
+}
 </script>
 
 <template>
@@ -114,6 +148,13 @@ function askConfirmation() {
         v-if="training"
         class="m-3"
     >
+        <TrainingEdit
+            :training="training"
+            :is-editing="isEditing"
+            @close="toggleEdit"
+            @update="fetchTraining"
+        />
+
         <div class="flex">
             <h2 class="text-2xl underline">
                 {{ firstLetterToUpperCase(training?.name) }}
@@ -126,6 +167,14 @@ function askConfirmation() {
                 color="red"
                 icon="i-heroicons-trash-20-solid"
                 @click="askConfirmation"
+            />
+
+            <UButton
+                label="Edit"
+                size="2xs"
+                variant="ghost"
+                icon="i-heroicons-pencil-20-solid"
+                @click="toggleEdit"
             />
         </div>
 
@@ -186,7 +235,7 @@ function askConfirmation() {
                             Operators: r.Operators,
                             State: r.State.name,
                             Date: new Date(r.date).toLocaleDateString(),
-                            action: ''
+                            action: r
                         }
                     })"
                 >
@@ -200,13 +249,20 @@ function askConfirmation() {
                         </UButton>
                     </template>
 
-                    <template #action-data="{ row }">
+                    <template #action-data="{ row, index }">
+                        <RegistrationChangeState
+                            :registration="row.action"
+                            :is-editing="isRegistrationEditing[index]"
+                            @close="() => toggleRegistrationEdit(index)"
+                            @update="fetchTraining"
+                        />
+
                         <UButton
                             v-if="row.State !== 'done' && row.State !== 'expired'"
                             label="Change state"
                             size="xs"
                             class="ml-2"
-                            @click="changeState"
+                            @click="() => toggleRegistrationEdit(index)"
                         />
 
                         <UButton
@@ -214,7 +270,8 @@ function askConfirmation() {
                             label="Certificate"
                             size="xs"
                             class="ml-2"
-                            @click="downloadCertificate"
+                            :loading="loadingDownload"
+                            @click="() => downloadCertificate(row.action)"
                         />
                     </template>
                 </UTable>

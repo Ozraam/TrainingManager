@@ -45,6 +45,7 @@ export type Registration = {
     id_state: number;
     Operators: Operator;
     State: State;
+    filename: string;
 };
 
 export type PositionComp = {

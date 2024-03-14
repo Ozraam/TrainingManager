@@ -10,8 +10,6 @@ const sp = useSupabaseClient()
 
 const toast = useToast()
 
-const { data } = await sp.from('Operators').select('*, Position(*, Position_comp(Competences(*))), Registration(*, State(*), Training(name, duration))').eq('id_op', props.currentOperator)
-
 const operator : Ref<{
     id_op: number,
     name: string,
@@ -39,46 +37,14 @@ const operator : Ref<{
             duration: number
         }
     }[]
-} | null> = ref(data![0] ?? null)
+} | null> = ref(null)
 
-const { data: dataPositions } = await sp.from('Position').select('*')
-
-const positions : Ref<{ id_pos: number, name: string }[] | null> = ref(dataPositions)
-
-const positionsSelect = positions.value?.map((position) => {
-    return {
-        label: position.name,
-        id: position.id_pos
-    }
-})
-
-const initialPosition = positionsSelect?.find((position) => {
-    return position.id === operator.value?.Position.id_pos
-})
-
-const selectedPosition = ref(initialPosition)
-
-const isPositionChanged = computed(() => {
-    return selectedPosition.value?.id !== initialPosition?.id
-})
-
-function savePosition() {
-    sp.from('Operators').update({ id_pos: selectedPosition.value?.id } as never).eq('id_op', operator.value?.id_op as never).then(({ error }) => {
-        if (error) {
-            toast.add({
-                title: 'Error',
-                description: 'An error occurred while saving the position',
-                color: 'red',
-            })
-        } else {
-            toast.add({
-                title: 'Success',
-                description: 'The position has been saved',
-            })
-            reloadNuxtApp()
-        }
-    })
+async function fetchOperator() {
+    const { data } = await sp.from('Operators').select('*, Position(*, Position_comp(Competences(*))), Registration(*, State(*), Training(name, duration))').eq('id_op', props.currentOperator)
+    operator.value = data?.[0] ?? null
 }
+
+onMounted(fetchOperator)
 
 const { data: stateData } = await sp.from('State').select('name, id_state')
 
@@ -151,6 +117,10 @@ function askConfirmation() {
         color: 'red',
     }).id
 }
+const isEditing = ref(false)
+function toggleEdit() {
+    isEditing.value = !isEditing.value
+}
 </script>
 
 <template>
@@ -159,6 +129,13 @@ function askConfirmation() {
             v-if="operator"
             class="flex justify-between"
         >
+            <OperatorEdit
+                :operator="operator"
+                :is-editing="isEditing"
+                @close="toggleEdit"
+                @update="fetchOperator"
+            />
+
             <div>
                 <div class="flex">
                     <h1 class="text-2xl font-bold">
@@ -173,19 +150,18 @@ function askConfirmation() {
                         icon="i-heroicons-trash-20-solid"
                         @click="askConfirmation"
                     />
-                </div>
-
-                <h2 class="flex gap-2">
-                    <USelectMenu
-                        v-model="selectedPosition"
-                        :options="positionsSelect"
-                    />
 
                     <UButton
-                        v-if="isPositionChanged"
-                        label="Save"
-                        @click="savePosition"
+                        label="Edit"
+                        size="2xs"
+                        variant="ghost"
+                        icon="i-heroicons-pencil-20-solid"
+                        @click="toggleEdit"
                     />
+                </div>
+
+                <h2 class="mb-4">
+                    {{ operator.Position.name }}
                 </h2>
 
                 <div>

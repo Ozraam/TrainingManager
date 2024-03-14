@@ -12,7 +12,7 @@ const teachers : Ref<{
 }[]> = ref([])
 
 const fetchTeacher = async () => {
-    const { data, error } = await sp.from('Teacher').select('*, Training(name, id_train)')
+    const { data, error } = await sp.from('Teacher').select('*, Training(name, id_train)').order('name', { ascending: true })
     if (error) {
         // eslint-disable-next-line no-console
         console.error(error)

@@ -1,14 +1,35 @@
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from '#ui/types'
 
+const props = defineProps({
+    operator: {
+        type: Object,
+        required: true,
+    },
+    isEditing: {
+        type: Boolean,
+        default: false,
+    },
+})
+const isOpen = computed({
+    get: () => props.isEditing,
+    set: (value) => {
+        if (!value) {
+            emit('update')
+            emit('close')
+        }
+    },
+})
+const emit = defineEmits(['close', 'update'])
+
 const sp = useSupabaseClient()
 
 const { data: positions } = await sp.from('Position').select('id_pos, name')
 
 const state = reactive({
-    name: undefined,
-    surname: undefined,
-    idPos: undefined,
+    name: props.operator.name,
+    surname: props.operator.surname,
+    idPos: props.operator.id_pos,
 })
 
 type State = {
@@ -59,10 +80,12 @@ async function onSubmit(event: FormSubmitEvent<State>) {
         }
     ]
 
-    const { data, error } = await sp.from('Operators').insert(insert as never).select('id_op')
+    const { error } = await sp.from('Operators').update(insert as never).eq('id_op', props.operator.id_op).select('id_op')
 
     if (error) {
         loading.value = false
+        // eslint-disable-next-line no-console
+        console.error(error)
         toast.add({
             title: 'Error',
             description: 'An error occurred',
@@ -70,31 +93,35 @@ async function onSubmit(event: FormSubmitEvent<State>) {
             color: 'red',
         })
     } else {
+        loading.value = false
         toast.add({
-            title: 'Operator added',
-            description: 'The operator has been added',
+            title: 'Operator updated',
+            description: 'The operator has been updated',
             icon: 'i-icon-park-solid-success',
         })
-        navigateTo('/operator/' + data![0].id_op)
+        isOpen.value = false
     }
 }
 </script>
 
 <template>
-    <section>
-        <PageHeader
-            title="Opetators"
-            title-link="/operator"
-            :other-links="[{
-                label: 'Add new operator',
-                to: '/operator/add'
-            }]"
-        />
+    <UModal v-model="isOpen">
+        <UCard>
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                        Edit operator
+                    </h3>
 
-        <div>
-            <h2 class="text-xl text-center mb-5">
-                Add new operator
-            </h2>
+                    <UButton
+                        color="gray"
+                        variant="ghost"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="-my-1"
+                        @click="isOpen = false"
+                    />
+                </div>
+            </template>
 
             <UForm
                 class="space-y-4 flex flex-col items-center"
@@ -137,9 +164,9 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                 <UButton
                     :loading="loading"
                     type="submit"
-                    label="Add"
+                    label="Update"
                 />
             </UForm>
-        </div>
-    </section>
+        </UCard>
+    </UModal>
 </template>
