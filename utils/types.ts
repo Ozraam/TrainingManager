@@ -43,7 +43,7 @@ export type Registration = {
     id_train: number;
     date: string;
     id_state: number;
-    Operators: Operator[];
+    Operators: Operator;
     State: State;
 };
 
