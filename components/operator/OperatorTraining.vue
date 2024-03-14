@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
     training: {
         type: Object as PropType<{
             date: string,
@@ -13,26 +13,61 @@ defineProps({
                 duration: number
             },
             id_state: number,
-            id_train: number
+            id_train: number,
+            filename: string,
         }>,
         required: true,
     },
 })
 
-function changeState() {
-    // TODO : This is a placeholder for the real save
-    alert('State changed - TODO')
-}
+const loadingDownload = ref(false)
+
+const sp = useSupabaseClient()
+
+defineEmits(['update'])
+
+const toast = useToast()
 
 function downloadCertificate() {
-    // TODO : This is a placeholder for the real save
-    alert('Certificate downloaded - TODO')
+    if (loadingDownload.value) { return }
+    loadingDownload.value = true
+    const filepath = `registration/${props.training.id_train}/${props.training.id_op}/${props.training.date}/${props.training.filename}`
+
+    sp.storage.from('Registration_certificate').download(filepath).then(({ data, error }) => {
+        if (error) {
+            toast.add({
+                title: 'Error',
+                description: 'An error occurred while downloading the certificate',
+                color: 'red',
+            })
+        } else {
+            const url = URL.createObjectURL(data)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = props.training.filename
+            a.click()
+            URL.revokeObjectURL(url)
+        }
+        loadingDownload.value = false
+    })
+}
+
+const isRegistrationEditing: Ref<boolean> = ref(false)
+function toggleRegistrationEdit() {
+    isRegistrationEditing.value = !isRegistrationEditing.value
 }
 </script>
 
 <template>
     <div>
         <div class="flex items-center">
+            <RegistrationChangeState
+                :registration="training"
+                :is-editing="isRegistrationEditing"
+                @close="toggleRegistrationEdit"
+                @update="$emit('update')"
+            />
+
             <p>
                 <UButton
                     variant="link"
@@ -51,7 +86,7 @@ function downloadCertificate() {
                 label="Change state"
                 size="xs"
                 class="ml-2"
-                @click="changeState"
+                @click="toggleRegistrationEdit"
             />
 
             <UButton
@@ -59,6 +94,7 @@ function downloadCertificate() {
                 label="Certificate"
                 size="xs"
                 class="ml-2"
+                :loading="loadingDownload"
                 @click="downloadCertificate"
             />
         </div>
