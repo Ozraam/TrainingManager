@@ -42,23 +42,25 @@ const operator : Ref<{
 async function fetchOperator() {
     const { data } = await sp.from('Operators').select('*, Position(*, Position_comp(Competences(*))), Registration(*, State(*), Training(name, duration))').eq('id_op', props.currentOperator)
     operator.value = data?.[0] ?? null
+
+    accordeon.value = stateData?.map((state) => {
+        const o = {
+            label: state.name,
+            items: operator.value?.Registration.filter(reg => reg.State.id_state === state.id_state) ?? [],
+            defaultOpen: false
+        }
+
+        o.defaultOpen = o.items.length > 0 && state.name !== 'expired'
+
+        return o
+    }) ?? []
 }
 
 onMounted(fetchOperator)
 
 const { data: stateData } = await sp.from('State').select('name, id_state')
 
-const accordeon = ref(stateData?.map((state) => {
-    const o = {
-        label: state.name,
-        items: operator.value?.Registration.filter(reg => reg.State.id_state === state.id_state) ?? [],
-        defaultOpen: false
-    }
-
-    o.defaultOpen = o.items.length > 0 && state.name !== 'expired'
-
-    return o
-}))
+const accordeon : Ref<any> = ref([])
 
 function downloadPDF() {
     // TODO : This is a placeholder for the real save
@@ -221,6 +223,7 @@ function toggleEdit() {
                                         >
                                             <OperatorTraining
                                                 :training="training"
+                                                @update="fetchOperator"
                                             />
                                         </li>
                                     </ul>
