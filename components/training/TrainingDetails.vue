@@ -43,10 +43,13 @@ const training = ref<{
     },
 } | null>(null)
 
-const { data } = await sp.from('Training').select('*, Registration(*, State(*), Operators(*)), Competences(*), Type_confirmation(*), Type_training(*), Teacher(*)').eq('id_train', props.currentTraining)
+async function fetchTraining() {
+    const { data } = await sp.from('Training').select('*, Registration(*, State(*), Operators(*)), Competences(*), Type_confirmation(*), Type_training(*), Teacher(*)').eq('id_train', props.currentTraining)
 
-training.value = data?.[0] ?? null
+    training.value = data?.[0] ?? null
+}
 
+onMounted(fetchTraining)
 function changeState() {
     // TODO : This is a placeholder for the real save
     alert('State changed - TODO')
@@ -107,6 +110,10 @@ function askConfirmation() {
         color: 'red',
     }).id
 }
+const isEditing = ref(false)
+function toggleEdit() {
+    isEditing.value = !isEditing.value
+}
 </script>
 
 <template>
@@ -114,6 +121,13 @@ function askConfirmation() {
         v-if="training"
         class="m-3"
     >
+        <TrainingEdit
+            :training="training"
+            :is-editing="isEditing"
+            @close="toggleEdit"
+            @update="fetchTraining"
+        />
+
         <div class="flex">
             <h2 class="text-2xl underline">
                 {{ firstLetterToUpperCase(training?.name) }}
@@ -126,6 +140,14 @@ function askConfirmation() {
                 color="red"
                 icon="i-heroicons-trash-20-solid"
                 @click="askConfirmation"
+            />
+
+            <UButton
+                label="Edit"
+                size="2xs"
+                variant="ghost"
+                icon="i-heroicons-pencil-20-solid"
+                @click="toggleEdit"
             />
         </div>
 
