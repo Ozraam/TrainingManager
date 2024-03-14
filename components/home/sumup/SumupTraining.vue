@@ -1,10 +1,11 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
     training: {
         type: Object as PropType<Training>,
         required: true
     }
 })
+console.log(props.training)
 </script>
 
 <template>
@@ -25,15 +26,15 @@ defineProps({
 
         <div class="flex flex-col gap-2">
             <div
-                v-for="operator in training.operators"
-                :key="operator.name"
+                v-for="registration in training.Registration"
+                :key="registration.Operators.name"
                 class="flex items-center gap-3 justify-between"
             >
-                <p>{{ operator.name }} : {{ operator.status }}</p>
+                <p>{{ registration.Operators.name }} : {{ registration.Operators.status }}</p>
 
                 <div class="flex gap-2">
                     <UButton
-                        v-if="operator.status !== 'Done'"
+                        v-if="registration.Operators.status !== 'done'"
                         label="Mark as done"
                         icon="i-heroicons-check"
                     />
@@ -41,7 +42,7 @@ defineProps({
                     <UButton
                         label="View profile"
                         icon="i-heroicons-user-circle"
-                        :to="`/operator/${operator.id_op}`"
+                        :to="`/operator/${registration.Operators.id_op}`"
                     />
                 </div>
             </div>
