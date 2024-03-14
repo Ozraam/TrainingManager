@@ -2,7 +2,7 @@ import { serverSupabaseClient } from '#supabase/server'
 import { Competence, Registration, Training, YearData } from '~/utils/types'
 export default defineEventHandler(async (event) => {
     const sp = await serverSupabaseClient(event)
-    const data = [] as any
+    const data = [] as YearData[]
 
     const dataFocast = (await sp.from('Forecast').select('*')).data as YearData[]
     const dataCompetences = (await sp.from('Competences').select('*, Training(*, Registration(*, Operators(*), State(*)))')).data as Competence[]

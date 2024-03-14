@@ -17,7 +17,7 @@ defineProps({
 
                 <UButton
                     label="See Training"
-                    :to="`/training/${training.id}`"
+                    :to="`/training/${training.id_train}`"
                     variant="link"
                 />
             </div>
@@ -41,7 +41,7 @@ defineProps({
                     <UButton
                         label="View profile"
                         icon="i-heroicons-user-circle"
-                        :to="`/operator/${operator.id}`"
+                        :to="`/operator/${operator.id_op}`"
                     />
                 </div>
             </div>

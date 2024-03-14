@@ -8,136 +8,22 @@
 //     throw new Error('Error while fetching years' + error.message) // TODO: handle error
 // }
 
-const data : Ref<YearData[]> = ref([
-    {
-        year: 2021,
-        budget: 1000,
-        competences: [
-            {
-                id: 1,
-                name: 'welding',
-                trainings: [
-                    {
-                        id: 1,
-                        name: 'welding 101',
-                        cost: 100,
-                        duration: 10,
-                        date: '2021-01-01',
-                        operators: [
-                            { name: 'John Doe', status: 'Done', id: 1 },
-                            { name: 'Jane Doe', status: 'Planned', id: 2 }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        name: 'welding 102',
-                        cost: 200,
-                        duration: 20,
-                        date: '2021-02-01',
-                        operators: [
-                            { name: 'John Doe', status: 'Delayed', id: 1 },
-                            { name: 'Jane Doe', status: 'Planned', id: 2 }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 2,
-                name: 'plumbing',
-                trainings: [
-                    {
-                        id: 3,
-                        name: 'plumbing 101',
-                        cost: 100,
-                        duration: 10,
-                        date: '2021-01-01',
-                        operators: [
-                            { name: 'John Doe', status: 'Done', id: 1 },
-                            { name: 'Jane Doe', status: 'Planned', id: 2 }
-                        ]
-                    },
-                    {
-                        id: 4,
-                        name: 'plumbing 102',
-                        cost: 200,
-                        duration: 20,
-                        date: '2021-02-01',
-                        operators: [
-                            { name: 'John Doe', status: 'Delayed', id: 1 },
-                            { name: 'Jane Doe', status: 'Planned', id: 2 }
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        year: 2022,
-        budget: 2000,
-        competences: [
-            {
-                id: 1,
-                name: 'welding',
-                trainings: [
-                    {
-                        id: 1,
-                        name: 'welding 101',
-                        cost: 100,
-                        duration: 10,
-                        date: '2022-01-01',
-                        operators: [
-                            { name: 'John Doe', status: 'Delayed', id: 1 },
-                            { name: 'Jane Doe', status: 'Planned', id: 2 }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        name: 'welding 102',
-                        cost: 200,
-                        duration: 20,
-                        date: '2022-02-01',
-                        operators: [
-                            { name: 'John Doe', status: 'Delayed', id: 1 },
-                            { name: 'Jane Doe', status: 'Planned', id: 2 }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 2,
-                name: 'plumbing',
-                trainings: [
-                    {
-                        id: 3,
-                        name: 'plumbing 101',
-                        cost: 100,
-                        duration: 10,
-                        date: '2022-01-01',
-                        operators: [
-                            { name: 'John Doe', status: 'Done', id: 1 },
-                            { name: 'Jane Doe', status: 'Planned', id: 2 }
-                        ]
-                    },
-                    {
-                        id: 4,
-                        name: 'plumbing 102',
-                        cost: 200,
-                        duration: 20,
-                        date: '2022-02-01',
-                        operators: [
-                            { name: 'John Doe', status: 'Delayed', id: 1 },
-                            { name: 'Jane Doe', status: 'Planned', id: 2 }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-])
+const data : Ref<YearData[]> = ref([])
+useFetch('/api/DataYears').then((res) => {
+    if (res.error.value) {
+        throw new Error('Error while fetching years' + res.error.value?.message) // TODO: handle error
+    } else {
+        data.value = res.data.value!.data as YearData[]
 
-const years = ref(data.value.map(d => d.year))
+        years.value = data.value.map(d => d.year)
+
+        currentPage.value = years.value.length - 1
+    }
+})
+
+const years : Ref<number[]> = ref([])
 // current page is set to the last year
-const currentPage = ref(years.value.length - 1)
+const currentPage = ref(0)
 </script>
 
 <template>
@@ -146,20 +32,25 @@ const currentPage = ref(years.value.length - 1)
             {{ $t('home.welcome') }}
         </h1>
 
-        <HomeYearPagination
-            v-model="currentPage"
-            :years="years"
-            class="mt-3"
-        />
+        <div
+            v-if="data.length > 0"
+            class="flex flex-col items-center"
+        >
+            <HomeYearPagination
+                v-model="currentPage"
+                :years="years"
+                class="mt-3"
+            />
 
-        <HomeChart
-            :years-stat="data[currentPage]"
-            class="mt-3"
-        />
+            <HomeChart
+                :years-stat="data[currentPage]"
+                class="mt-3"
+            />
 
-        <HomeRecapTrainingList
-            :years-stat="data[currentPage]"
-            class="mt-10"
-        />
+            <HomeRecapTrainingList
+                :years-stat="data[currentPage]"
+                class="mt-10"
+            />
+        </div>
     </section>
 </template>
