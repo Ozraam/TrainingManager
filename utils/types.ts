@@ -9,6 +9,7 @@ export type Operator = {
 };
 
 export type Training = {
+    state: any;
     id_train: number;
     name: string;
     date: string;
@@ -18,6 +19,7 @@ export type Training = {
     id_comp: number;
     id_type_train: number;
     topic: string;
+    Registration: Registration[];
     operators: Operator[];
 };
 
@@ -26,7 +28,7 @@ export type Competence = {
     id_comp: number;
     name: string;
     tmp_validity: number;
-    trainings: Training[];
+    Training: Training[];
 };
 
 export type YearData = {
@@ -41,6 +43,8 @@ export type Registration = {
     id_train: number;
     date: string;
     id_state: number;
+    Operators: Operator;
+    State: State;
 };
 
 export type PositionComp = {
@@ -53,4 +57,9 @@ export type Position = {
     id_pos: number;
     name: string;
     Position_comp: PositionComp[];
+};
+
+export type State = {
+    id_state: number;
+    name: string;
 };
