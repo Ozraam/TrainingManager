@@ -5,6 +5,8 @@ defineProps({
         required: true
     },
 })
+
+defineEmits(['update'])
 </script>
 
 <template>
@@ -18,7 +20,7 @@ defineProps({
                 <UButton
                     label="See Competence"
                     variant="link"
-                    :to="`/competence/${competence.id}`"
+                    :to="`/competence/${competence.id_comp}`"
                 />
             </div>
         </template>
@@ -29,9 +31,10 @@ defineProps({
 
         <div class="flex flex-col gap-2">
             <HomeSumupTraining
-                v-for="training in competence.trainings"
+                v-for="training in competence.Training"
                 :key="training.name"
                 :training="training"
+                @update="$emit('update')"
             />
         </div>
     </UCard>

@@ -10,8 +10,8 @@ const props = defineProps<{
 const expenses = computed(() => {
     const year = props.yearsStat
     return year.competences.reduce((acc, competence) => {
-        return acc + competence.trainings.reduce((acc, training) => {
-            return acc + training.cost
+        return acc + competence.Training.reduce((acc, training) => {
+            return acc + training.cost * training.Registration.length
         }, 0)
     }, 0)
 })
@@ -19,8 +19,8 @@ const expenses = computed(() => {
 const plannedTrainning = computed(() => {
     const year = props.yearsStat
     return year.competences.reduce((acc, competence) => {
-        return acc + competence.trainings.reduce((acc, training) => {
-            return acc + training.operators.length
+        return acc + competence.Training.reduce((acc, training) => {
+            return acc + training.Registration.length
         }, 0)
     }, 0)
 })
@@ -28,8 +28,8 @@ const plannedTrainning = computed(() => {
 const doneTrainning = computed(() => {
     const year = props.yearsStat
     return year.competences.reduce((acc, competence) => {
-        return acc + competence.trainings.reduce((acc, training) => {
-            return acc + training.operators.filter(operator => operator.status === 'Done').length
+        return acc + competence.Training.reduce((acc, training) => {
+            return acc + training.Registration.filter(reg => reg.State.name === 'done' || reg.State.name === 'expired').length
         }, 0)
     }, 0)
 })
@@ -37,8 +37,8 @@ const doneTrainning = computed(() => {
 const delayTrainning = computed(() => {
     const year = props.yearsStat
     return year.competences.reduce((acc, competence) => {
-        return acc + competence.trainings.reduce((acc, training) => {
-            return acc + training.operators.filter(operator => operator.status === 'Delayed').length
+        return acc + competence.Training.reduce((acc, training) => {
+            return acc + training.Registration.filter(reg => reg.State.name === 'delayed').length
         }, 0)
     }, 0)
 })

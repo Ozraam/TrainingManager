@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import RegistrationSumup from './RegistrationSumup.vue'
 defineProps({
     training: {
         type: Object as PropType<Training>,
         required: true
     }
 })
+
+defineEmits(['update'])
 </script>
 
 <template>
@@ -17,34 +20,19 @@ defineProps({
 
                 <UButton
                     label="See Training"
-                    :to="`/training/${training.id}`"
+                    :to="`/training/${training.id_train}`"
                     variant="link"
                 />
             </div>
         </template>
 
         <div class="flex flex-col gap-2">
-            <div
-                v-for="operator in training.operators"
-                :key="operator.name"
-                class="flex items-center gap-3 justify-between"
-            >
-                <p>{{ operator.name }} : {{ operator.status }}</p>
-
-                <div class="flex gap-2">
-                    <UButton
-                        v-if="operator.status !== 'Done'"
-                        label="Mark as done"
-                        icon="i-heroicons-check"
-                    />
-
-                    <UButton
-                        label="View profile"
-                        icon="i-heroicons-user-circle"
-                        :to="`/operator/${operator.id}`"
-                    />
-                </div>
-            </div>
+            <RegistrationSumup
+                v-for="registration in training.Registration"
+                :key="registration.id_op"
+                :registration="registration"
+                @update="$emit('update')"
+            />
         </div>
     </UCard>
 </template>

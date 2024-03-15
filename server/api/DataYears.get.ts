@@ -2,7 +2,7 @@ import { serverSupabaseClient } from '#supabase/server'
 import { Competence, Registration, Training, YearData } from '~/utils/types'
 export default defineEventHandler(async (event) => {
     const sp = await serverSupabaseClient(event)
-    const data = [] as any
+    const data = [] as YearData[]
 
     const dataFocast = (await sp.from('Forecast').select('*')).data as YearData[]
     const dataCompetences = (await sp.from('Competences').select('*, Training(*, Registration(*, Operators(*), State(*)))')).data as Competence[]
@@ -22,10 +22,13 @@ export default defineEventHandler(async (event) => {
         dataCompetences.forEach((competence) => {
             const Competence = {} as Competence
             Competence.name = competence.name
+            Competence.id_comp = competence.id_comp
             Competence.Training = []
             competence.Training.forEach((training) => {
                 if (yearData.year === new Date(training.date).getFullYear()) {
                     const Training = {} as Training
+                    Training.id_train = training.id_train
+                    Training.id_comp = training.id_comp
                     Training.name = training.name
                     Training.date = training.date
                     Training.duration = training.duration
@@ -38,6 +41,9 @@ export default defineEventHandler(async (event) => {
                         Registration.filename = registration.filename
                         Registration.State = registration.State
                         Registration.Operators = registration.Operators
+                        Registration.id_op = registration.id_op
+                        Registration.id_state = registration.id_state
+                        Registration.id_train = registration.id_train
                         Training.Registration.push(Registration)
                     })
                     if (Training.Registration.length !== 0) { Competence.Training.push(Training) }
