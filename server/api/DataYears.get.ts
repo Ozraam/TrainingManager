@@ -14,47 +14,38 @@ export default defineEventHandler(async (event) => {
         data.push({
             year: yearData.year,
             budget: yearData.budget,
-            competences: []
+            competences: [] as Competence[]
         })
     })
+    // console.log(data.competences.length)
     data.forEach((yearData: YearData) => {
         dataCompetences.forEach((competence) => {
             const Competence = {} as Competence
             Competence.name = competence.name
             Competence.Training = []
-            competence.Training.forEach((training:Training) => {
+            competence.Training.forEach((training) => {
                 if (yearData.year === new Date(training.date).getFullYear()) {
-                    if (training.id_comp === competence.id_comp) {
-                        const Training = {} as Training
-                        Training.name = training.name
-                        Training.date = training.date
-                        Training.duration = training.duration
-                        Training.cost = training.cost
-                        Training.operators = []
-
-                        training.Registration.forEach((registration:Registration) => {
-                            if (training.id_train === registration.id_train) {
-                                Training.operators.push(registration.Operators)
-                                if (Training.operators.length > 0) {
-                                    Training.operators.forEach((operator) => {
-                                        operator.status = registration.State.name
-                                    })
-                                }
-                            }
-                        })
-
-                        if (Training.operators.length > 0) { Competence.Training.push(Training) }
-                    }
+                    const Training = {} as Training
+                    Training.name = training.name
+                    Training.date = training.date
+                    Training.duration = training.duration
+                    Training.cost = training.cost
+                    Training.topic = training.topic
+                    Training.Registration = []
+                    training.Registration.forEach((registration) => {
+                        const Registration = {} as Registration
+                        Registration.date = registration.date
+                        Registration.filename = registration.filename
+                        Registration.State = registration.State
+                        Registration.Operators = registration.Operators
+                        Training.Registration.push(Registration)
+                    })
+                    if (Training.Registration.length !== 0) { Competence.Training.push(Training) }
                 }
             })
-            if (Competence.Training.length > 0) { yearData.competences.push(Competence) }
+            // console.log(yearData)
+            if (Competence.Training.length !== 0) { yearData.competences.push(Competence) }
         })
-    })
-
-    data.forEach((yearData: YearData) => {
-        if (yearData.competences.length === 0) {
-            data.splice(data.indexOf(yearData), 1)
-        }
     })
 
     return {
