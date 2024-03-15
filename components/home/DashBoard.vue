@@ -9,21 +9,29 @@
 // }
 
 const data : Ref<YearData[]> = ref([])
-useFetch('/api/DataYears').then((res) => {
-    if (res.error.value) {
-        throw new Error('Error while fetching years' + res.error.value?.message) // TODO: handle error
-    } else {
-        data.value = res.data.value!.data as YearData[]
 
-        years.value = data.value.map(d => d.year)
+const toast = useToast()
+function fetchData() {
+    $fetch('/api/DataYears').then((res) => {
+        if (!res.data) {
+            toast.add({
+                title: 'Error',
+                description: 'Error while fetching years',
+                color: 'red',
+            })
+        } else {
+            data.value = res.data as YearData[]
 
-        currentPage.value = years.value.length - 1
-    }
-})
+            years.value = data.value.map(d => d.year)
+            if (currentPage.value === -1) { currentPage.value = years.value.length - 1 }
+        }
+    })
+}
 
 const years : Ref<number[]> = ref([])
 // current page is set to the last year
-const currentPage = ref(0)
+const currentPage = ref(-1)
+fetchData()
 </script>
 
 <template>
@@ -50,6 +58,7 @@ const currentPage = ref(0)
             <HomeRecapTrainingList
                 :years-stat="data[currentPage]"
                 class="mt-10"
+                @update="fetchData"
             />
         </div>
     </section>

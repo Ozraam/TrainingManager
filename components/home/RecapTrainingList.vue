@@ -2,6 +2,8 @@
 defineProps<{
     yearsStat: YearData,
 }>()
+
+defineEmits(['update'])
 </script>
 
 <template>
@@ -14,6 +16,7 @@ defineProps<{
             v-for="competence in yearsStat.competences"
             :key="competence.name"
             :competence="competence"
+            @update="$emit('update')"
         />
     </section>
 </template>

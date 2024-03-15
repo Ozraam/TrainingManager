@@ -5,6 +5,8 @@ defineProps({
         required: true
     },
 })
+
+defineEmits(['update'])
 </script>
 
 <template>
@@ -32,6 +34,7 @@ defineProps({
                 v-for="training in competence.Training"
                 :key="training.name"
                 :training="training"
+                @update="$emit('update')"
             />
         </div>
     </UCard>

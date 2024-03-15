@@ -45,6 +45,6 @@ links.push(...props.otherLinks.map((link) => {
 <template>
     <UHorizontalNavigation
         :links="links"
-        class="border-b border-gray-200 dark:border-gray-800"
+        class="border-b border-gray-200 dark:border-gray-800 sticky top-0 bg-white dark:bg-gray-900 z-10"
     />
 </template>
