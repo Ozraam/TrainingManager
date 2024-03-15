@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { serverSupabaseClient } from '#supabase/server'
 import { Competence, Registration, Training, YearData } from '~/utils/types'
 export default defineEventHandler(async (event) => {
