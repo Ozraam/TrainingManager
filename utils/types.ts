@@ -20,7 +20,7 @@ export type Training = {
     id_type_train: number;
     topic: string;
     Registration: Registration[];
-    operators: Operator[];
+    // operators: Operator[];
 };
 
 export type Competence = {
