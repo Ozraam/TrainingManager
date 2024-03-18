@@ -36,22 +36,11 @@ async function fetchHistory() {
             return acc
         }, acc)
     }, {})
-    console.log(history)
 
     return history
 }
 
-const competenceData : Ref<{
-    year: {
-        reg: any,
-        training: any
-    }[]
-}> = ref({
-    year: [{
-        reg: {},
-        training: {}
-    }]
-})
+const competenceData : Ref<any> = ref(null)
 
 fetchHistory().then((data) => {
     competenceData.value = data
@@ -63,7 +52,7 @@ watch(() => props.competence, async () => {
 </script>
 
 <template>
-    <div>
+    <div v-if="competenceData">
         <h2 class="text-xl">
             History of
             <UButton
@@ -82,7 +71,7 @@ watch(() => props.competence, async () => {
         >
             <UCard
                 v-for="[date, registrations] in Object.entries(competenceData).sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())"
-                :key="date"
+                :key="registrations[0].training.id_train + date"
             >
                 <template #header>
                     <h3>
@@ -93,7 +82,7 @@ watch(() => props.competence, async () => {
                 <div class="flex flex-col gap-2">
                     <div
                         v-for="registration in registrations"
-                        :key="registration.reg.id_reg"
+                        :key="registration.reg.id_op + registration.training.id_train"
                         class="flex gap-1"
                     >
                         <UButton
@@ -105,7 +94,7 @@ watch(() => props.competence, async () => {
                         </UButton>
                         |
                         <UButton
-                            :to="'/training/' + registration.reg.id_op"
+                            :to="'/operator/' + registration.reg.id_op"
                             variant="link"
                             class="p-0 m-0"
                         >

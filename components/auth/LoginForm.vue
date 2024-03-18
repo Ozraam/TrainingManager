@@ -41,16 +41,15 @@ async function login(event: FormSubmitEvent<State>) {
     if (loading.value) { return }
     loading.value = true
     error.value = false
-    console.log(state.mail, state.password)
 
     const user = await sp.auth.signInWithPassword({
         email: event.data.mail!,
         password: event.data.password!,
     })
-    // console.log(user)
+    //
 
     if (user.error) {
-        // console.log(user.error, 'fuck you')
+        //
         loading.value = false
         error.value = true
     } else {

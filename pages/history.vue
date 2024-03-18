@@ -26,10 +26,7 @@ const positions = ref([])
 const selectedPosition : Ref<{
     value: number,
     label: string,
-}> = ref({
-    value: 0,
-    label: ''
-})
+}[]> = ref([])
 
 const sp = useSupabaseClient()
 
@@ -57,7 +54,7 @@ async function fetchHistory() {
         value: p.id_pos,
         ...p
     }))
-    selectedPosition.value = positions.value[0]
+    selectedPosition.value = [positions.value[0]]
 }
 
 onMounted(fetchHistory)
@@ -101,6 +98,7 @@ const selected = ref(1)
                             v-model="selectedPosition"
                             placeholder="Select an option"
                             :options="positions"
+                            multiple
                         />
                     </template>
                 </URadio>
@@ -115,6 +113,11 @@ const selected = ref(1)
                 <HistoryCompetence
                     v-if="selected === 2"
                     :competence="selectedCompetence"
+                />
+
+                <HistoryPositions
+                    v-if="selected === 3"
+                    :positions="selectedPosition"
                 />
             </div>
         </div>
