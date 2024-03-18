@@ -6,7 +6,6 @@ const isRegistrationEditing: Ref<boolean> = ref(false)
 function toggleRegistrationEdit() {
     isRegistrationEditing.value = !isRegistrationEditing.value
 }
-console.log(props.registration)
 
 defineEmits(['update'])
 </script>
