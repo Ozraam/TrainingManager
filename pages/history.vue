@@ -14,10 +14,22 @@ const selectedOperator: Ref<{value: number, label: string, id_op: number, name: 
 })
 
 const competence = ref([])
-const selectedCompetence = ref({})
+const selectedCompetence: Ref<{
+    value: number,
+    label: string,
+}> = ref({
+    value: 0,
+    label: ''
+})
 
 const positions = ref([])
-const selectedPosition = ref({})
+const selectedPosition : Ref<{
+    value: number,
+    label: string,
+}> = ref({
+    value: 0,
+    label: ''
+})
 
 const sp = useSupabaseClient()
 
@@ -98,6 +110,11 @@ const selected = ref(1)
                 <HistoryOperator
                     v-if="selected === 1"
                     :operator="selectedOperator"
+                />
+
+                <HistoryCompetence
+                    v-if="selected === 2"
+                    :competence="selectedCompetence"
                 />
             </div>
         </div>
