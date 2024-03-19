@@ -11,7 +11,9 @@ type StudyPlan = {
     name_state: string
     name_train: string
     surname: string
+    propositionTrain: Training[]
 }
+const sp = useSupabaseClient()
 const loading = ref(false)
 const state = reactive({
     nbday: 50
@@ -23,7 +25,6 @@ type State = {
 
 function validate(state:State): FormError[] {
     const errors: FormError[] = []
-    console.log(state.nbday)
     if (state.nbday < 0) {
         errors.push({
             path: 'nbday',
@@ -40,33 +41,45 @@ function validate(state:State): FormError[] {
     return errors
 }
 
-const data = ref([])
+const data = ref<StudyPlan[]>([])
 
-async function test() {
+async function test(nbday: number = 50) {
+    console.log('nbday:', nbday)
     try {
         const tmp = await $fetch('/api/StudyPlanHelper', {
             method: 'POST',
             headers: useRequestHeaders(['cookie']),
             body: JSON.stringify({
-                nbday: 50,
+                nbday
             }),
         }) as { data: StudyPlan[] }
+
+        tmp.data.forEach((element) => {
+            const { data } = sp.from('Training').select('*').eq('id_train', element.id_train)
+        })
+
         if (tmp && tmp.data) {
-            console.log(tmp.data)
             data.value = tmp.data
         } else {
             console.error('La réponse du serveur ne contient pas de données valides.')
         }
     } catch (error) {
         console.error("Une erreur s'est produite lors de la récupération des données :", error)
+    } finally {
+        loading.value = false
     }
 }
 
 async function fetchStudyPlanValdiation(event: FormSubmitEvent<State>) {
     if (loading.value) { return }
     loading.value = true
-    console.log(event.data)
-    await test()
+    console.log(event.data.nbday)
+    await test(event.data.nbday.toString() === '' ? 50 : event.data.nbday.valueOf())
+}
+
+function goToRegistration(data: StudyPlan) {
+    console.log('data:', data)
+    navigateTo('/training/add/registration?training=' + data.id_train + '&operator=' + data.id_op + '&date=' + data.date)
 }
 
 onMounted(async () => {
@@ -94,7 +107,7 @@ onMounted(async () => {
         </UFormGroup>
 
         <UButton
-            label="Submit"
+            label="Refresh"
             type="submit"
         />
     </UForm>
@@ -106,8 +119,8 @@ onMounted(async () => {
         class="flex flex-row items-center justify-center border-2 border-black p-5 m-9 ml-96 mr-96 rounded-lg"
     >
         <div class="bloc">
-            <h1 class="text-2xl">
-                {{ Study.name_op }}
+            <h1 class="text-2xl text-red-500">
+                Alert !!
             </h1>
 
             <p>
@@ -119,19 +132,12 @@ onMounted(async () => {
             </p>
 
             <p>
-                Training: {{ Study.name_train }}
-            </p>
-
-            <p>
-                State: {{ Study.name_state }}
-            </p>
-
-            <p>
                 Date: {{ Study.date }}
             </p>
 
             <UButton
                 label="i don't know"
+                @click="goToRegistration(Study)"
             />
         </div>
     </div>
