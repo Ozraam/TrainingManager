@@ -5,16 +5,13 @@ export default defineNuxtConfig({
         '@nuxtjs/supabase',
         '@nuxtjs/eslint-module',
         '@nuxt/ui',
-        '@nuxtjs/i18n'
+        '@nuxtjs/i18n',
+        '@sidebase/nuxt-pdf',
     ],
 
     eslint: {
         fix: true,
     },
-
-    css: [
-
-    ],
 
     ui: {
         icons: [

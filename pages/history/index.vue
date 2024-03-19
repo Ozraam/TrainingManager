@@ -60,7 +60,17 @@ async function fetchHistory() {
 onMounted(fetchHistory)
 
 function toPDF() {
-
+    switch (selected.value) {
+        case 1:
+            navigateTo(`/history/pdf/operator?operator=${selectedOperator.value.value}`)
+            break
+        case 2:
+            navigateTo(`/history/pdf/competence?competence=${selectedCompetence.value.value}`)
+            break
+        case 3:
+            navigateTo(`/history/pdf/positions?positions=${selectedPosition.value.map(p => p.value).join(',')}`)
+            break
+    }
 }
 
 const selected = ref(1)
