@@ -59,6 +59,10 @@ async function fetchHistory() {
 
 onMounted(fetchHistory)
 
+function toPDF() {
+
+}
+
 const selected = ref(1)
 </script>
 
@@ -102,6 +106,12 @@ const selected = ref(1)
                         />
                     </template>
                 </URadio>
+
+                <UButton
+                    label="Export to PDF"
+                    icon="i-material-symbols-download"
+                    @click="toPDF"
+                />
             </div>
 
             <div class="mt-5">

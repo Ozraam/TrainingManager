@@ -16,6 +16,13 @@ export default defineNuxtConfig({
 
     ],
 
+    ui: {
+        icons: [
+            'heroicons',
+            'material-symbols'
+        ]
+    },
+
     supabase: {
         redirectOptions: {
             callback: '/',
