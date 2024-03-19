@@ -1,6 +1,9 @@
+<!-- eslint-disable indent -->
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from '#ui/types'
+import type { Training } from '../utils/types'
+
 type StudyPlan = {
     date: string
     id_op: number
@@ -12,6 +15,7 @@ type StudyPlan = {
     name_train: string
     surname: string
     propositionTrain: Training[]
+    ref: Ref<Training>
 }
 const sp = useSupabaseClient()
 const loading = ref(false)
@@ -41,10 +45,9 @@ function validate(state:State): FormError[] {
     return errors
 }
 
-const data = ref<StudyPlan[]>([])
+const data = ref<StudyPlan[]>()
 
 async function test(nbday: number = 50) {
-    console.log('nbday:', nbday)
     try {
         const tmp = await $fetch('/api/StudyPlanHelper', {
             method: 'POST',
@@ -54,8 +57,11 @@ async function test(nbday: number = 50) {
             }),
         }) as { data: StudyPlan[] }
 
-        tmp.data.forEach((element) => {
-            const { data } = sp.from('Training').select('*').eq('id_train', element.id_train)
+        const Training = (await sp.from('Training').select('*')).data
+
+        tmp.data.forEach((element: StudyPlan) => {
+            element.propositionTrain = Training?.filter((training: Training) => new Date(training.date).getTime() > new Date().getTime() && element.id_comp === training.id_comp) ?? [] as Training[]
+            element.ref = ref<Training>(element.propositionTrain[0])
         })
 
         if (tmp && tmp.data) {
@@ -78,8 +84,8 @@ async function fetchStudyPlanValdiation(event: FormSubmitEvent<State>) {
 }
 
 function goToRegistration(data: StudyPlan) {
-    console.log('data:', data)
-    navigateTo('/training/add/registration?training=' + data.id_train + '&operator=' + data.id_op + '&date=' + data.date)
+    console.log('data:', data.ref)
+    navigateTo('/training/add/registration?training=' + data.ref.id_train + '&operator=' + data.id_op + '&date=' + data.ref.date)
 }
 
 onMounted(async () => {
@@ -134,6 +140,23 @@ onMounted(async () => {
             <p>
                 Date: {{ Study.date }}
             </p>
+
+            <div>
+                <label for="training">Training:</label>
+
+                <USelectMenu
+                    v-if="Study.propositionTrain.length > 0"
+                    id="training"
+                    v-model="Study.ref"
+                    :options="Study.propositionTrain"
+                    option-attribute="name"
+                    by="id_train"
+                />
+
+                <p v-else>
+                    No training available
+                </p>
+            </div>
 
             <UButton
                 label="i don't know"
