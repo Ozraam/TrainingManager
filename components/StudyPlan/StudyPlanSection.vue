@@ -1,36 +1,31 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
-type StudyPlan = {
-    date: string
-    id_op: number
-    id_comp: number
-    id_train: number
-    name: string
-    name_op: string
-    name_state: string
-    name_train: string
-    surname: string
-    propositionTrain: Training[]
-}
-
+import type { StudyPlan } from '../../utils/types'
 const prop = defineProps<{
     study: StudyPlan
 }>()
-const refSelectMenu = ref(prop.study.propositionTrain[0])
+
+const sp = useSupabaseClient()
+
+const Training = (await sp.from('Training').select('*')).data
+// const Pos = (await sp.from('Position').select('*')).data as Position[]
+// const pos = Pos.filter(posf => posf.name === prop.study.name)[0]
+
+const TrainOp = Training?.filter((training: Training) => new Date(training.date).getTime() > new Date().getTime() && prop.study.id_comp === training.id_comp) ?? [] as Training[]
+
+const refSelectMenu = ref(TrainOp[0])
 
 function goToRegistration(data: StudyPlan) {
-    console.log('data:', refSelectMenu)
     const date = new Date(refSelectMenu.value.date)
-    console.log('date:', date)
-    console.log(date.getDay() + '/' + date.getMonth() + '/' + date.getFullYear())
-    navigateTo('/training/add/registration?training=' + refSelectMenu.value.id_train + '&operator=' + data.id_op + '&date=' + date.getDay() + '/' + date.getMonth() + '/' + date.getFullYear())
+    // console.log('date: ' + date.getDate() + '/' + date.getMonth())
+    navigateTo('/training/add/registration?training=' + refSelectMenu.value.id_train + '&operator=' + data.id_op + '&date=' + date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
 }
 </script>
 
 <template>
     <div class="bloc">
-        <h1 class="text-2xl text-red-500">
-            Alert !!
+        <h1 class="text-3xl text-red-500 text-center mb-2">
+            /!\ Alerte /!\
         </h1>
 
         <p>
@@ -38,21 +33,27 @@ function goToRegistration(data: StudyPlan) {
         </p>
 
         <p>
-            Position: {{ prop.study.name }}
+            Position:
+            <ULink
+                to="/positions"
+                class="text-blue-500 underline"
+            >
+                {{ prop.study.name }}
+            </ULink>
         </p>
 
         <p>
             Last training : {{ prop.study.date }}
         </p>
 
-        <div>
+        <div class="mt-2 mb-4">
             <label for="training">Futur date training:</label>
 
             <USelectMenu
-                v-if="prop.study.propositionTrain.length > 0"
+                v-if="TrainOp.length > 0"
                 id="training"
                 v-model="refSelectMenu"
-                :options="prop.study.propositionTrain"
+                :options="TrainOp"
                 option-attribute="date"
                 by="id_train"
             />
@@ -63,7 +64,8 @@ function goToRegistration(data: StudyPlan) {
         </div>
 
         <UButton
-            label="i don't know"
+            label="Plan a new training"
+            block
             @click="goToRegistration(prop.study)"
         />
     </div>

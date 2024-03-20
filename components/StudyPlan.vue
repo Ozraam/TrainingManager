@@ -1,23 +1,10 @@
 <!-- eslint-disable indent -->
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
-// import { StudyPlan } from '#build/components';
 import type { FormError, FormSubmitEvent } from '#ui/types'
-import type { Training } from '../utils/types'
+import type { StudyPlan } from '../utils/types'
 
-type StudyPlan = {
-    date: string
-    id_op: number
-    id_comp: number
-    id_train: number
-    name: string
-    name_op: string
-    name_state: string
-    name_train: string
-    surname: string
-    propositionTrain: Training[]
-}
-const sp = useSupabaseClient()
+// const sp = useSupabaseClient()
 const loading = ref(false)
 const state = reactive({
     nbday: 50
@@ -56,13 +43,6 @@ async function test(nbday: number = 50) {
                 nbday
             }),
         }) as { data: StudyPlan[] }
-
-        const Training = (await sp.from('Training').select('*')).data
-
-        tmp.data.forEach((element: StudyPlan) => {
-            element.propositionTrain = Training?.filter((training: Training) => new Date(training.date).getTime() > new Date().getTime() && element.id_comp === training.id_comp) ?? [] as Training[]
-            // element.ref = ref<Training>(element.propositionTrain[0])
-        })
 
         if (tmp && tmp.data) {
             data.value = tmp.data

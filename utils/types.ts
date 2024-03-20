@@ -64,3 +64,15 @@ export type State = {
     id_state: number;
     name: string;
 };
+
+export type StudyPlan = {
+    date: string
+    id_op: number
+    id_comp: number
+    id_train: number
+    name: string
+    name_op: string
+    name_state: string
+    name_train: string
+    surname: string
+}

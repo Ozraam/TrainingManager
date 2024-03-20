@@ -1,4 +1,6 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
+import type { StudyPlan } from '../../utils/types'
 const props = defineProps({
     currentOperator: {
         type: String,
@@ -9,6 +11,8 @@ const props = defineProps({
 const sp = useSupabaseClient()
 
 const toast = useToast()
+
+const studyPlanOp = ref<StudyPlan[]>([])
 
 const operator : Ref<{
     id_op: number,
@@ -42,6 +46,8 @@ const operator : Ref<{
 async function fetchOperator() {
     const { data } = await sp.from('Operators').select('*, Position(*, Position_comp(Competences(*))), Registration(*, State(*), Training(name, duration))').eq('id_op', props.currentOperator)
     operator.value = data?.[0] ?? null
+    const studyPlan = (await sp.rpc('StudyPlanHelper', { nbday: 50 } as never)).data as unknown as StudyPlan[] ?? []
+    studyPlanOp.value = studyPlan.filter(studyPlan => operator.value?.id_op === studyPlan.id_op) ?? []
 
     accordeon.value = stateData?.map((state) => {
         const o = {
@@ -252,6 +258,14 @@ function toggleEdit() {
                         variant="ghost"
                         @click="downloadPDF"
                     />
+                </div>
+
+                <div
+                    v-for="op in studyPlanOp"
+                    :key="op.id_op"
+                    class="md-5 mt-3 pl-3"
+                >
+                    <StudyPlanSection :study="op" />
                 </div>
             </div>
         </div>
