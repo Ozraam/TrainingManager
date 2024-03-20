@@ -1,6 +1,7 @@
 <!-- eslint-disable indent -->
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
+// import { StudyPlan } from '#build/components';
 import type { FormError, FormSubmitEvent } from '#ui/types'
 import type { Training } from '../utils/types'
 
@@ -15,7 +16,6 @@ type StudyPlan = {
     name_train: string
     surname: string
     propositionTrain: Training[]
-    ref: Ref<Training>
 }
 const sp = useSupabaseClient()
 const loading = ref(false)
@@ -61,7 +61,7 @@ async function test(nbday: number = 50) {
 
         tmp.data.forEach((element: StudyPlan) => {
             element.propositionTrain = Training?.filter((training: Training) => new Date(training.date).getTime() > new Date().getTime() && element.id_comp === training.id_comp) ?? [] as Training[]
-            element.ref = ref<Training>(element.propositionTrain[0])
+            // element.ref = ref<Training>(element.propositionTrain[0])
         })
 
         if (tmp && tmp.data) {
@@ -81,11 +81,6 @@ async function fetchStudyPlanValdiation(event: FormSubmitEvent<State>) {
     loading.value = true
     console.log(event.data.nbday)
     await test(event.data.nbday.toString() === '' ? 50 : event.data.nbday.valueOf())
-}
-
-function goToRegistration(data: StudyPlan) {
-    console.log('data:', data.ref)
-    navigateTo('/training/add/registration?training=' + data.ref.id_train + '&operator=' + data.id_op + '&date=' + data.ref.date)
 }
 
 onMounted(async () => {
@@ -124,44 +119,6 @@ onMounted(async () => {
         :data="data"
         class="flex flex-row items-center justify-center border-2 border-black p-5 m-9 ml-96 mr-96 rounded-lg"
     >
-        <div class="bloc">
-            <h1 class="text-2xl text-red-500">
-                Alert !!
-            </h1>
-
-            <p>
-                name: {{ Study.name_op + " " + Study.surname }}
-            </p>
-
-            <p>
-                Position: {{ Study.name }}
-            </p>
-
-            <p>
-                Date: {{ Study.date }}
-            </p>
-
-            <div>
-                <label for="training">Training:</label>
-
-                <USelectMenu
-                    v-if="Study.propositionTrain.length > 0"
-                    id="training"
-                    v-model="Study.ref"
-                    :options="Study.propositionTrain"
-                    option-attribute="name"
-                    by="id_train"
-                />
-
-                <p v-else>
-                    No training available
-                </p>
-            </div>
-
-            <UButton
-                label="i don't know"
-                @click="goToRegistration(Study)"
-            />
-        </div>
+        <StudyPlanSection :study="Study" />
     </div>
 </template>
