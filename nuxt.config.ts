@@ -6,7 +6,7 @@ export default defineNuxtConfig({
         '@nuxtjs/eslint-module',
         '@nuxt/ui',
         '@nuxtjs/i18n',
-        '@sidebase/nuxt-pdf',
+        '@sidebase/nuxt-pdf'
     ],
 
     eslint: {
