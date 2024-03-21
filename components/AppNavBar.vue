@@ -8,7 +8,7 @@ const links = computed(() => [
         {
             label: 'Training Manager',
             avatar: {
-                src: 'https://placehold.co/400  ',
+                src: 'https://logo.clearbit.com/yokohama.eu',
             },
         },
         {

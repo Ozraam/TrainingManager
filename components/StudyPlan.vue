@@ -90,6 +90,13 @@ onMounted(async () => {
         <UButton
             label="Refresh"
             type="submit"
+            class="mt-5 w-1/8 items-center justify-center"
+        />
+
+        <UButton
+            label="Download Pdf"
+            class="mt-5 w-1/8 items-center justify-center"
+            @click="navigateTo('/studyplan/pdf')"
         />
     </UForm>
 
@@ -100,5 +107,12 @@ onMounted(async () => {
         class="flex flex-row items-center justify-center border-2 border-black p-5 m-9 ml-96 mr-96 rounded-lg"
     >
         <StudyPlanSection :study="Study" />
+    </div>
+
+    <div
+        v-if="!data"
+        class="flex flex-row items-center justify-center border-2 border-black p-5 m-9 ml-96 mr-96 rounded-lg"
+    >
+        <p>Chargement...</p>
     </div>
 </template>
