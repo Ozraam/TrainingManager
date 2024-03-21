@@ -34,7 +34,7 @@ function validate(state:State): FormError[] {
 
 const data = ref<StudyPlan[]>()
 
-async function test(nbday: number = 50) {
+async function fetchStudyPlan(nbday: number = 50) {
     try {
         const tmp = await $fetch('/api/StudyPlanHelper', {
             method: 'POST',
@@ -60,11 +60,11 @@ async function fetchStudyPlanValdiation(event: FormSubmitEvent<State>) {
     if (loading.value) { return }
     loading.value = true
     console.log(event.data.nbday)
-    await test(event.data.nbday.toString() === '' ? 50 : event.data.nbday.valueOf())
+    await fetchStudyPlan(event.data.nbday.toString() === '' ? 50 : event.data.nbday.valueOf())
 }
 
 onMounted(async () => {
-    await test()
+    await fetchStudyPlan()
 })
 </script>
 

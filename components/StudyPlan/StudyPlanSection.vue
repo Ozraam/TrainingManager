@@ -38,7 +38,7 @@ function goToRegistration(data: StudyPlan) {
                 to="/positions"
                 class="text-blue-500 underline"
             >
-                {{ prop.study.name }}
+                {{ firstLetterToUpperCase(prop.study.name) }}
             </ULink>
         </p>
 
