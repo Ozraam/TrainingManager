@@ -13,9 +13,12 @@ export default defineNuxtConfig({
         fix: true,
     },
 
-    css: [
-
-    ],
+    ui: {
+        icons: [
+            'heroicons',
+            'material-symbols'
+        ]
+    },
 
     supabase: {
         redirectOptions: {

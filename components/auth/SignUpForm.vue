@@ -69,7 +69,6 @@ async function signup(event: FormSubmitEvent<State>) {
     })
 
     if (user.error) {
-        console.log(user.error)
         error.value = true
     } else {
         location.href = '/'

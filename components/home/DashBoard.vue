@@ -4,7 +4,7 @@
 // const { data: yearsData, error } = await sp.from('Forecast').select('year, budget')
 
 // if (error) {
-//     console.log(error)
+//
 //     throw new Error('Error while fetching years' + error.message) // TODO: handle error
 // }
 

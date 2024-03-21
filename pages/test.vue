@@ -19,8 +19,6 @@ async function a() {
     })
 
     dataR.value = data
-    // eslint-disable-next-line no-console
-    console.log(data)
 }
 </script>
 
