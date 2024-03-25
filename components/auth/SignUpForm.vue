@@ -116,12 +116,12 @@ async function signup(event: FormSubmitEvent<State>) {
                 />
             </UFormGroup>
 
-            <UError
+            <div
                 v-if="error"
                 class="mt-3 text-red-500"
             >
                 {{ $t('signup.Error') }}
-            </UError>
+            </div>
 
             <UButton
                 class="mt-3"
