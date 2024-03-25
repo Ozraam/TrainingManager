@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable indent */
 import { serverSupabaseClient } from '#supabase/server'
 import { Operator, PositionComp, Registration } from '~/utils/types'
@@ -12,7 +11,6 @@ export default defineEventHandler(async (event) => {
         operator.Position.Position_comp.forEach((comp: PositionComp) => {
             operator.Registration.forEach((reg: Registration) => {
                 if (reg.Training.id_comp === comp.id_comp) {
-                    
                     const now = new Date()
                     const trainingDate = new Date(reg.Training.date)
                     const validityDays = comp.Competences.tmp_validity || 0

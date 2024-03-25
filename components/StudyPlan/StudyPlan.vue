@@ -2,7 +2,6 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from '#ui/types'
-import type { StudyPlan } from '../utils/types'
 
 // const sp = useSupabaseClient()
 const loading = ref(false)
@@ -101,12 +100,16 @@ onMounted(async () => {
     </UForm>
 
     <div
-        v-for="Study in data"
-        :key="Study.id_op"
-        :data="data"
-        class="flex flex-row items-center justify-center border-2 border-black p-5 m-9 ml-96 mr-96 rounded-lg"
+        class="flex flex-wrap items-center justify-center"
     >
-        <StudyPlanSection :study="Study" />
+        <div
+            v-for="Study in data"
+            :key="Study.id_op"
+            :data="data"
+            class="border-2 border-black p-5 m-9 w-96 rounded-xl"
+        >
+            <StudyPlanSection :study="Study" />
+        </div>
     </div>
 
     <div

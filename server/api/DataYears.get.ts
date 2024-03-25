@@ -7,8 +7,8 @@ export default defineEventHandler(async (event) => {
     const dataFocast = (await sp.from('Forecast').select('*')).data as YearData[]
     const dataCompetences = (await sp.from('Competences').select('*, Training(*, Registration(*, Operators(*), State(*)))')).data as Competence[]
     // data.push(dataCompetences)
-    // 
-    // 
+    //
+    //
 
     dataFocast.forEach((yearData) => {
         data.push({
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
             competences: [] as Competence[]
         })
     })
-    // 
+    //
     data.forEach((yearData: YearData) => {
         dataCompetences.forEach((competence) => {
             const Competence = {} as Competence
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
                     if (Training.Registration.length !== 0) { Competence.Training.push(Training) }
                 }
             })
-            // 
+            //
             if (Competence.Training.length !== 0) { yearData.competences.push(Competence) }
         })
     })

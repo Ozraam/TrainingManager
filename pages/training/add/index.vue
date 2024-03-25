@@ -1,6 +1,8 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from '#ui/types'
 
+const route = useRoute()
 const sp = useSupabaseClient()
 
 type State = {
@@ -121,7 +123,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     const insert = [
         {
             name: event.data.name!,
-            date: event.data.date!,
+            date: event.data.date!.split('/').reverse().join('-'),
             duration: event.data.duration!,
             cost: event.data.cost!,
             id_teacher: event.data.id_teacher!,
@@ -147,7 +149,12 @@ async function onSubmit(event: FormSubmitEvent<State>) {
             description: 'Training added successfully',
             color: 'green',
         })
-        navigateTo('/training/' + data![0].id_train)
+        console.log(route.query.operator)
+
+        if (route.query.operator !== undefined) {
+            console.log(route.query.operator)
+            navigateTo('/training/add/registration?training=' + data![0].id_train + '&operator=' + route.query.operator + '&date=' + event.data.date!)
+        } else { navigateTo('/training/' + data![0].id_train) }
     }
 }
 

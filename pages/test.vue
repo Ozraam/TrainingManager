@@ -10,8 +10,8 @@ sp.auth.signInWithPassword({
 const dataR : Ref<any | null> = ref(null)
 
 async function a() {
-    const data = await $fetch('/api/DataYears', {
-        method: 'GET',
+    const data = await $fetch('/api/StudyPlanHelper', {
+        method: 'POST',
         headers: useRequestHeaders(['cookie']),
         // body: JSON.stringify({
         //     nbday: 50,
