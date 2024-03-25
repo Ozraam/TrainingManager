@@ -72,22 +72,26 @@ const links = computed(() => user.value
         ]
     ]
     : [
-        {
-            label: 'Training Manager',
-            avatar: {
-                src: 'https://logo.clearbit.com/yokohama.eu',
+        [
+            {
+                label: 'Training Manager',
+                avatar: {
+                    src: 'https://logo.clearbit.com/yokohama.eu',
+                },
             },
-        },
-        {
-            label: 'Log in',
-            to: '/auth/login',
-            icon: 'i-heroicons-arrow-right-end-on-rectangle'
-        },
-        {
-            label: 'Sign up',
-            to: '/auth/signup',
-            icon: 'i-heroicons-user-plus'
-        },
+        ],
+        [
+            {
+                label: 'Log in',
+                to: '/auth/login',
+                icon: 'i-heroicons-arrow-right-end-on-rectangle'
+            },
+            {
+                label: 'Sign up',
+                to: '/auth/signup',
+                icon: 'i-heroicons-user-plus'
+            },
+        ]
     ])
 </script>
 
