@@ -8,8 +8,6 @@ const prop = defineProps<{
 const sp = useSupabaseClient()
 
 const Training = (await sp.from('Training').select('*')).data
-// const Pos = (await sp.from('Position').select('*')).data as Position[]
-// const pos = Pos.filter(posf => posf.name === prop.study.name)[0]
 
 const TrainOp = Training?.filter((training: Training) => new Date(training.date).getTime() > new Date().getTime() && prop.study.id_comp === training.id_comp) ?? [] as Training[]
 
@@ -17,7 +15,6 @@ const refSelectMenu = ref(TrainOp[0])
 
 function goToRegistration(data: StudyPlan) {
     const date = new Date(refSelectMenu.value.date)
-    // console.log('date: ' + date.getDate() + '/' + date.getMonth())
     navigateTo('/training/add/registration?training=' + refSelectMenu.value.id_train + '&operator=' + data.id_op + '&date=' + date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
 }
 
