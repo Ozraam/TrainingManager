@@ -277,13 +277,6 @@ function toggleRegistrationEdit(index: number) {
                 </UTable>
             </div>
         </div>
-
-        <div class="flex gap-3">
-            <UButton
-                label="Edit"
-                @click="deleteTraining"
-            />
-        </div>
     </div>
 
     <div v-else>

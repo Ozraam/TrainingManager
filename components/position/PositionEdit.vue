@@ -171,7 +171,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                 </UFormGroup>
 
                 <UFormGroup
-                    label="Position"
+                    label="Competences"
                     name="position"
                     class="min-w-40"
                     hint="Optional"
