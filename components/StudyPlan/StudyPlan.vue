@@ -100,6 +100,7 @@ onMounted(async () => {
     </UForm>
 
     <div
+        v-if="data"
         class="flex flex-wrap items-center justify-center"
     >
         <div
@@ -116,6 +117,6 @@ onMounted(async () => {
         v-if="!data"
         class="flex flex-row items-center justify-center border-2 border-black p-5 m-9 ml-96 mr-96 rounded-lg"
     >
-        <p>Chargement...</p>
+        <p>no operator need training</p>
     </div>
 </template>

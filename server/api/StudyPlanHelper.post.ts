@@ -8,11 +8,12 @@ export default defineEventHandler(async (event) => {
 
     let { data } = await sp.rpc('StudyPlanHelper', { nbday } as any) as any
     let data2 = (await sp.rpc('StudyPlanHelper2')).data as any
-    if (body === undefined || body.id_op === undefined || data === null) { return { data: data.concat(data2) } }
+    if (data === null) { return { data: data2 } }
+    if (body === undefined || body.id_op === undefined) { return { data: data.concat(data2) } }
     data = data.filter((d: any) => d.id_op === body.id_op)
     data2 = data2.filter((d: any) => d.id_op === body.id_op)
 
-    data.concat(data2)
+    data = data.concat(data2)
     return {
         data
     }
