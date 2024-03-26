@@ -46,7 +46,11 @@ const operator : Ref<{
 async function fetchOperator() {
     const { data } = await sp.from('Operators').select('*, Position(*, Position_comp(Competences(*))), Registration(*, State(*), Training(name, duration))').eq('id_op', props.currentOperator)
     operator.value = data?.[0] ?? null
-    const studyPlan = (await sp.rpc('StudyPlanHelper', { nbday: 50 } as never)).data as unknown as StudyPlan[] ?? []
+
+    const studyPlan = (await $fetch('/api/StudyPlanHelper', {
+        method: 'POST',
+        headers: useRequestHeaders(['cookie'])
+    }) as { data: StudyPlan[] }).data
     studyPlanOp.value = studyPlan.filter(studyPlan => operator.value?.id_op === studyPlan.id_op) ?? []
 
     accordeon.value = stateData?.map((state) => {

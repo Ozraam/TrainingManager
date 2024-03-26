@@ -20,6 +20,10 @@ function goToRegistration(data: StudyPlan) {
     // console.log('date: ' + date.getDate() + '/' + date.getMonth())
     navigateTo('/training/add/registration?training=' + refSelectMenu.value.id_train + '&operator=' + data.id_op + '&date=' + date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear())
 }
+
+function goToAdd(data: StudyPlan) {
+    navigateTo('/training/add?operator=' + data.id_op)
+}
 </script>
 
 <template>
@@ -43,7 +47,7 @@ function goToRegistration(data: StudyPlan) {
         </p>
 
         <p>
-            Last training : {{ prop.study.date }}
+            Last training : {{ prop.study.date ?? 'No training' }}
         </p>
 
         <div class="mt-2 mb-4">
@@ -64,9 +68,17 @@ function goToRegistration(data: StudyPlan) {
         </div>
 
         <UButton
+            v-if="TrainOp.length > 0"
             label="Plan a new training"
             block
             @click="goToRegistration(prop.study)"
+        />
+
+        <UButton
+            v-else
+            label="Add new Training"
+            block
+            @click="goToAdd(prop.study)"
         />
     </div>
 </template>
