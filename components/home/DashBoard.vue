@@ -1,12 +1,9 @@
 <script setup lang="ts">
-// const sp = useSupabaseClient()
+const user = useSupabaseUser()
 
-// const { data: yearsData, error } = await sp.from('Forecast').select('year, budget')
-
-// if (error) {
-//
-//     throw new Error('Error while fetching years' + error.message) // TODO: handle error
-// }
+if (!user.value) {
+    navigateTo('/auth/login')
+}
 
 const data : Ref<YearData[]> = ref([])
 

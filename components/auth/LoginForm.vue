@@ -88,12 +88,12 @@ async function login(event: FormSubmitEvent<State>) {
                 />
             </UFormGroup>
 
-            <UError
+            <div
                 v-if="error"
                 class="mt-3 text-red-500"
             >
                 {{ $t('login.Error') }}
-            </UError>
+            </div>
 
             <UButton
                 class="mt-3"

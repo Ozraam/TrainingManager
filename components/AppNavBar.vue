@@ -3,66 +3,66 @@
 const route = useRoute()
 const user = useSupabaseUser()
 
-const links = computed(() => [
-    [
-        {
-            label: 'Training Manager',
-            avatar: {
-                src: 'https://logo.clearbit.com/yokohama.eu',
+const links = computed(() => user.value
+    ? [
+        [
+            {
+                label: 'Training Manager',
+                avatar: {
+                    src: 'https://logo.clearbit.com/yokohama.eu',
+                },
             },
-        },
-        {
-            label: 'Dashboard',
-            to: '/',
-            icon: 'i-heroicons-home'
-        },
-    ],
-    [
-        {
-            label: 'Operators',
-            to: route.path.startsWith('/operator') ? route.path : '/operator',
-            icon: 'i-heroicons-user-group'
-        },
-        {
-            label: 'Positions',
-            to: '/positions',
-            icon: 'i-heroicons-user'
-        },
-        {
-            label: 'Competences',
-            to: route.path.startsWith('/competence') ? route.path : '/competence',
-            icon: 'i-heroicons-clipboard'
-        },
-        {
-            label: 'Training',
-            to: route.path.startsWith('/training') ? route.path : '/training',
-            icon: 'i-heroicons-academic-cap'
-        },
-        {
-            label: 'Teacher',
-            to: '/teacher',
-            icon: 'i-heroicons-academic-cap'
-        },
-    ],
-    [
-        {
-            label: 'Forecast',
-            to: '/forecast',
-            icon: 'i-heroicons-calendar'
-        },
-        {
-            label: 'History',
-            to: '/history',
-            icon: 'i-heroicons-clock'
-        },
-        {
-            label: 'Study Plan',
-            to: '/study-plan',
-            icon: 'i-heroicons-book-open'
-        },
-    ],
-    user.value
-        ? [
+            {
+                label: 'Dashboard',
+                to: '/',
+                icon: 'i-heroicons-home'
+            },
+        ],
+        [
+            {
+                label: 'Operators',
+                to: route.path.startsWith('/operator') ? route.path : '/operator',
+                icon: 'i-heroicons-user-group'
+            },
+            {
+                label: 'Positions',
+                to: '/positions',
+                icon: 'i-heroicons-user'
+            },
+            {
+                label: 'Competences',
+                to: route.path.startsWith('/competence') ? route.path : '/competence',
+                icon: 'i-heroicons-clipboard'
+            },
+            {
+                label: 'Training',
+                to: route.path.startsWith('/training') ? route.path : '/training',
+                icon: 'i-heroicons-academic-cap'
+            },
+            {
+                label: 'Teacher',
+                to: '/teacher',
+                icon: 'i-heroicons-academic-cap'
+            },
+        ],
+        [
+            {
+                label: 'Forecast',
+                to: '/forecast',
+                icon: 'i-heroicons-calendar'
+            },
+            {
+                label: 'History',
+                to: '/history',
+                icon: 'i-heroicons-clock'
+            },
+            {
+                label: 'Study Plan',
+                to: '/study-plan',
+                icon: 'i-heroicons-book-open'
+            },
+        ],
+        [
             {
                 label: 'Log out',
                 to: '/auth/logout',
@@ -70,7 +70,17 @@ const links = computed(() => [
             }
 
         ]
-        : [
+    ]
+    : [
+        [
+            {
+                label: 'Training Manager',
+                avatar: {
+                    src: 'https://logo.clearbit.com/yokohama.eu',
+                },
+            },
+        ],
+        [
             {
                 label: 'Log in',
                 to: '/auth/login',
@@ -81,15 +91,8 @@ const links = computed(() => [
                 to: '/auth/signup',
                 icon: 'i-heroicons-user-plus'
             },
-        ],
-    [
-        {
-            label: 'Settings',
-            to: '',
-            icon: 'i-heroicons-cog'
-        }
-    ]
-])
+        ]
+    ])
 </script>
 
 <template>
