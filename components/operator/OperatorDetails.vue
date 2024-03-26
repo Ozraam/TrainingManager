@@ -51,6 +51,7 @@ async function fetchOperator() {
         method: 'POST',
         headers: useRequestHeaders(['cookie'])
     }) as { data: StudyPlan[] }).data
+
     studyPlanOp.value = studyPlan.filter(studyPlan => operator.value?.id_op === studyPlan.id_op) ?? []
 
     accordeon.value = stateData?.map((state) => {
@@ -74,11 +75,12 @@ const accordeon : Ref<any> = ref([])
 
 function downloadPDF() {
     // TODO : This is a placeholder for the real save
-    toast.add({
-        title: 'PDF downloaded - TODO',
-        timeout: 2000,
-        icon: 'i-heroicons-face-frown-16-solid'
-    })
+    // toast.add({
+    //     title: 'PDF downloaded - TODO',
+    //     timeout: 2000,
+    //     icon: 'i-heroicons-face-frown-16-solid'
+    // })
+    navigateTo('/operator/pdf/?id_op=' + operator.value?.id_op)
 }
 
 function deleteOperator() {
