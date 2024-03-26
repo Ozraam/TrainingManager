@@ -1,10 +1,16 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import type { StudyPlan } from '../../utils/types'
 
 const tmp = ref<{ data: StudyPlan[] }>()
+const trainings = ref<Training[]>()
+const Training = ref<{
+    id_comp: number
+    name: string
+    trainings: Training[]
+}[]>([])
 const page = ref<HTMLElement>()
+const sp = useSupabaseClient()
 const route = useRoute()
 
 async function fetchData() {
@@ -18,8 +24,26 @@ async function fetchData() {
             }),
         }) as { data: StudyPlan[] }
 
+        trainings.value = (await sp.from('Training').select('*')).data ?? []
         tmp.value = { data: tmp.value.data.filter(item => item.id_op === Number(route.query.id_op)) }
-        console.log(tmp.value)
+        trainings.value = trainings.value.filter(item => item.date > new Date().toISOString().split('T')[0] && tmp.value?.data.some(study => study.id_comp === item.id_comp))
+        const comp = (await sp.from('Competences').select('*')).data ?? [] as Competence[]
+        trainings.value.forEach((training) => {
+            const trainingIndex = Training.value?.findIndex(item => item.id_comp === training.id_comp)
+            // console.log(trainingIndex)
+            if (trainingIndex === -1) {
+                console.log(training)
+                Training.value.push({
+                    id_comp: training.id_comp,
+                    name: comp.find(item => item.id_comp === training.id_comp)?.name ?? '',
+                    trainings: [training]
+                })
+            } else {
+                Training.value[trainingIndex!].trainings.push(training)
+            }
+        })
+        // console.log(Training.value)
+        // console.log(trainings.value)
     } catch (error) {
         console.error("Une erreur s'est produite lors de la récupération des données :", error)
     }
@@ -85,41 +109,52 @@ onMounted(async () => {
             </h2>
 
             <div
-                v-for="items in tmp?.data"
-                :key="items.id_comp"
-                class="flex justify-center gap-5 mb-5"
+                v-if="Training.length > 0"
+                class="flex flex-col gap-5"
             >
                 <div
-                    class="flex flex-col gap-5 border border-black p-5 w-3/4"
+                    v-for="items in Training"
+                    :key="items.id_comp"
+                    class="flex justify-center gap-5 mb-5"
                 >
-                    <h2 class="text-2xl font-bold text-center">
-                        Comptence: {{ items.name }}
-                    </h2>
+                    <div
+                        class="flex flex-col gap-5 border border-black p-5 w-3/4"
+                    >
+                        <h2 class="text-2xl font-bold text-center">
+                            Name of competence: {{ items.name }}
+                        </h2>
 
-                    <p v-if="items.name_train">
-                        Name of the last Training: {{ items.name_train }}
-                    </p>
+                        <div
+                            v-for="training in items.trainings"
+                            :key="training.id_train"
+                        >
+                            <p v-if="training.date">
+                                Date Training: {{ training.date }}
+                            </p>
 
-                    <p v-else>
-                        Name of the last Training: No training found
-                    </p>
+                            <p>
+                                Cost: {{ training.cost }} €
+                            </p>
 
-                    <p v-if="items.date">
-                        Date of the last Training: {{ items.date }}
-                    </p>
+                            <p>
+                                Duration: {{ training.duration }} day{{ training.duration > 1 ? 's' : '' }}
+                            </p>
 
-                    <p v-else>
-                        Date of the last Training: No training found
-                    </p>
-
-                    <p v-if="items.name_state">
-                        State: {{ items.name_state }}
-                    </p>
-
-                    <p v-else>
-                        State: No training found
-                    </p>
+                            <p>
+                                Topic: {{ training.topic }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <div
+                v-else
+                class="flex flex-col gap-5 text-center"
+            >
+                <p>
+                    No training available
+                </p>
             </div>
 
             <button
