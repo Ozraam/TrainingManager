@@ -16,6 +16,7 @@ export type Training = {
     duration: number;
     cost: number;
     id_teacher: number;
+    id_orga: number;
     id_comp: number;
     id_type_train: number;
     topic: string;

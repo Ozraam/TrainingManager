@@ -1,3 +1,4 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
 const sp = useSupabaseClient()
 
@@ -11,6 +12,8 @@ const teachers : Ref<{
     }[]
 }[]> = ref([])
 
+const organisations : Ref<{ id_orga: number; name: string }[]> = ref([])
+
 const fetchTeacher = async () => {
     const { data, error } = await sp.from('Teacher').select('*, Training(name, id_train)').order('name', { ascending: true })
     if (error) {
@@ -19,6 +22,22 @@ const fetchTeacher = async () => {
     } else {
         teachers.value = data
     }
+}
+
+async function fetchOrganisation() {
+    const { data, error } = await sp.from('Organisation').select('id_orga, name').order('name', { ascending: true })
+    if (error) {
+        // eslint-disable-next-line no-console
+        console.error(error)
+    } else {
+        console.log(data)
+        organisations.value = data
+    }
+}
+
+async function fetchAll() {
+    await fetchTeacher()
+    await fetchOrganisation()
 }
 
 const route = useRoute()
@@ -33,7 +52,7 @@ const filteredTeachers = computed(() => {
     })
 })
 
-onMounted(fetchTeacher)
+onMounted(fetchAll)
 </script>
 
 <template>
