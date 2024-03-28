@@ -115,12 +115,17 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 const { data: trainings } = await sp.from('Training').select('id_train, name, date')
 const { data: operators } = await sp.from('Operators').select('id_op, name, surname')
 const { data: states } = await sp.from('State').select('name, id_state')
-
+const registrations : Ref<Number[]> = ref([])
 const route = useRoute()
 
-function changeDate(trainingId: number) {
+async function changeDate(trainingId: number) {
     const training = trainings?.find(t => t.id_train === trainingId)
     state.date = (training!.date as string).split('-').reverse().join('/')
+
+    const { data } = await sp.from('Registration').select('id_op').eq('id_train', trainingId)
+    registrations.value = data!.map((d: { id_op: number }) => d.id_op)
+
+    state.id_op = state.id_op?.filter(id => !registrations.value.includes(id))
 }
 
 if (route.query.training) {
@@ -194,7 +199,7 @@ if (route.query.state) {
                 >
                     <USelectMenu
                         v-model="state.id_op"
-                        :options="operators?.map((o) => {
+                        :options="operators?.filter(o => !registrations.includes(o.id_op)).map((o) => {
                             return {
                                 id_op: o.id_op,
                                 name: o.name + ' ' + o.surname,
