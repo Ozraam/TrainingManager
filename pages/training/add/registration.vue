@@ -5,16 +5,16 @@ const sp = useSupabaseClient()
 
 type State = {
     id_train: number | undefined,
-    id_op: number | undefined,
+    id_op: number[] | undefined,
     date: string | undefined,
     state: number | undefined,
 }
 
 const state = reactive<State>({
     id_train: undefined,
-    id_op: undefined,
+    id_op: [],
     date: undefined,
-    state: undefined,
+    state: 1,
 })
 
 // check if date is valid
@@ -71,16 +71,28 @@ const toast = useToast()
 const loading = ref(false)
 
 async function onSubmit(event: FormSubmitEvent<State>) {
+    if (event.data.id_op?.length === 0) {
+        toast.add({
+            title: 'Error',
+            description: 'Operator is required',
+            color: 'red',
+        })
+        return
+    }
+
     if (loading.value) { return }
     loading.value = true
-    const insert = [
+    const preInsert =
         {
             id_train: event.data.id_train!,
-            id_op: event.data.id_op!,
             date: event.data.date!.split('/').reverse().join('-'),
             id_state: event.data.state!,
         }
-    ] as never[]
+
+    const insert = event.data.id_op!.map(idOp => ({
+        id_op: idOp,
+        ...preInsert,
+    })) as never[]
 
     const { error, data } = await sp.from('Registration').insert(insert).select('id_train')
 
@@ -100,18 +112,24 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     }
 }
 
-const { data: training } = await sp.from('Training').select('id_train, name')
+const { data: trainings } = await sp.from('Training').select('id_train, name, date')
 const { data: operators } = await sp.from('Operators').select('id_op, name, surname')
 const { data: states } = await sp.from('State').select('name, id_state')
 
 const route = useRoute()
 
+function changeDate(trainingId: number) {
+    const training = trainings?.find(t => t.id_train === trainingId)
+    state.date = (training!.date as string).split('-').reverse().join('/')
+}
+
 if (route.query.training) {
     state.id_train = parseInt(route.query.training as string)
+    changeDate(state.id_train!)
 }
 
 if (route.query.operator) {
-    state.id_op = parseInt(route.query.operator as string)
+    state.id_op = (route.query.operator as string).split(',').map(id => parseInt(id))
 }
 
 if (route.query.date) {
@@ -159,11 +177,12 @@ if (route.query.state) {
                 >
                     <USelectMenu
                         v-model="state.id_train"
-                        :options="training"
+                        :options="trainings"
                         value-attribute="id_train"
                         option-attribute="name"
                         placeholder="Select training"
                         searchable
+                        @change="changeDate"
                     />
                 </UFormGroup>
 
@@ -185,6 +204,7 @@ if (route.query.state) {
                         option-attribute="name"
                         placeholder="Select operator"
                         searchable
+                        multiple
                     />
                 </UFormGroup>
 
