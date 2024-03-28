@@ -26,7 +26,7 @@ function goToAdd(data: StudyPlan) {
 <template>
     <div class="bloc">
         <h1 class="text-3xl text-red-500 text-center mb-2">
-            /!\ Alerte /!\
+            /!\ Alert /!\
         </h1>
 
         <p>

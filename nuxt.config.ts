@@ -24,7 +24,8 @@ export default defineNuxtConfig({
         redirectOptions: {
             callback: '/',
             login: '/auth/login',
-        }
+            exclude: ['/auth/signup']
+        },
     },
 
     vite: {
