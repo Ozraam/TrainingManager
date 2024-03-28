@@ -113,10 +113,13 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 }
 
 const { data: trainings } = await sp.from('Training').select('id_train, name, date')
-const { data: operators } = await sp.from('Operators').select('id_op, name, surname')
+const { data: operators } = await sp.from('Operators').select('id_op, name, surname, id_pos')
+const { data: positions } = await sp.from('Position').select('id_pos, name')
 const { data: states } = await sp.from('State').select('name, id_state')
 const registrations : Ref<Number[]> = ref([])
 const route = useRoute()
+
+const positionSelected : Ref<string> = ref(positions![0].id_pos)
 
 async function changeDate(trainingId: number) {
     const training = trainings?.find(t => t.id_train === trainingId)
@@ -144,13 +147,57 @@ if (route.query.date) {
 if (route.query.state) {
     state.state = parseInt(route.query.state as string)
 }
+
+function setPositionFilter() {
+    isModalOpen.value = false
+
+    state.id_op = operators?.filter(o => o.id_pos === parseInt(positionSelected.value)).map(o => o.id_op).filter(id => !registrations.value.includes(id))
+}
+
+const isModalOpen = ref(false)
 </script>
 
 <template>
     <section>
+        <UModal
+            v-model="isModalOpen"
+        >
+            <UCard>
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl">
+                            Select all operator of position
+                        </h2>
+
+                        <UButton
+                            color="gray"
+                            variant="ghost"
+                            icon="i-heroicons-x-mark-20-solid"
+                            class="-my-1"
+                            @click="isModalOpen = false"
+                        />
+                    </div>
+                </template>
+
+                <div class="flex flex-col gap-3 justify-center items-center">
+                    <USelect
+                        v-model="positionSelected"
+                        :options="positions"
+                        value-attribute="id_pos"
+                        option-attribute="name"
+                    />
+
+                    <UButton
+                        label="Apply"
+                        @click="setPositionFilter"
+                    />
+                </div>
+            </UCard>
+        </UModal>
+
         <PageHeader
             title="Training"
-            title-link="/training/1"
+            title-link="/training"
             :other-links="[
                 {
                     label: 'Add new training',
@@ -212,6 +259,12 @@ if (route.query.state) {
                         multiple
                     />
                 </UFormGroup>
+
+                <UButton
+                    label="Select for position"
+                    size="2xs"
+                    @click="isModalOpen = true"
+                />
 
                 <UFormGroup
                     label="Date"
