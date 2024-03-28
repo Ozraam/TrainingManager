@@ -133,7 +133,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                 <UButton
                     :loading="loading"
                     type="submit"
-                    label="Add"
+                    label="Update"
                 />
             </UForm>
         </UCard>
