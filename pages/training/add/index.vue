@@ -15,6 +15,7 @@ type State = {
     id_conf: number | undefined,
     id_type_training: number | undefined,
     topic: string | undefined,
+    id_orga: number | undefined
 }
 
 const state = reactive({
@@ -27,7 +28,10 @@ const state = reactive({
     id_conf: undefined,
     id_type_training: undefined,
     topic: undefined,
+    id_orga: undefined
 })
+
+const toggle = ref(false)
 
 // check if date is valid
 // date format: dd/mm/yyyy or dd-mm-yyyy
@@ -75,10 +79,10 @@ function validate(state: State): FormError[] {
         })
     }
 
-    if (state.id_teacher === undefined) {
+    if (state.id_teacher === undefined && state.id_orga === undefined) {
         errors.push({
             path: 'id_teacher',
-            message: 'Teacher is required',
+            message: 'Teacher is required or \n an Organisation is required',
         })
     }
 
@@ -110,6 +114,13 @@ function validate(state: State): FormError[] {
         })
     }
 
+    if (state.id_orga === undefined && state.id_teacher === undefined) {
+        errors.push({
+            path: 'id_orga',
+            message: 'Teacher is required or \n an Organisation is required',
+        })
+    }
+
     return errors
 }
 
@@ -126,11 +137,12 @@ async function onSubmit(event: FormSubmitEvent<State>) {
             date: event.data.date!.split('/').reverse().join('-'),
             duration: event.data.duration!,
             cost: event.data.cost!,
-            id_teacher: event.data.id_teacher!,
             id_comp: event.data.id_comp!,
             id_conf: event.data.id_conf!,
             id_type_train: event.data.id_type_training!,
             topic: event.data.topic!,
+            id_teacher: event.data.id_teacher!,
+            id_orga: event.data.id_orga!
         }
     ]
 
@@ -158,10 +170,14 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     }
 }
 
-const { data: teachers } = await sp.from('Teacher').select('id_teacher, name, surname')
+let { data: teachers } = await sp.from('Teacher').select('id_teacher, name, surname, deleted')
 const { data: competences } = await sp.from('Competences').select('id_comp, name')
 const { data: confirmation } = await sp.from('Type_confirmation').select('id_conf, name')
 const { data: typeTraining } = await sp.from('Type_training').select('id_type_train, name')
+let { data: Organisation } = await sp.from('Organisation').select('id_orga, name, deleted')
+
+teachers = teachers?.filter((t:{ deleted: boolean}) => !t.deleted) ?? []
+Organisation = Organisation?.filter((o:{ deleted: boolean}) => !o.deleted) ?? []
 </script>
 
 <template>
@@ -229,6 +245,7 @@ const { data: typeTraining } = await sp.from('Type_training').select('id_type_tr
                 </UFormGroup>
 
                 <UFormGroup
+                    v-if="toggle"
                     label="Teacher"
                     name="id_teacher"
                     class="min-w-40"
@@ -248,6 +265,33 @@ const { data: typeTraining } = await sp.from('Type_training').select('id_type_tr
                         searchable
                     />
                 </UFormGroup>
+
+                <UFormGroup
+                    v-else
+                    label="Organisation"
+                    name="id_orga"
+                    class="min-w-40"
+                    required
+                >
+                    <USelectMenu
+                        v-model="state.id_orga"
+                        :options="Organisation?.map((o) => {
+                            return {
+                                id_orga: o.id_orga,
+                                name: o.name,
+                            }
+                        })"
+                        placeholder="Select an organisation"
+                        option-attribute="name"
+                        value-attribute="id_orga"
+                        searchable
+                    />
+                </UFormGroup>
+
+                <UToggle
+                    v-model="toggle"
+                    size="md"
+                />
 
                 <UFormGroup
                     label="Competence"

@@ -23,31 +23,31 @@ const toast = useToast()
 const emit = defineEmits(['deleted'])
 
 async function deleteOrga() {
-    const deleteTraining = async (idTraining: number) => {
-        const { error } = await sp.from('Registration').delete().eq('id_train', idTraining).select('*')
-        if (error) {
-            toast.add({
-                title: 'Error',
-                description: 'An error occurred while deleting the training',
-                color: 'red',
-            })
-        } else {
-            const { error } = await sp.from('Training').delete().eq('id_train', idTraining).select('*')
-            if (error) {
-                toast.add({
-                    title: 'Error',
-                    description: 'An error occurred while deleting the training',
-                    color: 'red',
-                })
-            }
-        }
-    }
+    // const deleteTraining = async (idTraining: number) => {
+    //     const { error } = await sp.from('Registration').delete().eq('id_train', idTraining).select('*')
+    //     if (error) {
+    //         toast.add({
+    //             title: 'Error',
+    //             description: 'An error occurred while deleting the training',
+    //             color: 'red',
+    //         })
+    //     } else {
+    //         const { error } = await sp.from('Training').delete().eq('id_train', idTraining).select('*')
+    //         if (error) {
+    //             toast.add({
+    //                 title: 'Error',
+    //                 description: 'An error occurred while deleting the training',
+    //                 color: 'red',
+    //             })
+    //         }
+    //     }
+    // }
 
-    for (const training of props.orga.Training) {
-        await deleteTraining(training.id_train)
-    }
+    // for (const training of props.orga.Training) {
+    //     await deleteTraining(training.id_train)
+    // }
 
-    const { error } = await sp.from('Organisation').delete().eq('id_orga', props.orga.id_orga).select()
+    const { error } = await sp.from('Organisation').update({ name: 'deleted', deleted: true } as never).eq('id_orga', props.orga.id_orga).select()
 
     if (error) {
         toast.add({
