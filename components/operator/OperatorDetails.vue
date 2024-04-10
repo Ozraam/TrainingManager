@@ -84,31 +84,15 @@ function downloadPDF() {
 }
 
 function deleteOperator() {
+    // TODO modify the delete function to annonymize the operator instead of deleting it
     // maybe not the right way for deleting an Operators but we are intern
-    sp.from('Registration').delete().eq('id_op', operator.value?.id_op as never).then(({ error }) => {
-        if (error) {
-            toast.add({
-                title: 'Error',
-                description: 'An error occurred while deleting the operator',
-                color: 'red',
-            })
-        } else {
-            sp.from('Operators').delete().eq('id_op', operator.value?.id_op as never).then(({ error }) => {
-                if (error) {
-                    toast.add({
-                        title: 'Error',
-                        description: 'An error occurred while deleting the operator',
-                        color: 'red',
-                    })
-                } else {
-                    toast.add({
-                        title: 'Success',
-                        description: 'The operator has been deleted',
-                    })
-                    navigateTo('/operator')
-                }
-            })
-        }
+    sp.from('Operators').update({ deleted: true, name: 'deleted', surname: 'deleted' } as never).eq('id_op', props.currentOperator).then(() => {
+        toast.add({
+            title: 'Operator deleted',
+            timeout: 2000,
+            icon: 'i-heroicons-trash-20-solid'
+        })
+        navigateTo('/operator')
     })
 }
 

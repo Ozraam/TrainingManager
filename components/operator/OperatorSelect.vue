@@ -16,7 +16,7 @@ const selectedPosition = ref(
     route.query.position ? parseInt(route.query.position as string) : undefined
 )
 
-const { data } = await sp.from('Position').select('*')
+const { data } = await sp.from('Position').select('*').neq('id_pos', 0)
 
 const positions : {id_pos: number, name: string}[] | null = data
 
@@ -42,7 +42,7 @@ function firstLetterToUpperCase(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-const { data: dataOp } = await sp.from('Operators').select('*').order('name')
+const { data: dataOp } = await sp.from('Operators').select('*').eq('deleted', 0).order('name')
 
 const operators : {id_op: number, name: string, surname: String, id_pos: number}[] | null = dataOp
 

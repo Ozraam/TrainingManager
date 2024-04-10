@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const sp = useSupabaseClient()
 onMounted(() => {
-    sp.from('Operators').select('id_op').order('name').then(({ data }) => {
+    sp.from('Operators').select('id_op').eq('deleted', 0).order('name').then(({ data }) => {
         if (!data || (data && data.length)) {
             navigateTo('/operator/add')
         }

@@ -10,7 +10,7 @@ const sp = useSupabaseClient()
 const toast = useToast()
 
 async function fetchHistory() {
-    const { data, error } = await sp.from('Competences').select('*, Training(*, Registration(*, Operators(*), State(*)))').eq('id_comp', props.competence.value) as any
+    const { data, error } = await sp.from('Competences').select('*, Training(*, Registration(*, Operators(*), State(*)))').eq('id_comp', props.competence.value).eq('Training.Registration.Operators.deleted', 0) as any
 
     if (error) {
         toast.add({
