@@ -45,9 +45,11 @@ const training = ref<{
 } | null>(null)
 
 async function fetchTraining() {
-    const { data } = await sp.from('Training').select('*, Registration(*, State(*), Operators(*)), Competences(*), Type_confirmation(*), Type_training(*), Teacher(*)').eq('id_train', props.currentTraining)
+    const { data } = await sp.from('Training').select('*, Registration(*, State(*), Operators(*)), Competences(*), Type_confirmation(*), Type_training(*), Teacher(*)').eq('id_train', props.currentTraining).eq('Registration.Operators.deleted', 0)
 
     training.value = data?.[0] ?? null
+
+    training.value!.Registration = training.value!.Registration.filter(r => r.Operators !== null)
 
     if (training.value) {
         isRegistrationEditing.value = Array(training.value.Registration.length).fill(false)
@@ -85,7 +87,7 @@ function downloadCertificate(reg: Registration) {
 const toast = useToast()
 
 function deleteTraining() {
-    // maybe not the right way for deleting an Operators but we are intern
+    // TODO: Not sure if this will stay
     sp.from('Registration').delete().eq('id_train', props.currentTraining).then(({ error }) => {
         if (error) {
             toast.add({
@@ -188,6 +190,7 @@ function toggleRegistrationEdit(index: number) {
                     <span class="font-bold">Teacher:</span>
 
                     <UButton
+                        v-if="training?.Teacher"
                         variant="link"
                         :to="'/teacher?search=' + training?.Teacher.name + ' ' + training?.Teacher.surname"
                     >

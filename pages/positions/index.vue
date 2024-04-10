@@ -30,7 +30,7 @@ type Position = {
 
 const positions : Ref<Position[]> = ref([])
 const fetchPositions = async () => {
-    const { data, error } = await sp.from('Position').select('*, Position_comp(*, Competences(*)), Operators(*)').order('id_pos')
+    const { data, error } = await sp.from('Position').select('*, Position_comp(*, Competences(*)), Operators(*)').eq('Operators.deleted', 0).order('id_pos')
     if (error) {
         // eslint-disable-next-line no-console
         console.error(error)

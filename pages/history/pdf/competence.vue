@@ -15,7 +15,7 @@ const toast = useToast()
 
 async function fetchHistory() {
     const { data, error } = await sp.from('Competences').select('*, Training(*, Registration(*, Operators(*), State(*)))')
-        .eq('id_comp', competence.value.value) as any
+        .eq('id_comp', competence.value.value).eq('Training.Registration.Operators.deleted', 0) as any
 
     if (error) {
         toast.add({

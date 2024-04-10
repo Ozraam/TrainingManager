@@ -113,7 +113,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 }
 
 const { data: trainings } = await sp.from('Training').select('id_train, name, date')
-const { data: operators } = await sp.from('Operators').select('id_op, name, surname, id_pos')
+const { data: operators } = await sp.from('Operators').select('id_op, name, surname, id_pos').eq('deleted', 0)
 const { data: positions } = await sp.from('Position').select('id_pos, name')
 const { data: states } = await sp.from('State').select('name, id_state')
 const registrations : Ref<Number[]> = ref([])

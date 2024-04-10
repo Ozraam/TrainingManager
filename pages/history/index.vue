@@ -31,7 +31,7 @@ const selectedPosition : Ref<{
 const sp = useSupabaseClient()
 
 async function fetchHistory() {
-    const { data: operatorsData } = await sp.from('Operators').select('id_op, name, surname') as any
+    const { data: operatorsData } = await sp.from('Operators').select('id_op, name, surname').eq('deleted', 0) as any
 
     const { data: competenceData } = await sp.from('Competences').select('id_comp, name') as any
 
