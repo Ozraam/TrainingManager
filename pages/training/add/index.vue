@@ -10,12 +10,11 @@ type State = {
     date: string | undefined,
     duration: number | undefined,
     cost: number | undefined,
-    id_teacher: number | undefined,
+    id_teacher: string | undefined,
     id_comp: number | undefined,
     id_conf: number | undefined,
     id_type_training: number | undefined,
     topic: string | undefined,
-    id_orga: number | undefined
 }
 
 const state = reactive({
@@ -28,10 +27,7 @@ const state = reactive({
     id_conf: undefined,
     id_type_training: undefined,
     topic: undefined,
-    id_orga: undefined
 })
-
-const toggle = ref(false)
 
 // check if date is valid
 // date format: dd/mm/yyyy or dd-mm-yyyy
@@ -43,7 +39,6 @@ function isDateValid(date: string | undefined) {
 
 function validate(state: State): FormError[] {
     const errors: FormError[] = []
-
     if (state.name ? state.name.trim() === '' : true) {
         errors.push({
             path: 'name',
@@ -79,10 +74,10 @@ function validate(state: State): FormError[] {
         })
     }
 
-    if (state.id_teacher === undefined && state.id_orga === undefined) {
+    if (state.id_teacher === undefined) {
         errors.push({
             path: 'id_teacher',
-            message: 'Teacher is required or \n an Organisation is required',
+            message: 'Select an element',
         })
     }
 
@@ -114,13 +109,6 @@ function validate(state: State): FormError[] {
         })
     }
 
-    if (state.id_orga === undefined && state.id_teacher === undefined) {
-        errors.push({
-            path: 'id_orga',
-            message: 'Teacher is required or \n an Organisation is required',
-        })
-    }
-
     return errors
 }
 
@@ -131,6 +119,7 @@ const loading = ref(false)
 async function onSubmit(event: FormSubmitEvent<State>) {
     if (loading.value) { return }
     loading.value = true
+    const teacher = event.data.id_teacher!.split(' ')
     const insert = [
         {
             name: event.data.name!,
@@ -141,11 +130,10 @@ async function onSubmit(event: FormSubmitEvent<State>) {
             id_conf: event.data.id_conf!,
             id_type_train: event.data.id_type_training!,
             topic: event.data.topic!,
-            id_teacher: event.data.id_teacher!,
-            id_orga: event.data.id_orga!
+            id_teacher: teacher[1] === 'true' ? teacher[0] : null,
+            id_orga: teacher[1] === 'false' ? teacher[0] : null,
         }
     ]
-
     const { error, data } = await sp.from('Training').insert(insert as never).select('id_train')
 
     if (error) {
@@ -178,6 +166,22 @@ let { data: Organisation } = await sp.from('Organisation').select('id_orga, name
 
 teachers = teachers?.filter((t:{ deleted: boolean}) => !t.deleted) ?? []
 Organisation = Organisation?.filter((o:{ deleted: boolean}) => !o.deleted) ?? []
+
+const tab = teachers.map((t) => {
+    return {
+        id: t.id_teacher,
+        name: t.name + ' ' + t.surname,
+        isTeacher: true
+    }
+})
+
+tab.push(...Organisation.map((o) => {
+    return {
+        id: o.id_orga,
+        name: o.name,
+        isTeacher: false
+    }
+}))
 </script>
 
 <template>
@@ -245,53 +249,25 @@ Organisation = Organisation?.filter((o:{ deleted: boolean}) => !o.deleted) ?? []
                 </UFormGroup>
 
                 <UFormGroup
-                    v-if="toggle"
-                    label="Teacher"
+                    label="Teacher or Organisation"
                     name="id_teacher"
                     class="min-w-40"
                     required
                 >
                     <USelectMenu
                         v-model="state.id_teacher"
-                        :options="teachers?.map((t) => {
+                        :options="tab?.map((t) => {
                             return {
-                                id_teacher: t.id_teacher,
-                                name: t.name + ' ' + t.surname,
+                                id_teacher: t.id + ' ' + t.isTeacher,
+                                name: t.name + (t.isTeacher ? ' (Teacher)' : ' (Organisation)'),
                             }
                         })"
-                        placeholder="Select a teacher"
+                        placeholder="Select a teacher or an organisation"
                         option-attribute="name"
                         value-attribute="id_teacher"
                         searchable
                     />
                 </UFormGroup>
-
-                <UFormGroup
-                    v-else
-                    label="Organisation"
-                    name="id_orga"
-                    class="min-w-40"
-                    required
-                >
-                    <USelectMenu
-                        v-model="state.id_orga"
-                        :options="Organisation?.map((o) => {
-                            return {
-                                id_orga: o.id_orga,
-                                name: o.name,
-                            }
-                        })"
-                        placeholder="Select an organisation"
-                        option-attribute="name"
-                        value-attribute="id_orga"
-                        searchable
-                    />
-                </UFormGroup>
-
-                <UToggle
-                    v-model="toggle"
-                    size="md"
-                />
 
                 <UFormGroup
                     label="Competence"
