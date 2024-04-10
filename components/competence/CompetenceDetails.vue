@@ -98,6 +98,7 @@ async function savePosition() {
     }
 }
 
+// eslint-disable-next-line prefer-const
 let { data: trainings, error } = await sp.from('Training').select('id_train, cost, date, name, duration, Registration(Operators(name, surname, id_op), State(name)), Teacher(name, surname, id_teacher)').eq('id_comp', props.currentCompetence).eq('Registration.Operators.deleted', 0)
 if (error) {
     throw error // TODO : Handle error
