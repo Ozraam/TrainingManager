@@ -83,12 +83,16 @@ onMounted(fetchAll)
 <template>
     <section class="">
         <PageHeader
-            title="Teachers"
+            title="Teachers/Organisations"
             title-link="/teacher"
             :actions="[
                 {
                     label: 'Add new teacher',
                     callBack: () => navigateTo('/teacher/add')
+                },
+                {
+                    label: 'Add new organisation',
+                    callBack: () => navigateTo('/teacher/addOrga')
                 }
             ]"
         />

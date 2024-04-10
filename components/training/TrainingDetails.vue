@@ -208,7 +208,7 @@ function toggleRegistrationEdit(index: number) {
 
                     <UButton
                         variant="link"
-                        :to="'/organisation?search=' + training?.Organisation.name"
+                        :to="'/teacher?search=' + training?.Organisation.name"
                     >
                         {{ training?.Organisation.name }}
                     </UButton>
