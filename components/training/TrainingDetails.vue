@@ -1,3 +1,4 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
 const props = defineProps({
     currentTraining: {
@@ -37,20 +38,25 @@ const training = ref<{
         name: string,
         surname: string,
         id_teacher: number,
+        deleted: boolean,
     },
     Competences: {
         id_comp: number,
         name: string,
     },
+    Organisation: {
+        id_orga: number,
+        name: string,
+        deleted: boolean,
+    },
 } | null>(null)
 
 async function fetchTraining() {
-    const { data } = await sp.from('Training').select('*, Registration(*, State(*), Operators(*)), Competences(*), Type_confirmation(*), Type_training(*), Teacher(*)').eq('id_train', props.currentTraining).eq('Registration.Operators.deleted', 0)
+    const { data } = await sp.from('Training').select('*, Registration(*, State(*), Operators(*)), Competences(*), Type_confirmation(*), Type_training(*), Teacher(*), Organisation(*)').eq('id_train', props.currentTraining)
 
     training.value = data?.[0] ?? null
 
-    training.value!.Registration = training.value!.Registration.filter(r => r.Operators !== null)
-
+    console.log(training.value)
     if (training.value) {
         isRegistrationEditing.value = Array(training.value.Registration.length).fill(false)
     }
@@ -186,7 +192,7 @@ function toggleRegistrationEdit(index: number) {
                     <span class="font-bold">Competence:</span> {{ training?.Competences.name }}
                 </p>
 
-                <p>
+                <p v-if="training?.Teacher">
                     <span class="font-bold">Teacher:</span>
 
                     <UButton
@@ -195,6 +201,17 @@ function toggleRegistrationEdit(index: number) {
                         :to="'/teacher?search=' + training?.Teacher.name + ' ' + training?.Teacher.surname"
                     >
                         {{ training?.Teacher.name }} {{ training?.Teacher.surname }}
+                    </UButton>
+                </p>
+
+                <p v-if="training?.Organisation">
+                    <span class="font-bold">Organisation:</span>
+
+                    <UButton
+                        variant="link"
+                        :to="'/teacher?search=' + training?.Organisation.name"
+                    >
+                        {{ training?.Organisation.name }}
                     </UButton>
                 </p>
 

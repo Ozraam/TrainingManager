@@ -5,12 +5,10 @@ const sp = useSupabaseClient()
 
 const state = reactive({
     name: undefined,
-    surname: undefined
 })
 
 type State = {
     name: string | undefined,
-    surname: string | undefined
 }
 
 function validate(state: State): FormError[] {
@@ -20,13 +18,6 @@ function validate(state: State): FormError[] {
         errors.push({
             path: 'name',
             message: 'Name is required',
-        })
-    }
-
-    if (state.surname ? state.surname.trim() === '' : true) {
-        errors.push({
-            path: 'surname',
-            message: 'Surname is required',
         })
     }
 
@@ -41,11 +32,10 @@ function onSubmit(event: FormSubmitEvent<State>) {
     const insert = [
         {
             name: event.data.name!,
-            surname: event.data.surname!,
         }
     ]
 
-    sp.from('Teacher').insert(insert as never).then(({ error }) => {
+    sp.from('Organisation').insert(insert as never).then(({ error }) => {
         if (error) {
             loading.value = false
             toast.add({
@@ -83,7 +73,7 @@ function onSubmit(event: FormSubmitEvent<State>) {
 
         <div>
             <h2 class="text-xl text-center mb-5">
-                Add new teacher
+                Add new Organisation
             </h2>
 
             <UForm
@@ -98,14 +88,6 @@ function onSubmit(event: FormSubmitEvent<State>) {
                     required
                 >
                     <UInput v-model="state.name" />
-                </UFormGroup>
-
-                <UFormGroup
-                    required
-                    label="Surname"
-                    name="surname"
-                >
-                    <UInput v-model="state.surname" />
                 </UFormGroup>
 
                 <UButton
