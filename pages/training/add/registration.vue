@@ -5,16 +5,16 @@ const sp = useSupabaseClient()
 
 type State = {
     id_train: number | undefined,
-    id_op: number | undefined,
+    id_op: number[] | undefined,
     date: string | undefined,
     state: number | undefined,
 }
 
 const state = reactive<State>({
     id_train: undefined,
-    id_op: undefined,
+    id_op: [],
     date: undefined,
-    state: undefined,
+    state: 1,
 })
 
 // check if date is valid
@@ -71,16 +71,28 @@ const toast = useToast()
 const loading = ref(false)
 
 async function onSubmit(event: FormSubmitEvent<State>) {
+    if (event.data.id_op?.length === 0) {
+        toast.add({
+            title: 'Error',
+            description: 'Operator is required',
+            color: 'red',
+        })
+        return
+    }
+
     if (loading.value) { return }
     loading.value = true
-    const insert = [
+    const preInsert =
         {
             id_train: event.data.id_train!,
-            id_op: event.data.id_op!,
             date: event.data.date!.split('/').reverse().join('-'),
             id_state: event.data.state!,
         }
-    ] as never[]
+
+    const insert = event.data.id_op!.map(idOp => ({
+        id_op: idOp,
+        ...preInsert,
+    })) as never[]
 
     const { error, data } = await sp.from('Registration').insert(insert).select('id_train')
 
@@ -100,18 +112,32 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     }
 }
 
-const { data: training } = await sp.from('Training').select('id_train, name')
-const { data: operators } = await sp.from('Operators').select('id_op, name, surname')
+const { data: trainings } = await sp.from('Training').select('id_train, name, date')
+const { data: operators } = await sp.from('Operators').select('id_op, name, surname, id_pos').eq('deleted', 0)
+const { data: positions } = await sp.from('Position').select('id_pos, name')
 const { data: states } = await sp.from('State').select('name, id_state')
-
+const registrations : Ref<Number[]> = ref([])
 const route = useRoute()
+
+const positionSelected : Ref<string> = ref(positions![0].id_pos)
+
+async function changeDate(trainingId: number) {
+    const training = trainings?.find(t => t.id_train === trainingId)
+    state.date = (training!.date as string).split('-').reverse().join('/')
+
+    const { data } = await sp.from('Registration').select('id_op').eq('id_train', trainingId)
+    registrations.value = data!.map((d: { id_op: number }) => d.id_op)
+
+    state.id_op = state.id_op?.filter(id => !registrations.value.includes(id))
+}
 
 if (route.query.training) {
     state.id_train = parseInt(route.query.training as string)
+    changeDate(state.id_train!)
 }
 
 if (route.query.operator) {
-    state.id_op = parseInt(route.query.operator as string)
+    state.id_op = (route.query.operator as string).split(',').map(id => parseInt(id))
 }
 
 if (route.query.date) {
@@ -121,13 +147,57 @@ if (route.query.date) {
 if (route.query.state) {
     state.state = parseInt(route.query.state as string)
 }
+
+function setPositionFilter() {
+    isModalOpen.value = false
+
+    state.id_op = operators?.filter(o => o.id_pos === parseInt(positionSelected.value)).map(o => o.id_op).filter(id => !registrations.value.includes(id))
+}
+
+const isModalOpen = ref(false)
 </script>
 
 <template>
     <section>
+        <UModal
+            v-model="isModalOpen"
+        >
+            <UCard>
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl">
+                            Select all operator of position
+                        </h2>
+
+                        <UButton
+                            color="gray"
+                            variant="ghost"
+                            icon="i-heroicons-x-mark-20-solid"
+                            class="-my-1"
+                            @click="isModalOpen = false"
+                        />
+                    </div>
+                </template>
+
+                <div class="flex flex-col gap-3 justify-center items-center">
+                    <USelect
+                        v-model="positionSelected"
+                        :options="positions"
+                        value-attribute="id_pos"
+                        option-attribute="name"
+                    />
+
+                    <UButton
+                        label="Apply"
+                        @click="setPositionFilter"
+                    />
+                </div>
+            </UCard>
+        </UModal>
+
         <PageHeader
             title="Training"
-            title-link="/training/1"
+            title-link="/training"
             :other-links="[
                 {
                     label: 'Add new training',
@@ -159,11 +229,12 @@ if (route.query.state) {
                 >
                     <USelectMenu
                         v-model="state.id_train"
-                        :options="training"
+                        :options="trainings"
                         value-attribute="id_train"
                         option-attribute="name"
                         placeholder="Select training"
                         searchable
+                        @change="changeDate"
                     />
                 </UFormGroup>
 
@@ -175,7 +246,7 @@ if (route.query.state) {
                 >
                     <USelectMenu
                         v-model="state.id_op"
-                        :options="operators?.map((o) => {
+                        :options="operators?.filter(o => !registrations.includes(o.id_op)).map((o) => {
                             return {
                                 id_op: o.id_op,
                                 name: o.name + ' ' + o.surname,
@@ -185,8 +256,15 @@ if (route.query.state) {
                         option-attribute="name"
                         placeholder="Select operator"
                         searchable
+                        multiple
                     />
                 </UFormGroup>
+
+                <UButton
+                    label="Select for position"
+                    size="2xs"
+                    @click="isModalOpen = true"
+                />
 
                 <UFormGroup
                     label="Date"

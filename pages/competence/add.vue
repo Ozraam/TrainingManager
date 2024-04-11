@@ -126,7 +126,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 
                 <UFormGroup
                     required
-                    label="Validity in days"
+                    label="Frequency in days"
                     name="tmp_validity"
                 >
                     <UInput

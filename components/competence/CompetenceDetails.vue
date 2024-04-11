@@ -7,6 +7,7 @@ const props = defineProps({
 })
 
 const sp = useSupabaseClient()
+
 async function fetchCompetecence() {
     const { data } = await sp.from('Competences').select('*, Position_comp(*)').eq('id_comp', props.currentCompetence)
 
@@ -97,11 +98,17 @@ async function savePosition() {
     }
 }
 
-const { data: trainings, error } = await sp.from('Training').select('id_train, cost, date, name, duration, Registration(Operators(name, surname, id_op), State(name)), Teacher(name, surname, id_teacher)').eq('id_comp', props.currentCompetence)
-
+// eslint-disable-next-line prefer-const
+let { data: trainings, error } = await sp.from('Training').select('id_train, cost, date, name, duration, Registration(Operators(name, surname, id_op), State(name)), Teacher(name, surname, id_teacher)').eq('id_comp', props.currentCompetence).eq('Registration.Operators.deleted', 0)
 if (error) {
     throw error // TODO : Handle error
 }
+trainings = trainings.map((t) => {
+    return {
+        ...t,
+        Registration: t.Registration.filter(r => r.Operators)
+    }
+})
 
 const toast = useToast()
 
@@ -278,6 +285,7 @@ function toggleEdit() {
                                 <strong>{{ $t('competence.training.instructor') }}</strong>
 
                                 : <UButton
+                                    v-if="item.training.Teacher"
                                     :to="`/teacher?search=${item.training.Teacher.name} ${item.training.Teacher.surname}`"
                                     variant="link"
                                 >

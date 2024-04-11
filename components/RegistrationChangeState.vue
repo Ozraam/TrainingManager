@@ -143,7 +143,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 }
 
 const { data: training } = await sp.from('Training').select('id_train, name')
-const { data: operators } = await sp.from('Operators').select('id_op, name, surname')
+const { data: operators } = await sp.from('Operators').select('id_op, name, surname').eq('deleted', 0)
 const { data: states } = await sp.from('State').select('name, id_state')
 </script>
 

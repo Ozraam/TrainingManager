@@ -93,7 +93,7 @@ function downloadCertificate(reg: Registration) {
 const toast = useToast()
 
 function deleteTraining() {
-    // maybe not the right way for deleting an Operators but we are intern
+    // TODO: Not sure if this will stay
     sp.from('Registration').delete().eq('id_train', props.currentTraining).then(({ error }) => {
         if (error) {
             toast.add({
@@ -196,6 +196,7 @@ function toggleRegistrationEdit(index: number) {
                     <span class="font-bold">Teacher:</span>
 
                     <UButton
+                        v-if="training?.Teacher"
                         variant="link"
                         :to="'/teacher?search=' + training?.Teacher.name + ' ' + training?.Teacher.surname"
                     >

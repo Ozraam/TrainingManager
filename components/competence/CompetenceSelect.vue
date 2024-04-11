@@ -16,7 +16,7 @@ const selectedPosition = ref(
     route.query.position ? parseInt(route.query.position as string) : undefined
 )
 
-const { data } = await sp.from('Position').select('*')
+const { data } = await sp.from('Position').select('*').neq('id_pos', 0)
 
 const positions : {id_pos: number, name: string}[] | null = data
 const selectedItem = ref<Array<number | undefined>>([selectedPosition.value, parseInt(props.currentCompetence)])

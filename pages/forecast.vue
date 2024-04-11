@@ -1,9 +1,25 @@
+<!-- eslint-disable no-console -->
 <script setup lang="ts">
 import type { FormError, FormSubmitEvent } from '#ui/types'
 
 const sp = useSupabaseClient()
 
 const yearsBudget: Ref<{ year: number, budget: number }[] | undefined> = ref(undefined)
+const yearsSpend: Ref<{ year: number, spend: number }[]> = ref([])
+const { data } = await sp.from('Training').select('id_train, cost, date, Registration(count)')
+// console.log(data)
+data?.forEach((d: { id_train: number, cost: number, date: string, Registration: Array<{count: number}> }) => {
+    const year = new Date(d.date).getFullYear()
+    const spend = d.cost * d.Registration[0].count
+    const yearSpend = yearsSpend.value?.find(y => y.year === year)
+    if (yearSpend) {
+        yearSpend.spend += spend
+    } else {
+        yearsSpend.value?.push({ year, spend })
+    }
+})
+
+console.log(yearsSpend.value)
 
 function fetchYearsBudget() {
     sp.from('Forecast').select('year, budget').then(({ data, error }) => {
@@ -156,6 +172,10 @@ function addBudget(event: FormSubmitEvent<State>) {
 
                         <p>
                             Budget: {{ yearBudget.budget }} €
+                        </p>
+
+                        <p>
+                            Spend: {{ yearsSpend.find(y => y.year === yearBudget.year)?.spend ?? 'no data for this year' }} {{ yearsSpend.find(y => y.year === yearBudget.year) ? '€' : '' }}
                         </p>
                     </UCard>
                 </div>

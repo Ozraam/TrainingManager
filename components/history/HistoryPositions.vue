@@ -10,7 +10,7 @@ const sp = useSupabaseClient()
 const toast = useToast()
 
 async function fetchPositions() {
-    const { data, error } = await sp.from('Position').select('*, Operators(*, Registration(*, Training(*), State(*)))')
+    const { data, error } = await sp.from('Position').select('*, Operators(*, Registration(*, Training(*), State(*)))').neq('id_pos', 0).eq('Operators.deleted', 0)
 
     if (error) {
         toast.add({

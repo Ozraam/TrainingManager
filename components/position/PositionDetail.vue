@@ -54,6 +54,7 @@ const toast = useToast()
 const emit = defineEmits(['deleted'])
 
 async function deletePosition() {
+    // TODO : Maybe don't delete if there are operators assigned to this position
     const { data } = await sp.from('Operators').select('id_op').eq('id_pos', props.position.id_pos)
     if (data?.length) {
         toast.add({
