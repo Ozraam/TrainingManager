@@ -2,7 +2,7 @@
 import type { FormError, FormSubmitEvent } from '#ui/types'
 
 const props = defineProps({
-    teacher: {
+    orga: {
         type: Object,
         required: true,
     },
@@ -27,12 +27,10 @@ const sp = useSupabaseClient()
 
 type State = {
     name: string | undefined,
-    surname: string | undefined,
 }
 
 const state = reactive({
-    name: props.teacher.name,
-    surname: props.teacher.surname,
+    name: props.orga.name,
 })
 
 function validate(state: State): FormError[] {
@@ -42,13 +40,6 @@ function validate(state: State): FormError[] {
         errors.push({
             path: 'name',
             message: 'Name is required',
-        })
-    }
-
-    if (state.surname ? state.surname.trim() === '' : true) {
-        errors.push({
-            path: 'surname',
-            message: 'Surname is required',
         })
     }
 
@@ -65,11 +56,10 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     const insert = [
         {
             name: event.data.name!,
-            surname: event.data.surname!,
         }
     ]
 
-    const { error } = await sp.from('Teacher').update(insert as never).eq('id_teacher', props.teacher.id_teacher).select()
+    const { error } = await sp.from('Organisation').update(insert as never).eq('id_orga', props.orga.id_orga).select()
 
     if (error) {
         toast.add({
@@ -95,7 +85,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        Edit operator
+                        Edit Organisation
                     </h3>
 
                     <UButton
@@ -120,14 +110,6 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                     required
                 >
                     <UInput v-model="state.name" />
-                </UFormGroup>
-
-                <UFormGroup
-                    required
-                    label="Surname"
-                    name="surname"
-                >
-                    <UInput v-model="state.surname" />
                 </UFormGroup>
 
                 <UButton

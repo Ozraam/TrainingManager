@@ -10,7 +10,7 @@ type State = {
     date: string | undefined,
     duration: number | undefined,
     cost: number | undefined,
-    id_teacher: number | undefined,
+    id_teacher: string | undefined,
     id_comp: number | undefined,
     id_conf: number | undefined,
     id_type_training: number | undefined,
@@ -39,7 +39,6 @@ function isDateValid(date: string | undefined) {
 
 function validate(state: State): FormError[] {
     const errors: FormError[] = []
-
     if (state.name ? state.name.trim() === '' : true) {
         errors.push({
             path: 'name',
@@ -78,7 +77,7 @@ function validate(state: State): FormError[] {
     if (state.id_teacher === undefined) {
         errors.push({
             path: 'id_teacher',
-            message: 'Teacher is required',
+            message: 'Select an element',
         })
     }
 
@@ -120,20 +119,21 @@ const loading = ref(false)
 async function onSubmit(event: FormSubmitEvent<State>) {
     if (loading.value) { return }
     loading.value = true
+    const teacher = event.data.id_teacher!.split(' ')
     const insert = [
         {
             name: event.data.name!,
             date: event.data.date!.split('/').reverse().join('-'),
             duration: event.data.duration!,
             cost: event.data.cost!,
-            id_teacher: event.data.id_teacher!,
             id_comp: event.data.id_comp!,
             id_conf: event.data.id_conf!,
             id_type_train: event.data.id_type_training!,
             topic: event.data.topic!,
+            id_teacher: teacher[1] === 'true' ? teacher[0] : null,
+            id_orga: teacher[1] === 'false' ? teacher[0] : null,
         }
     ]
-
     const { error, data } = await sp.from('Training').insert(insert as never).select('id_train')
 
     if (error) {
@@ -158,10 +158,30 @@ async function onSubmit(event: FormSubmitEvent<State>) {
     }
 }
 
-const { data: teachers } = await sp.from('Teacher').select('id_teacher, name, surname')
+let { data: teachers } = await sp.from('Teacher').select('id_teacher, name, surname, deleted')
 const { data: competences } = await sp.from('Competences').select('id_comp, name')
 const { data: confirmation } = await sp.from('Type_confirmation').select('id_conf, name')
 const { data: typeTraining } = await sp.from('Type_training').select('id_type_train, name')
+let { data: Organisation } = await sp.from('Organisation').select('id_orga, name, deleted')
+
+teachers = teachers?.filter((t:{ deleted: boolean}) => !t.deleted) ?? []
+Organisation = Organisation?.filter((o:{ deleted: boolean}) => !o.deleted) ?? []
+
+const tab = teachers.map((t) => {
+    return {
+        id: t.id_teacher,
+        name: t.name + ' ' + t.surname,
+        isTeacher: true
+    }
+})
+
+tab.push(...Organisation.map((o) => {
+    return {
+        id: o.id_orga,
+        name: o.name,
+        isTeacher: false
+    }
+}))
 </script>
 
 <template>
@@ -229,20 +249,20 @@ const { data: typeTraining } = await sp.from('Type_training').select('id_type_tr
                 </UFormGroup>
 
                 <UFormGroup
-                    label="Teacher"
+                    label="Teacher or Organisation"
                     name="id_teacher"
                     class="min-w-40"
                     required
                 >
                     <USelectMenu
                         v-model="state.id_teacher"
-                        :options="teachers?.map((t) => {
+                        :options="tab?.map((t) => {
                             return {
-                                id_teacher: t.id_teacher,
-                                name: t.name + ' ' + t.surname,
+                                id_teacher: t.id + ' ' + t.isTeacher,
+                                name: t.name + (t.isTeacher ? ' (Teacher)' : ' (Organisation)'),
                             }
                         })"
-                        placeholder="Select a teacher"
+                        placeholder="Select a teacher or an organisation"
                         option-attribute="name"
                         value-attribute="id_teacher"
                         searchable

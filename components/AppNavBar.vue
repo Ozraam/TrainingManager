@@ -40,7 +40,7 @@ const links = computed(() => user.value
                 icon: 'i-heroicons-academic-cap'
             },
             {
-                label: 'Teacher',
+                label: 'Teacher/Organisation',
                 to: '/teacher',
                 icon: 'i-heroicons-academic-cap'
             },
