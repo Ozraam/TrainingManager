@@ -117,6 +117,10 @@ onMounted(fetchAll)
             </UInput>
         </div>
 
+        <div class="gap-3 m-3 text-xl">
+            <h1> {{ firstLetterToUpperCase("all teacher:") }} </h1>
+        </div>
+
         <div class="flex flex-wrap gap-3 m-3">
             <TeacherDetail
                 v-for="teacher in filteredTeachers"
@@ -124,6 +128,10 @@ onMounted(fetchAll)
                 :teacher="teacher"
                 @deleted="fetchTeacher"
             />
+        </div>
+
+        <div class="gap-3 m-3 text-xl">
+            <h1> {{ firstLetterToUpperCase('all organisation:') }} </h1>
         </div>
 
         <div class="flex flex-wrap gap-3 m-3">
