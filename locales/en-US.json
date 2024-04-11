@@ -77,5 +77,9 @@
         "ConfirmError": "Password and confirm password are not the same",
         "Error": "a problem has occured, please try again later",
         "LenghtError": "Password must be at least 6 characters long"
+    },
+    "unauthorized": {
+        "title": "Unauthorized",
+        "description": "You are not authorized to access this page, please wait for the administrator to validate your account"
     }
 }
