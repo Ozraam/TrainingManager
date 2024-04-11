@@ -81,5 +81,11 @@
     "unauthorized": {
         "title": "Unauthorized",
         "description": "You are not authorized to access this page, please wait for the administrator to validate your account"
+    },
+    "auth": {
+        "callback": {
+            "title": "Callback",
+            "description": "Welcome to the callback page"
+        }
     }
 }

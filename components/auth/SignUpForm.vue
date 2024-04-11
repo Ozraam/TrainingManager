@@ -66,6 +66,9 @@ async function signup(event: FormSubmitEvent<State>) {
     const user = await sp.auth.signUp({
         email: event.data.mail!,
         password: event.data.password!,
+        options: {
+            emailRedirectTo: '/auth/callback?signup=true'
+        }
     })
 
     if (user.error) {
