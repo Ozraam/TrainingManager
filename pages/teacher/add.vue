@@ -72,9 +72,13 @@ function onSubmit(event: FormSubmitEvent<State>) {
             title="Teachers/Oraganisation"
             title-link="/teacher"
             :other-links="[{
-                label: 'Add new teacher',
-                to: '/teacher/add'
-            }]"
+                               label: 'Add new teacher',
+                               to: '/teacher/add'
+                           },
+                           {
+                               label: 'Add new organisation',
+                               to: '/teacher/addOrga'
+                           }]"
         />
 
         <div>
