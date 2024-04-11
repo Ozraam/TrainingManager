@@ -10,6 +10,10 @@ if (!trainingId.value) {
 }
 const training = ref<Training>()
 
+const numberOfTrainingDone = ref(0)
+const numberOfTrainingDelayed = ref(0)
+const totalTraining = ref(0)
+
 onMounted(async () => {
     const { data, error } = await sp.from('Training').select('*, Competences(*), Registration(*, Operators(*), State(*))').eq('id_train', trainingId.value).single()
     if (error) {
@@ -19,6 +23,10 @@ onMounted(async () => {
     }
 
     training.value = data
+
+    numberOfTrainingDone.value = training.value.Registration.filter(registration => registration.State.name === 'done').length
+    numberOfTrainingDelayed.value = training.value.Registration.filter(registration => registration.State.name === 'delayed').length
+    totalTraining.value = training.value.Registration.length
 })
 </script>
 
@@ -36,6 +44,38 @@ onMounted(async () => {
                 <h2>
                     {{ training.name }}
                 </h2>
+
+                <div class="flex justify-center">
+                    <div class="flex w-fit gap-3">
+                        <div class="flex flex-col">
+                            <span>Done</span>
+
+                            <span>{{ numberOfTrainingDone }}</span>
+                        </div>
+
+                        <UDivider
+                            orientation="vertical"
+                            size="md"
+                        />
+
+                        <div class="flex flex-col">
+                            <span>Delayed</span>
+
+                            <span>{{ numberOfTrainingDelayed }}</span>
+                        </div>
+
+                        <UDivider
+                            orientation="vertical"
+                            size="md"
+                        />
+
+                        <div class="flex flex-col">
+                            <span>Total</span>
+
+                            <span>{{ totalTraining }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div>

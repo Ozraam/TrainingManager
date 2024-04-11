@@ -46,6 +46,7 @@ export type Registration = {
     Operators: Operator;
     State: State;
     filename: string;
+    deleted: boolean;
 };
 
 export type PositionComp = {
