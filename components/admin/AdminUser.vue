@@ -8,7 +8,7 @@ const props = defineProps({
 const emit = defineEmits(['update'])
 const sp = useSupabaseClient()
 function switchAllowState(state: boolean) {
-    sp.from('Authorization').update({ is_allowed: state } as never).eq('user_id', props.user.user_id).then(() => {
+    sp.from('Authorization').update({ is_allowed: state, is_admin: false } as never).eq('user_id', props.user.user_id).then(() => {
         emit('update')
     })
 }
