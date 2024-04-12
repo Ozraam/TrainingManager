@@ -1,10 +1,42 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
     user: {
         type: Object as PropType<{ user_id: string, email: string, is_allowed: boolean, is_admin: boolean }>,
         required: true
     }
 })
+const emit = defineEmits(['update'])
+const sp = useSupabaseClient()
+function switchAllowState(state: boolean) {
+    sp.from('Authorization').update({ is_allowed: state } as never).eq('user_id', props.user.user_id).then(() => {
+        emit('update')
+    })
+}
+
+const toast = useToast()
+function changeState(confirmMessage : string, state: boolean, switchFunction: (state: boolean) => void) {
+    toast.add({
+        title: 'Are you sure ?',
+        description: confirmMessage,
+        actions: [
+            {
+                label: 'Yes',
+                click: () => switchFunction(state),
+                color: 'green'
+            },
+            {
+                label: 'Cancel',
+                color: 'red'
+            }
+        ]
+    })
+}
+
+function switchAdminState(state: boolean) {
+    sp.from('Authorization').update({ is_admin: state } as never).eq('user_id', props.user.user_id).then(() => {
+        emit('update')
+    })
+}
 
 const userAdmin = useSupabaseUser()
 </script>
@@ -41,6 +73,7 @@ const userAdmin = useSupabaseUser()
                     color="green"
                     size="sm"
                     class="flex justify-center"
+                    @click="changeState('Do you want to disallowed this user to use the application ?', false, switchAllowState)"
                 >
                     Allowed
                 </UButton>
@@ -50,6 +83,7 @@ const userAdmin = useSupabaseUser()
                     color="red"
                     size="sm"
                     class="flex justify-center"
+                    @click="changeState('Do you want to allowed this user to use the application ?', true, switchAllowState)"
                 >
                     Not Allowed
                 </UButton>
@@ -59,6 +93,7 @@ const userAdmin = useSupabaseUser()
                     color="green"
                     size="sm"
                     class="flex justify-center"
+                    @click="changeState('Do you want to revoke admin right from this user ?', false, switchAdminState)"
                 >
                     <span>
                         Admin
@@ -70,6 +105,7 @@ const userAdmin = useSupabaseUser()
                     color="red"
                     size="sm"
                     class="flex justify-center"
+                    @click="changeState('Do you want to give admin right from this user ? (Warning: this user will be allowed to use the admin panel fully and revoke admin right)', true, switchAdminState)"
                 >
                     User
                 </UButton>
