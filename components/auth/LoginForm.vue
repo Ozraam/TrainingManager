@@ -4,6 +4,12 @@ import type { FormError, FormSubmitEvent } from '#ui/types'
 
 const sp = useSupabaseClient()
 
+const user = useSupabaseUser()
+
+if (user.value) {
+    navigateTo('/')
+}
+
 const loading = ref(false)
 const error = ref(false)
 

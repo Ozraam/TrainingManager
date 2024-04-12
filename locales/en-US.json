@@ -77,5 +77,20 @@
         "ConfirmError": "Password and confirm password are not the same",
         "Error": "a problem has occured, please try again later",
         "LenghtError": "Password must be at least 6 characters long"
+    },
+    "unauthorized": {
+        "title": "Unauthorized",
+        "description": "You are not authorized to access this page, please wait for the administrator to validate your account"
+    },
+    "auth": {
+        "callback": {
+            "title": "Callback",
+            "description": "Welcome to the callback page"
+        }
+    },
+    "adminPanel": {
+        "title": "Admin Panel",
+        "welcome": "Welcome to the admin panel",
+        "description": "You can manage the users and validate their account"
     }
 }
