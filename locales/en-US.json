@@ -87,5 +87,10 @@
             "title": "Callback",
             "description": "Welcome to the callback page"
         }
+    },
+    "adminPanel": {
+        "title": "Admin Panel",
+        "welcome": "Welcome to the admin panel",
+        "description": "You can manage the users and validate their account"
     }
 }

@@ -2,6 +2,23 @@
 <script setup lang="ts">
 const route = useRoute()
 const user = useSupabaseUser()
+const sp = useSupabaseClient()
+
+const admindLink : Ref<any[]> = ref([])
+
+if (user.value) {
+    sp.from('Authorization').select('is_admin').eq('user_id', user.value.id).single().then(({ data, error }) => {
+        if (error) {
+            console.error(error)
+        } else if (data.is_admin) {
+            admindLink.value.push([{
+                label: 'Admin Panel',
+                to: '/admin-panel',
+                icon: 'i-heroicons-home'
+            }])
+        }
+    })
+}
 
 const links = computed(() => user.value
     ? [
@@ -70,7 +87,7 @@ const links = computed(() => user.value
             }
 
         ]
-    ]
+    ].concat(admindLink.value)
     : [
         [
             {
