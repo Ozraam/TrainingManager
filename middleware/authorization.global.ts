@@ -15,6 +15,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
     if (error) {
         await sp.from('Authorization').insert({
             user_id: user.value.id,
+            email: user.value.email,
             is_allowed: false,
         })
         return navigateTo('/')

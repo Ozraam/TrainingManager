@@ -13,8 +13,9 @@ if (!route.query.signup) {
 }
 
 sp.from('Authorization').insert({
-    user_id: user.value.id,
+    user_id: user.value?.id,
     is_allowed: false,
+    email: user.value?.email
 }).then(() => {
     navigateTo('/')
 })
