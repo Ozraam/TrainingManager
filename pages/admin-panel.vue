@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 const sp = useSupabaseClient()
 const userCurrent = useSupabaseUser()
 
@@ -17,6 +19,14 @@ function fetchAllUser() {
         }
     })
 }
+
+const emailSearch = ref('')
+
+const userFiltered = computed(() => {
+    return allUser.value.filter((u) => {
+        return u.email.includes(emailSearch.value)
+    })
+})
 
 fetchAllUser()
 </script>
@@ -38,9 +48,17 @@ fetchAllUser()
             </p>
         </div>
 
+        <div class="flex justify-center my-4">
+            <UInput
+                v-model="emailSearch"
+                placeholder="Search..."
+                icon="i-heroicons-magnifying-glass-20-solid"
+            />
+        </div>
+
         <ul class="flex flex-col items-center">
             <li
-                v-for="user in allUser"
+                v-for="user in userFiltered"
                 :key="user.user_id"
                 class="user-admin"
             >
