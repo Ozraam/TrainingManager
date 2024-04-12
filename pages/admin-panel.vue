@@ -1,12 +1,18 @@
 <script setup lang="ts">
 const sp = useSupabaseClient()
+const userCurrent = useSupabaseUser()
 
 const allUser = ref([])
 
 function fetchAllUser() {
     sp.from('Authorization').select('user_id, email, is_allowed, is_admin').then(({ data, error }) => {
+        // check if user is admin
+        if (data.find((user : any) => user.user_id === userCurrent.value?.id)?.is_admin === false) {
+            navigateTo('/')
+        }
+
         if (error) {
-            // eslint-disable-next-line no-console
+            navigateTo('/')
             console.error(error)
         } else {
             allUser.value = data
