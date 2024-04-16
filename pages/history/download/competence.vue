@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import * as excel from 'exceljs'
+
 const route = useRoute()
 
 if (!route.query.competence) {
@@ -14,7 +16,7 @@ const sp = useSupabaseClient()
 const toast = useToast()
 
 async function fetchHistory() {
-    const { data, error } = await sp.from('Competences').select('*, Training(*, Registration(*, Operators(*), State(*)))')
+    const { data, error } = await sp.from('Competences').select('*, Training(*, Competences(name, tmp_validity), Registration(*, Operators(*), State(*)))')
         .eq('id_comp', competence.value.value).eq('Training.Registration.Operators.deleted', 0) as any
 
     if (error) {
@@ -54,122 +56,68 @@ const competenceData = ref({})
 
 fetchHistory().then((data) => {
     competenceData.value = data
+    download()
 })
 
-const page : Ref<HTMLElement | null> = ref(null)
-const downloadButton : Ref<HTMLElement | null> = ref(null)
+function download() {
+    const worksheet = new excel.Workbook()
+    const sheet = worksheet.addWorksheet('History - ' + competence.value.label)
 
-function replaceAllLatvianLongVowelsInHtmlElement(element: ChildNode, _index: number, _array: NodeListOf<ChildNode>) {
-    // replace all long vowels with short ones in the text of the element children check if the element is a text node
-    if (element.nodeType === Node.TEXT_NODE) {
-        element.textContent = element.textContent!
-            .replace(/ā/g, 'aa')
-            .replace(/ē/g, 'ee')
-            .replace(/ī/g, 'ii')
-            .replace(/ū/g, 'uu')
-            .replace(/Ā/g, 'AA')
-            .replace(/Ē/g, 'EE')
-            .replace(/Ī/g, 'II')
-            .replace(/Ū/g, 'UU')
-            .replace(/ģ/g, 'g')
-            .replace(/ķ/g, 'k')
-            .replace(/ļ/g, 'l')
-            .replace(/ņ/g, 'n')
-    } else {
-        // if the element is not a text node, then we need to check its children
-        element.childNodes.forEach(replaceAllLatvianLongVowelsInHtmlElement)
-    }
-}
+    sheet.columns = [
+        { header: 'Operator', key: 'operator', width: 20 },
+        { header: 'Date', key: 'date', width: 20 },
+        { header: 'Training', key: 'training', width: 40 },
+        { header: 'State', key: 'state', width: 20 },
+        { header: 'Price', key: 'price', width: 20 },
+        { header: 'Frequency', key: 'frequency', width: 20 },
+        { header: 'Competence', key: 'competence', width: 20 },
+    ]
 
-function downloadPDF() {
-    replaceAllLatvianLongVowelsInHtmlElement(page.value!, 0, page.value!.childNodes)
-    downloadButton.value!.style.opacity = '0'
-    const name = competence.value.label.replace(' ', '_') + new Date().toLocaleDateString() + '.pdf'
-    exportToPDF(name, page.value!, {}, { html2canvas: { scale: 0.8 } })
-    downloadButton.value!.style.opacity = ''
+    const rows = Object.entries(competenceData.value).sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime()).map(([date, registrations]) => {
+        return registrations.map(({ reg, training }) => {
+            return {
+                operator: `${reg.Operators.name} ${reg.Operators.surname}`,
+                date: new Date(date).toLocaleDateString(),
+                training: training.name,
+                state: reg.State.name,
+                price: training.cost,
+                frequency: training.Competences.tmp_validity,
+                competence: training.Competences.name,
+            }
+        })
+    }).flat()
+
+    // sort rows by operator name
+    rows.sort((a, b) => a.operator.localeCompare(b.operator))
+    sheet.addRows(rows)
+
+    worksheet.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `History - ${competence.value.label}.xlsx`
+        a.click()
+        URL.revokeObjectURL(url)
+
+        setTimeout(() => {
+            navigateTo('/history?competence=' + competence.value.value)
+        }, 1000)
+    })
 }
 </script>
 
 <template>
-    <div class="flex justify-center gap-5">
-        <div
-            ref="page"
-            class="page text-black relative"
-        >
-            <h2 class="text-xl">
+    <div class="flex justify-center gap-5 items-center text-center">
+        <div>
+            <h2 class="text-2xl">
                 History of
                 <span class="underline">
                     {{ firstLetterToUpperCase(competence.label) }}
                 </span>
             </h2>
 
-            <div
-                v-if="Object.keys(competenceData).length"
-                class="flex flex-col gap-3 mt-4"
-            >
-                <div
-                    v-for="[date, registrations] in Object.entries(competenceData).sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())"
-                    :key="registrations[0].training.id_train + date"
-                >
-                    <h3 class="underline">
-                        {{ new Date(date).toLocaleDateString() }}
-                    </h3>
-
-                    <div class="flex flex-col gap-2">
-                        <div
-                            v-for="registration in registrations"
-                            :key="registration.reg.id_op + registration.training.id_train"
-                            class="flex gap-1"
-                        >
-                            {{ registration.training.name }}
-                            -
-                            <span class="font-bold">
-                                {{ registration.reg.Operators.name }} {{ registration.reg.Operators.surname }}
-                            </span>
-                            -
-                            <p>
-                                {{ registration.reg.State.name }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div v-else>
-                <p>
-                    No history for this competence
-                </p>
-            </div>
-
-            <button
-                ref="downloadButton"
-                class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center button-download font-bold"
-                @click="downloadPDF"
-            >
-                <UIcon
-                    name="i-material-symbols-download"
-                />
-                Download
-            </button>
+            <DownloadWaiting @download="download" />
         </div>
     </div>
 </template>
-
-<style>
-    .page {
-        padding: 20px;
-        background-color: white;
-        width: 595px;
-    }
-
-    .button-download:hover {
-        opacity: 1;
-    }
-
-    .button-download {
-        opacity: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        transition: opacity 0.3s;
-    }
-</style>

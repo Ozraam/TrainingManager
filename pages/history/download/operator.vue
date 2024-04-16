@@ -51,6 +51,7 @@ const operatorData = ref({})
 
 fetchHistory().then((data) => {
     operatorData.value = data
+    download()
 })
 
 function download() {
@@ -65,6 +66,8 @@ function download() {
         { header: 'Frequency', key: 'frequency', width: 20 },
         { header: 'Competence', key: 'competence', width: 20 },
     ]
+
+    console.log(operatorData.value)
 
     const rows = Object.entries(operatorData.value)
         .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
@@ -97,10 +100,6 @@ function download() {
         }, 1000)
     })
 }
-
-onMounted(() => {
-    download()
-})
 </script>
 
 <template>
@@ -113,47 +112,7 @@ onMounted(() => {
                 </span>
             </h2>
 
-            <div>
-                <p>
-                    Wait a moment while we process the data...
-                </p>
-
-                <UProgress animation="carousel" />
-
-                <p>
-                    The download will start automatically.
-                </p>
-
-                <p>
-                    If it doesn't, click the button below.
-                </p>
-
-                <UButton
-                    class="mt-5"
-                    @click="download"
-                >
-                    Download
-                </UButton>
-            </div>
+            <DownloadWaiting @download="download" />
         </div>
     </div>
 </template>
-
-<style>
-    .page {
-        padding: 20px;
-        background-color: white;
-        width: 595px;
-    }
-
-    .button-download:hover {
-        opacity: 1;
-    }
-
-    .button-download {
-        opacity: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        transition: opacity 0.3s;
-    }
-</style>
