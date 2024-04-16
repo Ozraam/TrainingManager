@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import * as excel from 'exceljs'
 const route = useRoute()
 
 if (!route.query.positions) {
     navigateTo('/history')
 }
 
-const positions = ref(route.query.positions.split(',').map((p: string) => ({ value: Number(p), label: '' })))
+const positions : Ref<{value: number, label: string}[]> = ref(route.query.positions.split(',').map((p: string) => ({ value: Number(p), label: '' })))
 
 const sp = useSupabaseClient()
 const toast = useToast()
 
 async function fetchHistory() {
-    const { data, error } = await sp.from('Position').select('*, Operators(*, Registration(*, Training(*), State(*)))').eq('Operators.deleted', 0)
+    const { data, error } = await sp.from('Position').select('*, Operators(*, Registration(*, Training(*, Competences(name, tmp_validity)), State(*)))').eq('Operators.deleted', 0)
 
     if (error) {
         toast.add({
@@ -25,6 +26,10 @@ async function fetchHistory() {
     if (data.length === 0) {
         navigateTo('/history')
     }
+
+    positions.value.forEach((pos) => {
+        pos.label = data.find((p: any) => p.id_pos === pos.value).name
+    })
 
     const dataFiltered = data.filter((p: any) => positions.value.some(pos => pos.value === p.id_pos))
 
@@ -56,125 +61,69 @@ const positionsData = ref([])
 
 fetchHistory().then((data) => {
     positionsData.value = data
+    download()
 })
 
-const page : Ref<HTMLElement | null> = ref(null)
-const downloadButton : Ref<HTMLElement | null> = ref(null)
+function download() {
+    const worksheet = new excel.Workbook()
 
-function replaceAllLatvianLongVowelsInHtmlElement(element: HTMLElement) {
-    // replace all long vowels with short ones in the text of the element children check if the element is a text node
-    if (element.nodeType === Node.TEXT_NODE) {
-        element.textContent = element.textContent
-            .replace(/ā/g, 'aa')
-            .replace(/ē/g, 'ee')
-            .replace(/ī/g, 'ii')
-            .replace(/ū/g, 'uu')
-            .replace(/Ā/g, 'AA')
-            .replace(/Ē/g, 'EE')
-            .replace(/Ī/g, 'II')
-            .replace(/Ū/g, 'UU')
-            .replace(/ģ/g, 'g')
-            .replace(/ķ/g, 'k')
-            .replace(/ļ/g, 'l')
-            .replace(/ņ/g, 'n')
-    } else {
-        // if the element is not a text node, then we need to check its children
-        element.childNodes.forEach(replaceAllLatvianLongVowelsInHtmlElement)
-    }
-}
+    positionsData.value.forEach((p) => {
+        const sheet = worksheet.addWorksheet('History - ' + p.position.name)
+        sheet.columns = [
+            { header: 'Operator', key: 'operator', width: 20 },
+            { header: 'Date', key: 'date', width: 20 },
+            { header: 'Training', key: 'training', width: 40 },
+            { header: 'State', key: 'state', width: 20 },
+            { header: 'Price', key: 'price', width: 20 },
+            { header: 'Frequency', key: 'frequency', width: 20 },
+            { header: 'Competence', key: 'competence', width: 20 },
+        ]
 
-function downloadPDF() {
-    replaceAllLatvianLongVowelsInHtmlElement(page.value!)
-    downloadButton.value!.style.opacity = '0'
-    const name = 'positions_' + new Date().toLocaleDateString() + '.pdf'
-    exportToPDF(name, page.value!, {}, { html2canvas: { scale: 0.8 } })
-    downloadButton.value!.style.opacity = ''
+        const rows : any = Object.entries(p.history).sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime()).map(([date, registrations]) => {
+            return registrations.map(({ reg, training, op }) => {
+                return {
+                    operator: `${op.name} ${op.surname}`,
+                    date: new Date(date).toLocaleDateString(),
+                    training: training.name,
+                    state: reg.State.name,
+                    price: training.cost,
+                    frequency: training.Competences.tmp_validity,
+                    competence: training.Competences.name,
+                }
+            })
+        }).flat()
+
+        sheet.addRows(rows)
+    })
+    console.log(positions.value)
+
+    worksheet.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `History - ${positions.value.map(p => p.label).join(', ')}.xlsx`
+        a.click()
+        URL.revokeObjectURL(url)
+
+        setTimeout(() => {
+            navigateTo('/history?positions=' + positions.value.map(p => p.value).join(', '))
+        }, 1000)
+    })
 }
 </script>
 
 <template>
-    <div class="flex justify-center gap-5">
-        <div
-            v-if="Object.keys(positionsData).length"
-            ref="page"
-            class="page text-black relative flex flex-col"
-        >
-            <h2 class="text-xl">
+    <div class="flex justify-center gap-5 items-center text-center">
+        <div>
+            <h2 class="text-2xl">
                 History of positions
+                <span>
+                    {{ positions.map(p => p.label).join(', ') }}
+                </span>
             </h2>
 
-            <span class="mb-4">
-                Date: {{ new Date().toLocaleDateString() }}
-            </span>
-
-            <div
-                v-for="(history, i) in positionsData"
-                :key="history.position.id_pos"
-            >
-                <h2 class="text-xl">
-                    History of
-                    <span class="underline">
-                        {{ firstLetterToUpperCase(history.position.name) }}
-                    </span>
-                </h2>
-
-                <div
-                    v-if="Object.keys(history.history).length"
-                    class="flex gap-3 flex-col mt-4"
-                >
-                    <div
-                        v-for="[date, registrations] in Object.entries(history.history).sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())"
-                        :key="date"
-                    >
-                        <h3 class="underline">
-                            {{ new Date(date).toLocaleDateString() }}
-                        </h3>
-
-                        <div class="flex flex-col gap-2">
-                            <div
-                                v-for="registration in (registrations as any)"
-                                :key="registration.reg.id_op"
-                            >
-                                <div class="flex gap-1">
-                                    <span>
-                                        {{ registration.training.name }}
-                                    </span>
-                                    |
-                                    <span class="font-bold">
-                                        {{ registration.op.name }} {{ registration.op.surname }}
-                                    </span>
-                                    |
-                                    <p>
-                                        {{ registration.reg.State.name }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-else>
-                    <p>
-                        No history for this competence
-                    </p>
-                </div>
-
-                <UDivider
-                    v-if="i !== positionsData.length - 1"
-                    class="my-4"
-                />
-            </div>
-
-            <button
-                ref="downloadButton"
-                class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center button-download font-bold"
-                @click="downloadPDF"
-            >
-                <UIcon
-                    name="i-material-symbols-download"
-                />
-                Download
-            </button>
+            <DownloadWaiting @download="download" />
         </div>
     </div>
 </template>
