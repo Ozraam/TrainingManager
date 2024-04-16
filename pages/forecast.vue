@@ -24,7 +24,6 @@ console.log(yearsSpend.value)
 function fetchYearsBudget() {
     sp.from('Forecast').select('year, budget').then(({ data, error }) => {
         if (error) {
-            // eslint-disable-next-line no-console
             console.error(error)
             return
         }
@@ -81,7 +80,6 @@ function addBudget(event: FormSubmitEvent<State>) {
 
     sp.from('Forecast').upsert(insert as never).then(({ error }) => {
         if (error) {
-            // eslint-disable-next-line no-console
             console.error(error)
             toast.add({
                 title: 'Error',

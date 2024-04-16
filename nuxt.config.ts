@@ -6,7 +6,8 @@ export default defineNuxtConfig({
         '@nuxtjs/eslint-module',
         '@nuxt/ui',
         '@nuxtjs/i18n',
-        '@sidebase/nuxt-pdf'
+        '@sidebase/nuxt-pdf',
+        'nuxt-cron'
     ],
 
     eslint: {
@@ -49,4 +50,10 @@ export default defineNuxtConfig({
         lazy: true,
         langDir: 'locales/',
     },
+
+    cron: {
+        runOnInit: true,
+        timeZone: 'Europe/Riga',
+        // jobsDir: '/cron'
+    }
 })
