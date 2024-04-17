@@ -27,6 +27,8 @@ async function fetchData() {
             }),
         }) as { data: StudyPlan[] }
 
+        console.log(tmp.value.data.some(study => study.id_op === 0))
+
         trainings.value = (await sp.from('Training').select('*, Competences(name, tmp_validity)')).data ?? []
         const operators = (await sp.from('Operators').select('*')).data ?? []
         const comp = (await sp.from('Competences').select('*')).data ?? []
@@ -34,6 +36,7 @@ async function fetchData() {
         trainings.value = trainings.value.filter(item => item.date > new Date().toISOString().split('T')[0] && tmp.value?.data.some(study => study.id_comp === item.id_comp))
         tmp.value.data.forEach((item) => {
             const operator = operators.find(operator => operator.id_op === item.id_op)
+
             const operatorIndex = Operators.value.findIndex(operator => operator.operator.id_op === item.id_op)
             if (operatorIndex === -1) {
                 const newTrain = trainings.value.filter(training => training.id_comp === item.id_comp)
@@ -86,8 +89,12 @@ async function fetchData() {
 
 function download() {
     const worksheet = new excel.Workbook()
+    console.log(Operators.value)
 
     Operators.value.forEach((items) => {
+        if (worksheet.getWorksheet(items.operator.name_op + ' ' + items.operator.surname) || items.operator.name_op === 'deleted') {
+            return
+        }
         const sheet = worksheet.addWorksheet(items.operator.name_op + ' ' + items.operator.surname)
         sheet.columns = [
             { header: 'Training', key: 'training', width: 24 },
