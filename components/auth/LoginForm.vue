@@ -68,6 +68,7 @@ async function login(event: FormSubmitEvent<State>) {
     <div class="min-h-screen">
         <UForm
             class="flex flex-col items-center w-50 m-7"
+            :loading="loading"
             :state="state"
             :validate="validate"
             @submit="login"

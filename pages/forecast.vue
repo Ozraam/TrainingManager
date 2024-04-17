@@ -19,7 +19,7 @@ data?.forEach((d: { id_train: number, cost: number, date: string, Registration: 
     }
 })
 
-console.log(yearsSpend.value)
+// console.log(yearsSpend.value)
 
 function fetchYearsBudget() {
     sp.from('Forecast').select('year, budget').then(({ data, error }) => {
@@ -28,7 +28,7 @@ function fetchYearsBudget() {
             return
         }
 
-        yearsBudget.value = data
+        yearsBudget.value = data.sort((a: { year: number }, b: { year: number }) => a.year - b.year)
 
         state.budget = yearsBudget.value?.find(y => y.year === state.year)?.budget ?? 0
     })
@@ -152,30 +152,32 @@ function addBudget(event: FormSubmitEvent<State>) {
                 </UForm>
             </div>
 
-            <div class="mt-5">
-                <h4>
-                    All budgets for all years
-                </h4>
+            <div class="flex flex-col justify-center items-center">
+                <div class=" mt-12">
+                    <h4 class="text-center">
+                        All budgets for all years
+                    </h4>
 
-                <div class="flex gap-3">
-                    <UCard
-                        v-for="yearBudget in yearsBudget"
-                        :key="yearBudget.year"
-                    >
-                        <template #header>
-                            <h3>
-                                {{ yearBudget.year }}
-                            </h3>
-                        </template>
+                    <div class="flex gap-3">
+                        <UCard
+                            v-for="yearBudget in yearsBudget"
+                            :key="yearBudget.year"
+                        >
+                            <template #header>
+                                <h3>
+                                    {{ yearBudget.year }}
+                                </h3>
+                            </template>
 
-                        <p>
-                            Budget: {{ yearBudget.budget }} €
-                        </p>
+                            <p>
+                                Budget: {{ yearBudget.budget }} €
+                            </p>
 
-                        <p>
-                            Spend: {{ yearsSpend.find(y => y.year === yearBudget.year)?.spend ?? 'no data for this year' }} {{ yearsSpend.find(y => y.year === yearBudget.year) ? '€' : '' }}
-                        </p>
-                    </UCard>
+                            <p>
+                                Spend: {{ yearsSpend.find(y => y.year === yearBudget.year)?.spend ?? 'no data for this year' }} {{ yearsSpend.find(y => y.year === yearBudget.year) ? '€' : '' }}
+                            </p>
+                        </UCard>
+                    </div>
                 </div>
             </div>
         </div>

@@ -130,6 +130,7 @@ async function signup(event: FormSubmitEvent<State>) {
                 class="mt-3"
                 :label="$t('signup.submit')"
                 type="submit"
+                :loading="loading"
             />
         </UForm>
     </div>
