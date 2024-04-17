@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import * as excel from 'exceljs'
 import type { StudyPlan } from '../../utils/types'
+import type { DownloadWaiting } from '#build/components'
 const tmp = ref<{ data: StudyPlan[] }>()
 const page = ref<HTMLElement>()
 const Operators = ref<{
@@ -26,8 +27,6 @@ async function fetchData() {
                 // id_op: route.query.id_op
             }),
         }) as { data: StudyPlan[] }
-
-        console.log(tmp.value.data.some(study => study.id_op === 0))
 
         trainings.value = (await sp.from('Training').select('*, Competences(name, tmp_validity)')).data ?? []
         const operators = (await sp.from('Operators').select('*')).data ?? []
@@ -89,7 +88,6 @@ async function fetchData() {
 
 function download() {
     const worksheet = new excel.Workbook()
-    console.log(Operators.value)
 
     Operators.value.forEach((items) => {
         if (worksheet.getWorksheet(items.operator.name_op + ' ' + items.operator.surname) || items.operator.name_op === 'deleted') {
@@ -134,66 +132,20 @@ function download() {
 
 onMounted(async () => {
     await fetchData()
+    download()
 })
 </script>
 
 <template>
     <div
-        class="flex justify-center gap-5 p-8"
+        class="flex justify-center gap-5 items-center text-center"
     >
-        <div
-            ref="page"
-            class="page text-black relative"
-        >
+        <div>
             <h1 class="text-2xl font-bold text-center mb-10">
                 Study Plan
             </h1>
 
-            <div
-                v-for="items in Operators.filter(item => item.length > 0)"
-                :key="items[0].id_comp"
-                class="flex justify-center gap-5 mb-5"
-            >
-                <div
-                    class="flex flex-col gap-5 border border-black p-5 w-3/4"
-                >
-                    <h2 class="text-2xl font-bold text-center">
-                        Comptence: {{ items[0].name }}
-                    </h2>
-
-                    <div
-                        v-for="item in items"
-                        :key="item.id_op"
-                    >
-                        <p class="text-xl">
-                            Name: {{ item.name_op + ' ' + item.surname }}
-                        </p>
-
-                        <p>
-                            Name of the last Training: {{ item.name_train }}
-                        </p>
-
-                        <p>
-                            Date of the last Training: {{ item.date }}
-                        </p>
-
-                        <p>
-                            State: {{ item.name_state }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <button
-                ref="downloadButton"
-                class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center button-download font-bold"
-                @click="download"
-            >
-                <UIcon
-                    name="i-material-symbols-download"
-                />
-                Download
-            </button>
+            <DownloadWaiting @download="download" />
         </div>
     </div>
 </template>
