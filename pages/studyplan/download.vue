@@ -1,6 +1,6 @@
-<!-- eslint-disable no-console -->
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import * as excel from 'exceljs'
 import type { StudyPlan } from '../../utils/types'
 const tmp = ref<{ data: StudyPlan[] }>()
 const page = ref<HTMLElement>()
@@ -16,8 +16,6 @@ async function fetchData() {
         })
 
         if (tmp.value && tmp.value.data) {
-            console.log(tmp.value.data)
-
             tmp.value.data.forEach((item) => {
                 const i = comp.value.findIndex((el:StudyPlan[]) => el[0].id_comp === item.id_comp)
                 if (i === -1) {
@@ -26,41 +24,55 @@ async function fetchData() {
                     comp.value[i].push(item)
                 }
             })
-            console.log(comp.value)
         } else {
-            console.error('La réponse du serveur ne contient pas de données valides.')
+            // eslint-disable-next-line no-console
+            console.error('Server response does not contain valid data.')
         }
     } catch (error) {
-        console.error("Une erreur s'est produite lors de la récupération des données :", error)
+        // eslint-disable-next-line no-console
+        console.error('Error occured while fetching data:', error)
     }
 }
 
-function replaceAllLatvianLongVowelsInHtmlElement(element: HTMLElement) {
-    // replace all long vowels with short ones in the text of the element children check if the element is a text node
-    if (element.nodeType === Node.TEXT_NODE) {
-        element.textContent = element.textContent
-            .replace(/ā/g, 'aa')
-            .replace(/ē/g, 'ee')
-            .replace(/ī/g, 'ii')
-            .replace(/ū/g, 'uu')
-            .replace(/Ā/g, 'AA')
-            .replace(/Ē/g, 'EE')
-            .replace(/Ī/g, 'II')
-            .replace(/Ū/g, 'UU')
-            .replace(/ģ/g, 'g')
-            .replace(/ķ/g, 'k')
-            .replace(/ļ/g, 'l')
-            .replace(/ņ/g, 'n')
-    } else {
-        // if the element is not a text node, then we need to check its children
-        element.childNodes.forEach(replaceAllLatvianLongVowelsInHtmlElement)
-    }
-}
+function download() {
+    const worksheet = new excel.Workbook()
 
-function DownloadPDF() {
-    // console.log(page.value)
-    replaceAllLatvianLongVowelsInHtmlElement(page.value!)
-    exportToPDF('Study-plan.pdf', page.value!, { format: 'a4' }, { html2canvas: { scale: 0.7 } })
+    comp.value.forEach((items) => {
+        const sheet = worksheet.addWorksheet(items[0].name)
+        sheet.columns = [
+            { header: 'Operator', key: 'operator', width: 24 },
+            { header: 'Training of previous training', key: 'training', width: 24 },
+            { header: 'Date of previous training', key: 'date', width: 24 },
+            { header: 'State of previous training', key: 'state', width: 24 }
+        ]
+        const rows : any = []
+        items.forEach((item) => {
+            console.log(item.name_op + ' ' + item.surname)
+
+            rows.push({
+                operator: item.name_op.trim() + ' ' + item.surname,
+                training: item.name_train ?? 'No previous training',
+                date: item.date ?? '',
+                state: item.name_state ?? ''
+            })
+        })
+        sheet.addRows(rows)
+        console.log(sheet.rowCount)
+    })
+
+    worksheet.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = 'study-plan.xlsx'
+        a.click()
+        URL.revokeObjectURL(url)
+
+        setTimeout(() => {
+            navigateTo('/study-plan')
+        }, 1000)
+    })
 }
 
 onMounted(async () => {
@@ -118,7 +130,7 @@ onMounted(async () => {
             <button
                 ref="downloadButton"
                 class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center button-download font-bold"
-                @click="DownloadPDF"
+                @click="download"
             >
                 <UIcon
                     name="i-material-symbols-download"

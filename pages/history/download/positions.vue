@@ -95,7 +95,6 @@ function download() {
 
         sheet.addRows(rows)
     })
-    console.log(positions.value)
 
     worksheet.xlsx.writeBuffer().then((buffer) => {
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })

@@ -95,7 +95,7 @@ onMounted(async () => {
         <UButton
             label="Download Pdf"
             class="mt-5 w-1/8 items-center justify-center"
-            @click="navigateTo('/studyplan/pdf')"
+            to="/studyplan/download"
         />
     </UForm>
 
