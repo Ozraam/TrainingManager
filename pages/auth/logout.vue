@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const sp = useSupabaseClient()
+const loading = ref(false)
 async function logout() {
+    loading.value = true
     await sp.auth.signOut()
     location.href = '/'
 }
@@ -20,6 +22,7 @@ async function logout() {
 
             <UButton
                 class="mt-5"
+                :loading="loading"
                 @click="logout"
             >
                 Logout
