@@ -32,6 +32,11 @@ async function fetchHistory() {
         navigateTo('/history')
     }
 
+    // filter out deleted operators
+    data[0].Training.forEach((training: any) => {
+        training.Registration = training.Registration.filter((reg: any) => reg.Operators)
+    })
+
     competence.value.label = `${data[0].name}`
     // process the data to have an object for each date of registration but I want training
     const history = data[0].Training.reduce((acc: any, training: any) => {
