@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const route = useRoute()
+
 const historyChoices = ref([
     { label: 'Operator', value: 1 },
     { label: 'Competence', value: 2 },
@@ -55,6 +57,17 @@ async function fetchHistory() {
         ...p
     }))
     selectedPosition.value = [positions.value[0]]
+
+    if (route.query.operator) {
+        selected.value = 1
+        selectedOperator.value = operators.value.find((o: any) => o.value === Number(route.query.operator)) ?? operators.value[0]
+    } else if (route.query.competence) {
+        selected.value = 2
+        selectedCompetence.value = competence.value.find((c: any) => c.value === Number(route.query.competence)) ?? competence.value[0]
+    } else if (route.query.positions) {
+        selected.value = 3
+        selectedPosition.value = route.query.positions.split(',').map((p: string) => positions.value.find((pos: any) => pos.value === Number(p)))
+    }
 }
 
 onMounted(fetchHistory)
