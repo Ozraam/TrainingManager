@@ -4,7 +4,18 @@ import * as excel from 'exceljs'
 import type { StudyPlan } from '../../utils/types'
 const tmp = ref<{ data: StudyPlan[] }>()
 const page = ref<HTMLElement>()
-const comp = ref<StudyPlan[][]>([])
+const Operators = ref<{
+    trainings: Training[],
+    operator: {
+        id_op: number,
+        name_op: string,
+        surname: string,
+    }
+}[]>([])
+const sp = useSupabaseClient()
+
+const trainings = ref<Training[]>()
+
 async function fetchData() {
     try {
         tmp.value = await $fetch('/api/StudyPlanHelper', {
@@ -12,52 +23,91 @@ async function fetchData() {
             headers: useRequestHeaders(['cookie']),
             body: JSON.stringify({
                 nbday: 50
+                // id_op: route.query.id_op
             }),
-        })
+        }) as { data: StudyPlan[] }
 
-        if (tmp.value && tmp.value.data) {
-            tmp.value.data.forEach((item) => {
-                const i = comp.value.findIndex((el:StudyPlan[]) => el[0].id_comp === item.id_comp)
-                if (i === -1) {
-                    comp.value.push([item])
-                } else {
-                    comp.value[i].push(item)
+        trainings.value = (await sp.from('Training').select('*, Competences(name, tmp_validity)')).data ?? []
+        const operators = (await sp.from('Operators').select('*')).data ?? []
+        const comp = (await sp.from('Competences').select('*')).data ?? []
+
+        trainings.value = trainings.value.filter(item => item.date > new Date().toISOString().split('T')[0] && tmp.value?.data.some(study => study.id_comp === item.id_comp))
+        tmp.value.data.forEach((item) => {
+            const operator = operators.find(operator => operator.id_op === item.id_op)
+            const operatorIndex = Operators.value.findIndex(operator => operator.operator.id_op === item.id_op)
+            if (operatorIndex === -1) {
+                const newTrain = trainings.value.filter(training => training.id_comp === item.id_comp)
+                if (newTrain.length === 0) {
+                    newTrain.push({
+                        id_train: 0,
+                        name: 'No training available',
+                        date: '',
+                        cost: 0,
+                        duration: 0,
+                        topic: 'This competence need to be trained by the operator',
+                        Competences: {
+                            id_comp: item.id_comp,
+                            name: comp.find(comp => comp.id_comp === item.id_comp)?.name ?? '',
+                        }
+                    })
                 }
-            })
-        } else {
-            // eslint-disable-next-line no-console
-            console.error('Server response does not contain valid data.')
-        }
+                Operators.value.push({
+                    trainings: newTrain,
+                    operator: {
+                        id_op: operator?.id_op ?? 0,
+                        name_op: operator?.name ?? '',
+                        surname: operator?.surname ?? ''
+                    }
+                })
+            } else {
+                const newTrain = trainings.value.filter(training => training.id_comp === item.id_comp)
+                if (newTrain.length === 0) {
+                    newTrain.push({
+                        id_train: 0,
+                        name: 'No training available',
+                        date: '',
+                        cost: 0,
+                        duration: 0,
+                        topic: 'This competence need to be trained by the operator',
+                        Competences: {
+                            id_comp: item.id_comp,
+                            name: comp.find(comp => comp.id_comp === item.id_comp)?.name ?? '',
+                        }
+                    })
+                }
+                Operators.value[operatorIndex].trainings.push(...newTrain)
+            }
+        })
     } catch (error) {
         // eslint-disable-next-line no-console
-        console.error('Error occured while fetching data:', error)
+        console.error("Une erreur s'est produite lors de la récupération des données :", error)
     }
 }
 
 function download() {
     const worksheet = new excel.Workbook()
 
-    comp.value.forEach((items) => {
-        const sheet = worksheet.addWorksheet(items[0].name)
+    Operators.value.forEach((items) => {
+        const sheet = worksheet.addWorksheet(items.operator.name_op + ' ' + items.operator.surname)
         sheet.columns = [
-            { header: 'Operator', key: 'operator', width: 24 },
-            { header: 'Training of previous training', key: 'training', width: 24 },
-            { header: 'Date of previous training', key: 'date', width: 24 },
-            { header: 'State of previous training', key: 'state', width: 24 }
+            { header: 'Training', key: 'training', width: 24 },
+            { header: 'Date Training', key: 'date', width: 24 },
+            { header: 'Price', key: 'cost', width: 24 },
+            { header: 'Duration', key: 'duration', width: 24 },
+            { header: 'Topic', key: 'topic', width: 24 },
+            { header: 'Competence', key: 'competence', width: 24 }
         ]
-        const rows : any = []
-        items.forEach((item) => {
-            console.log(item.name_op + ' ' + item.surname)
 
-            rows.push({
-                operator: item.name_op.trim() + ' ' + item.surname,
-                training: item.name_train ?? 'No previous training',
-                date: item.date ?? '',
-                state: item.name_state ?? ''
+        items.trainings.forEach((item) => {
+            sheet.addRow({
+                training: item.name,
+                date: item.date,
+                cost: item.cost,
+                duration: item.duration,
+                topic: item.topic,
+                competence: item.Competences.name
             })
         })
-        sheet.addRows(rows)
-        console.log(sheet.rowCount)
     })
 
     worksheet.xlsx.writeBuffer().then((buffer) => {
@@ -93,7 +143,7 @@ onMounted(async () => {
             </h1>
 
             <div
-                v-for="items in comp"
+                v-for="items in Operators.filter(item => item.length > 0)"
                 :key="items[0].id_comp"
                 class="flex justify-center gap-5 mb-5"
             >
