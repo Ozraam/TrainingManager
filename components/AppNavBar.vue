@@ -113,7 +113,7 @@ const links = computed(() => user.value
 </script>
 
 <template>
-    <nav class="border-r-4 h-screen border-gray-200 dark:border-gray-700 sticky top-0">
+    <nav class="border-r-4 h-screen border-gray-200 dark:border-gray-700 sticky top-0 z-10 bg-white dark:bg-gray-900">
         <UVerticalNavigation
             :links="links"
         />

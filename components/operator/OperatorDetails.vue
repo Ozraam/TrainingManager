@@ -73,19 +73,11 @@ const { data: stateData } = await sp.from('State').select('name, id_state')
 
 const accordeon : Ref<any> = ref([])
 
-function downloadPDF() {
-    // TODO : This is a placeholder for the real save
-    // toast.add({
-    //     title: 'PDF downloaded - TODO',
-    //     timeout: 2000,
-    //     icon: 'i-heroicons-face-frown-16-solid'
-    // })
-    navigateTo('/operator/pdf/?id_op=' + operator.value?.id_op)
+function download() {
+    navigateTo('/operator/download/?id_op=' + operator.value?.id_op)
 }
 
 function deleteOperator() {
-    // TODO modify the delete function to annonymize the operator instead of deleting it
-    // maybe not the right way for deleting an Operators but we are intern
     sp.from('Operators').update({ deleted: true, name: 'deleted', surname: 'deleted' } as never).eq('id_op', props.currentOperator).then(() => {
         toast.add({
             title: 'Operator deleted',
@@ -243,10 +235,10 @@ function toggleEdit() {
                     </h2>
 
                     <UButton
-                        label="Download as PDF"
+                        label="Download as Excel"
                         size="xs"
                         variant="ghost"
-                        @click="downloadPDF"
+                        @click="download"
                     />
                 </div>
 

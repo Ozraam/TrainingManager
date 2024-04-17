@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const route = useRoute()
+
 const historyChoices = ref([
     { label: 'Operator', value: 1 },
     { label: 'Competence', value: 2 },
@@ -55,20 +57,31 @@ async function fetchHistory() {
         ...p
     }))
     selectedPosition.value = [positions.value[0]]
+
+    if (route.query.operator) {
+        selected.value = 1
+        selectedOperator.value = operators.value.find((o: any) => o.value === Number(route.query.operator)) ?? operators.value[0]
+    } else if (route.query.competence) {
+        selected.value = 2
+        selectedCompetence.value = competence.value.find((c: any) => c.value === Number(route.query.competence)) ?? competence.value[0]
+    } else if (route.query.positions) {
+        selected.value = 3
+        selectedPosition.value = route.query.positions.split(',').map((p: string) => positions.value.find((pos: any) => pos.value === Number(p)))
+    }
 }
 
 onMounted(fetchHistory)
 
-function toPDF() {
+function toExcel() {
     switch (selected.value) {
         case 1:
-            navigateTo(`/history/pdf/operator?operator=${selectedOperator.value.value}`)
+            navigateTo(`/history/download/operator?operator=${selectedOperator.value.value}`)
             break
         case 2:
-            navigateTo(`/history/pdf/competence?competence=${selectedCompetence.value.value}`)
+            navigateTo(`/history/download/competence?competence=${selectedCompetence.value.value}`)
             break
         case 3:
-            navigateTo(`/history/pdf/positions?positions=${selectedPosition.value.map(p => p.value).join(',')}`)
+            navigateTo(`/history/download/positions?positions=${selectedPosition.value.map(p => p.value).join(',')}`)
             break
     }
 }
@@ -118,9 +131,9 @@ const selected = ref(1)
                 </URadio>
 
                 <UButton
-                    label="Export to PDF"
+                    label="Export to Excel"
                     icon="i-material-symbols-download"
-                    @click="toPDF"
+                    @click="toExcel"
                 />
             </div>
 
