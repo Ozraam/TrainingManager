@@ -15,6 +15,10 @@ export default defineNuxtConfig({
         '~/assets/css/global.scss'
     ],
 
+    colorMode: {
+        preference: 'light'
+    },
+
     eslint: {
         fix: true,
     },
