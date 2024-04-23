@@ -134,6 +134,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                     :loading="loading"
                     type="submit"
                     label="Update"
+                    color="leather"
                 />
             </UForm>
         </UCard>

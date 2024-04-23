@@ -182,6 +182,7 @@ function toggleRegistrationEdit(index: number) {
                 size="2xs"
                 variant="ghost"
                 icon="i-heroicons-pencil-20-solid"
+                color="indigo"
                 @click="toggleEdit"
             />
         </div>
@@ -198,6 +199,7 @@ function toggleRegistrationEdit(index: number) {
                     <UButton
                         v-if="training?.Teacher"
                         variant="link"
+                        color="leather"
                         :to="'/teacher?search=' + training?.Teacher.name + ' ' + training?.Teacher.surname"
                     >
                         {{ training?.Teacher.name }} {{ training?.Teacher.surname }}
@@ -210,6 +212,7 @@ function toggleRegistrationEdit(index: number) {
                     <UButton
                         variant="link"
                         :to="'/teacher?search=' + training?.Organisation.name"
+                        color="leather"
                     >
                         {{ training?.Organisation.name }}
                     </UButton>
@@ -244,6 +247,7 @@ function toggleRegistrationEdit(index: number) {
 
                     <UButton
                         label="Add new registration"
+                        color="leather"
                         variant="link"
                         :to="`/training/add/registration?training=${training?.id_train}`"
                     />
@@ -264,6 +268,7 @@ function toggleRegistrationEdit(index: number) {
                             variant="link"
                             :to="`/operator/${row.Operators.id_op}`"
                             class="p-0"
+                            color="leather"
                         >
                             {{ row.Operators.name }} {{ row.Operators.surname }}
                         </UButton>
@@ -282,6 +287,7 @@ function toggleRegistrationEdit(index: number) {
                             label="Change state"
                             size="xs"
                             class="ml-2"
+                            color="leather"
                             @click="() => toggleRegistrationEdit(index)"
                         />
 
@@ -291,6 +297,7 @@ function toggleRegistrationEdit(index: number) {
                             size="xs"
                             class="ml-2"
                             :loading="loadingDownload"
+                            color="leather"
                             @click="() => downloadCertificate(row.action)"
                         />
                     </template>

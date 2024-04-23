@@ -23,6 +23,7 @@ async function logout() {
             <UButton
                 class="mt-5"
                 :loading="loading"
+                color="leather"
                 @click="logout"
             >
                 Logout

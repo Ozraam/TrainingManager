@@ -135,6 +135,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                     :loading="loading"
                     type="submit"
                     label="Add"
+                    color="leather"
                 />
             </UForm>
         </div>

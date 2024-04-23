@@ -329,6 +329,7 @@ tab.push(...Organisation.map((o) => {
                     :loading="loading"
                     type="submit"
                     label="Add"
+                    color="leather"
                 />
             </UForm>
         </div>

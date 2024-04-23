@@ -66,8 +66,9 @@ watch(() => props.competence, async () => {
                 size="xl"
                 class="m-0 p-0 text-xl"
                 :to="'/competence/' + competence.value"
+                color="leather"
             >
-                {{ competence.label }}
+                {{ firstLetterToUpperCase(competence.label) }}
             </UButton>
         </h2>
 
@@ -95,6 +96,7 @@ watch(() => props.competence, async () => {
                             :to="'/training/' + registration.training.id_train"
                             variant="link"
                             class="p-0 m-0"
+                            color="leather"
                         >
                             {{ registration.training.name }}
                         </UButton>
@@ -103,6 +105,7 @@ watch(() => props.competence, async () => {
                             :to="'/operator/' + registration.reg.id_op"
                             variant="link"
                             class="p-0 m-0"
+                            color="leather"
                         >
                             {{ registration.reg.Operators.name }} {{ registration.reg.Operators.surname }}
                         </UButton>

@@ -116,6 +116,7 @@ function toggleEdit() {
                     label="Edit"
                     size="2xs"
                     variant="ghost"
+                    color="indigo"
                     icon="i-heroicons-pencil-20-solid"
                     @click="toggleEdit"
                 />
@@ -135,6 +136,7 @@ function toggleEdit() {
                     <UButton
                         variant="link"
                         :to="`/training/${training.id_train}`"
+                        color="leather"
                     >
                         {{ training.name }}
                     </UButton>

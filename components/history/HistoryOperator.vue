@@ -55,6 +55,7 @@ watch(() => props.operator, async () => {
                 size="xl"
                 class="m-0 p-0 text-xl"
                 :to="'/operator/' + operator.value"
+                color="leather"
             >
                 {{ operator.label }}
             </UButton>
@@ -84,6 +85,7 @@ watch(() => props.operator, async () => {
                                 variant="link"
                                 class="m-0 p-0"
                                 :to="'/training/' + registration.Training.id_train"
+                                color="leather"
                             >
                                 {{ registration.Training.name }}
                             </UButton>

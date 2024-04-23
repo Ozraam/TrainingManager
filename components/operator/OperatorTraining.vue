@@ -72,6 +72,7 @@ function toggleRegistrationEdit() {
                 <UButton
                     variant="link"
                     :to="`/training/${training.id_train}`"
+                    color="leather"
                 >
                     {{ training.Training.name }}
                 </UButton> - {{ new Date(training.date).toLocaleDateString() }}&nbsp;
@@ -86,6 +87,7 @@ function toggleRegistrationEdit() {
                 label="Change state"
                 size="xs"
                 class="ml-2"
+                color="leather"
                 @click="toggleRegistrationEdit"
             />
 
@@ -95,6 +97,7 @@ function toggleRegistrationEdit() {
                 size="xs"
                 class="ml-2"
                 :loading="loadingDownload"
+                color="leather"
                 @click="downloadCertificate"
             />
         </div>
