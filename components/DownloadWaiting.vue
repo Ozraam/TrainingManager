@@ -8,7 +8,9 @@ defineEmits(['download'])
             Wait a moment while we process the data...
         </p>
 
-        <UProgress animation="carousel" />
+        <UProgress
+            animation="carousel"
+        />
 
         <p>
             The download will start automatically.
@@ -20,6 +22,7 @@ defineEmits(['download'])
 
         <UButton
             class="mt-5"
+            color="leather"
             @click="$emit('download')"
         >
             Download

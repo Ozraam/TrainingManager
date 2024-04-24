@@ -145,6 +145,7 @@ function toggleEdit() {
                     size="2xs"
                     variant="ghost"
                     icon="i-heroicons-pencil-20-solid"
+                    color="indigo"
                     @click="toggleEdit"
                 />
             </div>
@@ -163,6 +164,7 @@ function toggleEdit() {
                         <UButton
                             variant="link"
                             :to="`/competence/${row.Competence}`"
+                            color="leather"
                         >
                             {{ position.Position_comp.find((pc: PositionComp) => pc.id_comp === row.Competence)?.Competences.name }}
                         </UButton>
@@ -184,6 +186,7 @@ function toggleEdit() {
                         <UButton
                             variant="link"
                             :to="`/operator/${row.Operator}`"
+                            color="leather"
                         >
                             {{ position.Operators.find((op: Operator) => op.id_op === row.Operator)?.name }}
                         </UButton>

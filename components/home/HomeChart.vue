@@ -92,7 +92,7 @@ const dataTraining = computed(() => ({
 
             <Pie
                 :data="dataBudget"
-                class="w-50"
+                class="w-50 tracking-normal"
             />
         </div>
 
@@ -107,7 +107,7 @@ const dataTraining = computed(() => ({
 
             <Pie
                 :data="dataTraining"
-                class="w-50"
+                class="w-50 tracking-normal"
             />
         </div>
     </div>

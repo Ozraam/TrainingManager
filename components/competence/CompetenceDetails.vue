@@ -229,6 +229,7 @@ function toggleEdit() {
                 size="2xs"
                 variant="ghost"
                 icon="i-heroicons-pencil-20-solid"
+                color="indigo"
                 @click="toggleEdit"
             />
         </div>
@@ -257,6 +258,7 @@ function toggleEdit() {
                             v-model="position.check"
                             :name="position.name"
                             :label="position.name"
+                            color="leather"
                         />
                     </li>
                 </ul>
@@ -265,6 +267,7 @@ function toggleEdit() {
                     v-if="isPositionChanged"
                     :label="$t('competence.position.save')"
                     :loading="positionChangeLoading"
+                    color="leather"
                     @click="savePosition"
                 />
             </div>
@@ -273,7 +276,10 @@ function toggleEdit() {
         <div class="mt-3">
             <h4>{{ $t('competence.training.title') }}</h4>
 
-            <UAccordion :items="items">
+            <UAccordion
+                :items="items"
+                color="leather"
+            >
                 <template #item="{ item }">
                     <div>
                         <h5 class="text-xl">
@@ -288,6 +294,7 @@ function toggleEdit() {
                                     v-if="item.training.Teacher"
                                     :to="`/teacher?search=${item.training.Teacher.name} ${item.training.Teacher.surname}`"
                                     variant="link"
+                                    color="leather"
                                 >
                                     {{ item.training.Teacher.name }} {{ item.training.Teacher.surname }}
                                 </UButton>
@@ -330,6 +337,7 @@ function toggleEdit() {
                         :label="$t('competence.training.edit')"
                         :to="`/training/${item.training.id_training}`"
                         variant="link"
+                        color="leather"
                     />
                 </template>
             </UAccordion>

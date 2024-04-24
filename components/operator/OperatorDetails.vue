@@ -146,6 +146,7 @@ function toggleEdit() {
                         size="2xs"
                         variant="ghost"
                         icon="i-heroicons-pencil-20-solid"
+                        color="indigo"
                         @click="toggleEdit"
                     />
                 </div>
@@ -238,6 +239,7 @@ function toggleEdit() {
                         label="Download as Excel"
                         size="xs"
                         variant="ghost"
+                        color="leather"
                         @click="download"
                     />
                 </div>

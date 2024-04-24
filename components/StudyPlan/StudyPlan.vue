@@ -90,12 +90,14 @@ onMounted(async () => {
             label="Refresh"
             type="submit"
             class="mt-5 w-1/8 items-center justify-center"
+            color="leather"
         />
 
         <UButton
             label="Download Pdf"
             class="mt-5 w-1/8 items-center justify-center"
             to="/studyplan/download"
+            color="leather"
         />
     </UForm>
 

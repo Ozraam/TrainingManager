@@ -88,7 +88,12 @@ function childSelectStage(selected: (number | undefined)[]) {
             </template>
 
             <template #item-data="{ row }">
-                <span :class="{ 'text-primary': row.item === selected[0] }">
+                <span
+                    :class="{
+                        'text-primary': row.item === selected[0],
+                        'font-bold': row.item === selected[0]
+                    }"
+                >
                     {{ row.item == undefined ? 'All' : props.stages.items.find(item => item.id === row.item)?.name }}
                 </span>
             </template>

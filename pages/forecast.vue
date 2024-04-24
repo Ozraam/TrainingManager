@@ -148,6 +148,7 @@ function addBudget(event: FormSubmitEvent<State>) {
                     <UButton
                         type="submit"
                         label="Add Budget"
+                        color="leather"
                     />
                 </UForm>
             </div>

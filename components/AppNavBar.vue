@@ -26,7 +26,7 @@ const links = computed(() => user.value
             {
                 label: 'Training Manager',
                 avatar: {
-                    src: 'https://logo.clearbit.com/yokohama.eu',
+                    src: 'https://logo.clearbit.com/yokohamatire.com/',
                 },
             },
             {
@@ -110,12 +110,40 @@ const links = computed(() => user.value
             },
         ]
     ])
+
+const colorMode = useColorMode()
+
+const isDark = computed({
+    get() {
+        return colorMode.value === 'dark'
+    },
+    set() {
+        colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+    }
+})
 </script>
 
 <template>
-    <nav class="border-r-4 h-screen border-gray-200 dark:border-gray-700 sticky top-0 z-10 bg-white dark:bg-gray-900">
+    <nav class="flex flex-col justify-between pb-3 border-r-4 h-screen border-gray-200 dark:border-gray-700 sticky top-0 z-10 bg-white dark:bg-gray-900">
         <UVerticalNavigation
             :links="links"
         />
+
+        <ClientOnly>
+            <UToggle
+                v-model="isDark"
+                on-icon="i-heroicons-moon"
+                off-icon="i-heroicons-sun"
+                color="gray"
+                variant="ghost"
+                aria-label="Theme"
+                size="lg"
+                class="ml-3"
+            />
+
+            <template #fallback>
+                <div class="w-8 h-8" />
+            </template>
+        </ClientOnly>
     </nav>
 </template>
