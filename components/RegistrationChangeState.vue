@@ -256,6 +256,7 @@ const { data: states } = await sp.from('State').select('name, id_state')
                     :loading="loading"
                     type="submit"
                     label="Add"
+                    color="leather"
                 />
             </UForm>
         </UCard>

@@ -70,6 +70,7 @@ watch(() => props.positions, async () => {
                     size="xl"
                     class="m-0 p-0 text-xl"
                     :to="'/positions'"
+                    color="leather"
                 >
                     {{ history.position.name }}
                 </UButton>
@@ -99,6 +100,7 @@ watch(() => props.positions, async () => {
                                     :to="'/training/' + registration.training.id_train"
                                     variant="link"
                                     class="p-0 m-0"
+                                    color="leather"
                                 >
                                     {{ registration.training.name }}
                                 </UButton>
@@ -107,6 +109,7 @@ watch(() => props.positions, async () => {
                                     :to="'/operator/' + registration.op.id_op"
                                     variant="link"
                                     class="p-0 m-0"
+                                    color="leather"
                                 >
                                     {{ registration.op.name }} {{ registration.op.surname }}
                                 </UButton>

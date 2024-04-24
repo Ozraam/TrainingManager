@@ -25,7 +25,7 @@ function goToAdd(data: StudyPlan) {
 
 <template>
     <div class="bloc">
-        <h1 class="text-3xl text-red-500 text-center mb-2">
+        <h1 class="text-3xl text-alizarin-crimson-500 text-center mb-2">
             /!\ Alert /!\
         </h1>
 
@@ -35,12 +35,14 @@ function goToAdd(data: StudyPlan) {
 
         <p>
             Position:
-            <ULink
+            <UButton
                 to="/positions"
-                class="text-blue-500 underline"
+                class="p-0"
+                color="leather"
+                variant="link"
             >
                 {{ firstLetterToUpperCase(prop.study.name) }}
-            </ULink>
+            </UButton>
         </p>
 
         <p>
@@ -68,6 +70,7 @@ function goToAdd(data: StudyPlan) {
             v-if="TrainOp.length > 0"
             label="Plan a new training"
             block
+            color="leather"
             @click="goToRegistration(prop.study)"
         />
 
@@ -75,6 +78,7 @@ function goToAdd(data: StudyPlan) {
             v-else
             label="Add new Training"
             block
+            color="leather"
             @click="goToAdd(prop.study)"
         />
     </div>

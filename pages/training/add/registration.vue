@@ -189,6 +189,7 @@ const isModalOpen = ref(false)
 
                     <UButton
                         label="Apply"
+                        color="leather"
                         @click="setPositionFilter"
                     />
                 </div>
@@ -263,6 +264,7 @@ const isModalOpen = ref(false)
                 <UButton
                     label="Select for position"
                     size="2xs"
+                    color="leather"
                     @click="isModalOpen = true"
                 />
 
@@ -297,6 +299,7 @@ const isModalOpen = ref(false)
                     :loading="loading"
                     type="submit"
                     label="Add"
+                    color="leather"
                 />
             </UForm>
         </div>

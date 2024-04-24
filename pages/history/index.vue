@@ -104,6 +104,7 @@ const selected = ref(1)
                     v-model="selected"
                     v-bind="choice"
                     class="flex items-center"
+                    color="leather"
                 >
                     <template #label>
                         <USelectMenu
@@ -133,6 +134,7 @@ const selected = ref(1)
                 <UButton
                     label="Export to Excel"
                     icon="i-material-symbols-download"
+                    color="leather"
                     @click="toExcel"
                 />
             </div>

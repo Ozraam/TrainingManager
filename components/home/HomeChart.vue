@@ -58,28 +58,35 @@ const dataBudget = computed(() => ({
         },
     ],
 }))
-
-const dataTraining = computed(() => ({
-    labels: ['Training Planned', 'Training Done', 'Training Delayed'],
-    datasets: [
-        {
-            label: 'Training',
-            data: props.yearsStat
-                ? [
-                    plannedTrainning.value - doneTrainning.value - delayTrainning.value,
-                    doneTrainning.value,
-                    delayTrainning.value,
-                ]
-                : [0, 0],
-            backgroundColor: ['#2196F3', '#FFC107', '#FF5252'],
-        },
-    ],
+type TrainingData = {
+    labels: string[];
+    datasets: {
+        label: string;
+        data: number[];
+        backgroundColor: string[];
+        total: number;
+    };
+};
+const dataTraining = computed<TrainingData>(() => ({
+    labels: ['Training Done', 'Training Delayed', 'Training Planned remaining'],
+    datasets: {
+        label: 'Training',
+        data: props.yearsStat
+            ? [
+                doneTrainning.value,
+                delayTrainning.value,
+                plannedTrainning.value - doneTrainning.value - delayTrainning.value,
+            ]
+            : [0, 0],
+        backgroundColor: ['#4CAF50', '#FF5252', '#FFC107'],
+        total: plannedTrainning.value,
+    },
 }))
 </script>
 
 <template>
     <div
-        class="flex gap-6 max-w-80 -translate-x-1/2"
+        class="flex flex-col gap-6 max-w-80"
     >
         <div class="flex flex-col items-center">
             <h2>
@@ -92,7 +99,7 @@ const dataTraining = computed(() => ({
 
             <Pie
                 :data="dataBudget"
-                class="w-50"
+                class="w-50 tracking-normal"
             />
         </div>
 
@@ -102,13 +109,10 @@ const dataTraining = computed(() => ({
             </h2>
 
             <span>
-                {{ doneTrainning }} {{ $t("home.chart.done") }} / {{ plannedTrainning }} {{ $t("home.chart.planned") }}
+                {{ doneTrainning }} {{ $t("home.chart.done") }} / {{ delayTrainning }} {{ $t("home.chart.delay") }} / {{ plannedTrainning }} {{ $t("home.chart.planned") }}
             </span>
 
-            <Pie
-                :data="dataTraining"
-                class="w-50"
-            />
+            <HomeCustomBarChart :datasets="dataTraining" />
         </div>
     </div>
 </template>

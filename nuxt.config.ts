@@ -7,8 +7,17 @@ export default defineNuxtConfig({
         '@nuxt/ui',
         '@nuxtjs/i18n',
         '@sidebase/nuxt-pdf',
-        'nuxt-cron'
+        'nuxt-cron',
+        '@nuxtjs/google-fonts'
     ],
+
+    css: [
+        '~/assets/css/global.scss'
+    ],
+
+    colorMode: {
+        preference: 'light'
+    },
 
     eslint: {
         fix: true,
@@ -55,5 +64,12 @@ export default defineNuxtConfig({
         runOnInit: true,
         timeZone: 'Europe/Riga',
         // jobsDir: '/cron'
-    }
+    },
+
+    googleFonts: {
+        families: {
+            'Lexend Exa': true,
+        },
+        display: 'swap',
+    },
 })

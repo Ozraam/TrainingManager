@@ -18,6 +18,7 @@ const numberOfTrainingDelayed = ref(props.training.Registration.filter(registrat
             <UButton
                 :to="`/training/${training.id_train}`"
                 variant="link"
+                color="leather"
             >
                 {{ training.name }}
             </UButton>
@@ -75,6 +76,7 @@ const numberOfTrainingDelayed = ref(props.training.Registration.filter(registrat
                 label="See more detail"
                 :to="`/dashboard-detail?training=${training.id_train}`"
                 variant="link"
+                color="leather"
             />
         </div>
     </div>
