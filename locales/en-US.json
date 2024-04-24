@@ -14,7 +14,8 @@
         "training": "Training",
         "chart": {
             "done": "Done",
-            "planned": "Planned"
+            "planned": "Planned",
+            "delay": "Delay"
         },
         "recapTrainingList": {
             "title": "Compentences",
