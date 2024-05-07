@@ -239,7 +239,7 @@ const { data: states } = await sp.from('State').select('name, id_state')
                 </UFormGroup>
 
                 <UFormGroup
-                    label="Filename"
+                    label="Certificate file"
                     name="filename"
                     :hint="state.state === 5 || state.state === 4 ? 'File is required' : 'Optional'"
                     :description="registration.filename ? `Current file: ${registration.filename}` : 'No file uploaded'"
