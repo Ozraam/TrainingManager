@@ -66,7 +66,7 @@ onMounted(fetchTraining)
 
 const loadingDownload = ref(false)
 
-function downloadCertificate(reg: Registration) {
+function downloadCertificate(reg: Registration, i: number) {
     if (loadingDownload.value) { return }
     loadingDownload.value = true
     const filepath = `registration/${reg.id_train}/${reg.id_op}/${reg.date}/${reg.filename}`
@@ -75,9 +75,10 @@ function downloadCertificate(reg: Registration) {
         if (error) {
             toast.add({
                 title: 'Error',
-                description: 'An error occurred while downloading the certificate',
+                description: 'An error occurred while downloading the certificate.\nPlease check if the file exists.',
                 color: 'red',
             })
+            toggleRegistrationEdit(i)
         } else {
             const url = URL.createObjectURL(data)
             const a = document.createElement('a')
@@ -298,7 +299,7 @@ function toggleRegistrationEdit(index: number) {
                             class="ml-2"
                             :loading="loadingDownload"
                             color="leather"
-                            @click="() => downloadCertificate(row.action)"
+                            @click="() => downloadCertificate(row.action, index)"
                         />
                     </template>
                 </UTable>
