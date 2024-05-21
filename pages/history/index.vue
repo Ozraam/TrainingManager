@@ -66,7 +66,7 @@ async function fetchHistory() {
         selectedCompetence.value = competence.value.find((c: any) => c.value === Number(route.query.competence)) ?? competence.value[0]
     } else if (route.query.positions) {
         selected.value = 3
-        selectedPosition.value = route.query.positions.split(',').map((p: string) => positions.value.find((pos: any) => pos.value === Number(p)))
+        selectedPosition.value = (route.query.positions as string).split(',').map((p: string) => positions.value.find((pos: any) => pos.value === Number(p))!)
     }
 }
 
@@ -107,27 +107,39 @@ const selected = ref(1)
                     color="leather"
                 >
                     <template #label>
-                        <USelectMenu
+                        <UFormGroup
                             v-if="choice.value === 1"
-                            v-model="selectedOperator"
-                            placeholder="Select an option"
-                            :options="operators"
-                        />
+                            label="Operators"
+                        >
+                            <USelectMenu
+                                v-model="selectedOperator"
+                                placeholder="Select an option"
+                                :options="operators"
+                            />
+                        </UFormGroup>
 
-                        <USelectMenu
+                        <UFormGroup
                             v-if="choice.value === 2"
-                            v-model="selectedCompetence"
-                            placeholder="Select an option"
-                            :options="competence"
-                        />
+                            label="Competences"
+                        >
+                            <USelectMenu
+                                v-model="selectedCompetence"
+                                placeholder="Select an option"
+                                :options="competence"
+                            />
+                        </UFormGroup>
 
-                        <USelectMenu
+                        <UFormGroup
                             v-if="choice.value === 3"
-                            v-model="selectedPosition"
-                            placeholder="Select an option"
-                            :options="positions"
-                            multiple
-                        />
+                            label="Positions"
+                        >
+                            <USelectMenu
+                                v-model="selectedPosition"
+                                placeholder="Select an option"
+                                :options="positions"
+                                multiple
+                            />
+                        </UFormGroup>
                     </template>
                 </URadio>
 
