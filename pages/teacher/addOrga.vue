@@ -2,13 +2,18 @@
 import type { FormError, FormSubmitEvent } from '#ui/types'
 
 const sp = useSupabaseClient()
+const regexMail = /^[\p{L}\w-.]+@([\p{L}\w-]+.)+[\p{L}\w-]{2,4}$/i
 
 const state = reactive({
     name: undefined,
+    phone: undefined,
+    email: undefined,
 })
 
 type State = {
     name: string | undefined,
+    phone: string | undefined,
+    email: string | undefined,
 }
 
 function validate(state: State): FormError[] {
@@ -18,6 +23,30 @@ function validate(state: State): FormError[] {
         errors.push({
             path: 'name',
             message: 'Name is required',
+        })
+    }
+
+    if ((state.phone === undefined || state.phone?.trim() === '') && (state.email === undefined || state.email?.trim() === '')) {
+        errors.push({
+            path: 'phone',
+            message: 'Phone or email is required',
+        }, {
+            path: 'email',
+            message: 'Phone or email is required',
+        })
+    }
+
+    if (state.phone !== undefined && isNaN(Number(state.phone.toString().replaceAll(' ', '')))) {
+        errors.push({
+            path: 'phone',
+            message: 'Phone must be a number',
+        })
+    }
+
+    if (state.email !== undefined && regexMail.test(state.email) === false) {
+        errors.push({
+            path: 'email',
+            message: 'Email must be valid',
         })
     }
 
@@ -32,6 +61,8 @@ function onSubmit(event: FormSubmitEvent<State>) {
     const insert = [
         {
             name: event.data.name!,
+            phone_number: event.data.phone,
+            email: event.data.email,
         }
     ]
 
@@ -88,6 +119,20 @@ function onSubmit(event: FormSubmitEvent<State>) {
                     required
                 >
                     <UInput v-model="state.name" />
+                </UFormGroup>
+
+                <UFormGroup
+                    label="Phone"
+                    name="phone"
+                >
+                    <UInput v-model="state.phone" />
+                </UFormGroup>
+
+                <UFormGroup
+                    label="Email"
+                    name="email"
+                >
+                    <UInput v-model="state.email" />
                 </UFormGroup>
 
                 <UButton

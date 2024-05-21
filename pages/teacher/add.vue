@@ -3,7 +3,7 @@ import type { FormError, FormSubmitEvent } from '#ui/types'
 
 const sp = useSupabaseClient()
 
-const regexMail = /^[\p{Latin}\p{Marks}\p{Cyrillic}\p{IsBasicLatin}\w-.]+@([\p{Latin}\p{Marks}\p{Cyrillic}\p{IsBasicLatin}\w-]+.)+[\p{Latin}\p{Marks}\p{Cyrillic}\p{IsBasicLatin}\w-]{2,4}$/i
+const regexMail = /^[\p{L}\w-.]+@([\p{L}\w-]+.)+[\p{L}\w-]{2,4}$/i
 
 const state = reactive({
     name: undefined,
