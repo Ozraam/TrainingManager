@@ -59,7 +59,7 @@ function onSubmit(event: FormSubmitEvent<State>) {
 <template>
     <section>
         <PageHeader
-            title="Teachers/Oraganisation"
+            title="Teachers/Organisation"
             title-link="/teacher"
             :other-links="[{
                                label: 'Add new teacher',

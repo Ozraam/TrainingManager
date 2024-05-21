@@ -138,8 +138,10 @@ async function onSubmit(event: FormSubmitEvent<State>) {
 </script>
 
 <template>
-    <UModal v-model="isOpen">
-        <UCard>
+    <UModal
+        v-model="isOpen"
+    >
+        <UCard class="overflow-y-auto">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
@@ -171,7 +173,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                 </UFormGroup>
 
                 <UFormGroup
-                    label="Competences"
+                    label="Competences :"
                     name="position"
                     class="min-w-40"
                     hint="Optional"
@@ -183,6 +185,7 @@ async function onSubmit(event: FormSubmitEvent<State>) {
                         option-attribute="name"
                         value-attribute="id_comp"
                         multiple
+                        searchable
                     />
                 </UFormGroup>
 

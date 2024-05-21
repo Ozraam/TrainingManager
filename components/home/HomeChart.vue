@@ -54,7 +54,7 @@ const dataBudget = computed(() => ({
                     expenses.value,
                 ]
                 : [0, 0],
-            backgroundColor: ['#4CAF50', '#FF5252'],
+            backgroundColor: ['#9b6b55', '#e21e31'],
         },
     ],
 }))
@@ -78,7 +78,7 @@ const dataTraining = computed<TrainingData>(() => ({
                 plannedTrainning.value - doneTrainning.value - delayTrainning.value,
             ]
             : [0, 0],
-        backgroundColor: ['#4CAF50', '#FF5252', '#FFC107'],
+        backgroundColor: ['#9b6b55', '#e21e31', '#999999'],
         total: plannedTrainning.value,
     },
 }))

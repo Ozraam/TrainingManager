@@ -284,8 +284,8 @@ function toggleRegistrationEdit(index: number) {
                         />
 
                         <UButton
-                            v-if="row.State !== 'done' && row.State !== 'expired'"
-                            label="Change state"
+                            v-if="(row.State !== 'done' && row.State !== 'expired') || !row.action.filename"
+                            :label="(row.State !== 'done' && row.State !== 'expired') ? 'Change state' : 'Add a file'"
                             size="xs"
                             class="ml-2"
                             color="leather"
@@ -293,7 +293,7 @@ function toggleRegistrationEdit(index: number) {
                         />
 
                         <UButton
-                            v-else
+                            v-else-if="row.action.filename"
                             label="Certificate"
                             size="xs"
                             class="ml-2"

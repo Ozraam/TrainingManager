@@ -94,7 +94,7 @@ onMounted(async () => {
         />
 
         <UButton
-            label="Download Pdf"
+            label="Download Excel"
             class="mt-5 w-1/8 items-center justify-center"
             to="/studyplan/download"
             color="leather"
