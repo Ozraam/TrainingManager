@@ -5,6 +5,8 @@ type Orga = {
     id_orga: number;
     name: string;
     deleted: boolean;
+    phone_number: string;
+    email: string;
     Training: {
         name: string;
         id_train: number;
@@ -122,6 +124,14 @@ function toggleEdit() {
                 />
             </div>
         </template>
+
+        <p v-if="orga.phone_number">
+            phone: {{ orga.phone_number }}
+        </p>
+
+        <p v-if="orga.email">
+            email: {{ orga.email }}
+        </p>
 
         <div>
             <h3>

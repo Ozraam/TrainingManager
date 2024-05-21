@@ -3,6 +3,8 @@ type Teacher = {
     id_teacher: number;
     name: string;
     surname: string;
+    phone_number: string;
+    email: string;
     Training: {
         name: string;
         id_train: number;
@@ -21,31 +23,32 @@ const toast = useToast()
 const emit = defineEmits(['deleted'])
 
 async function deleteTeacher() {
-    const deleteTraining = async (idTraining: number) => {
-        const { error } = await sp.from('Registration').delete().eq('id_train', idTraining).select('*')
-        if (error) {
-            toast.add({
-                title: 'Error',
-                description: 'An error occurred while deleting the training',
-                color: 'red',
-            })
-        } else {
-            const { error } = await sp.from('Training').delete().eq('id_train', idTraining).select('*')
-            if (error) {
-                toast.add({
-                    title: 'Error',
-                    description: 'An error occurred while deleting the training',
-                    color: 'red',
-                })
-            }
-        }
-    }
+    // const deleteTraining = async (idTraining: number) => {
+    //     const { error } = await sp.from('Registration').delete().eq('id_train', idTraining).select('*')
+    //     if (error) {
+    //         toast.add({
+    //             title: 'Error',
+    //             description: 'An error occurred while deleting the training',
+    //             color: 'red',
+    //         })
+    //     } else {
+    //         const { error } = await sp.from('Training').delete().eq('id_train', idTraining).select('*')
+    //         if (error) {
+    //             toast.add({
+    //                 title: 'Error',
+    //                 description: 'An error occurred while deleting the training',
+    //                 color: 'red',
+    //             })
+    //         }
+    //     }
+    // }
 
-    for (const training of props.teacher.Training) {
-        await deleteTraining(training.id_train)
-    }
+    // for (const training of props.teacher.Training) {
+    //     await deleteTraining(training.id_train)
+    // }
 
-    const { error } = await sp.from('Teacher').delete().eq('id_teacher', props.teacher.id_teacher).select()
+    const deletedTeacher = { name: 'deleted', surname: 'deleted', phone_number: 'deleted', email: 'delete', deleted: true }
+    const { error } = await sp.from('Teacher').update(deletedTeacher as never).eq('id_teacher', props.teacher.id_teacher).select()
 
     if (error) {
         toast.add({
@@ -121,9 +124,17 @@ function toggleEdit() {
             </div>
         </template>
 
+        <p v-if="teacher.phone_number">
+            phone: {{ teacher.phone_number }}
+        </p>
+
+        <p v-if="teacher.email">
+            email: {{ teacher.email }}
+        </p>
+
         <div>
             <h3>
-                Trainings
+                Trainings:
             </h3>
 
             <ul>
