@@ -103,12 +103,12 @@ const toast = useToast()
 
 const loading = ref(false)
 
-const inputFile = ref(null)
+const inputFile : Ref<{input : any} | null> = ref(null)
 
 async function onSubmit(event: FormSubmitEvent<State>) {
     if (loading.value) { return }
     loading.value = true
-    const filen = inputFile.value.input.files[0]
+    const filen = inputFile.value?.input.files[0]
 
     const insert = [
         {
@@ -241,7 +241,7 @@ const { data: states } = await sp.from('State').select('name, id_state')
                 <UFormGroup
                     label="Certificate file"
                     name="filename"
-                    :hint="state.state === 5 || state.state === 4 ? 'File is required' : 'Optional'"
+                    hint="Optional"
                     :description="registration.filename ? `Current file: ${registration.filename}` : 'No file uploaded'"
                     required
                 >

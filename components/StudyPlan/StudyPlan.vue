@@ -5,29 +5,31 @@ import type { FormError, FormSubmitEvent } from '#ui/types'
 
 // const sp = useSupabaseClient()
 const loading = ref(false)
+
+function datePlusDays(date: Date, days: number) {
+    const result = new Date(date)
+    result.setDate(result.getDate() + days)
+    return result
+}
+
 const state = reactive({
-    nbday: 50
+    date: datePlusDays(new Date(), 60),
 })
 
 type State = {
-    nbday: number
+    date: Date,
 }
 
 function validate(state:State): FormError[] {
     const errors: FormError[] = []
-    if (state.nbday < 0) {
+
+    if (state.date < new Date()) {
         errors.push({
             path: 'nbday',
-            message: 'nbday must be greater than 0 and is required',
+            message: 'Date must be in the future',
         })
     }
 
-    if (isNaN(state.nbday)) {
-        errors.push({
-            path: 'nbday',
-            message: 'nbday must be a number',
-        })
-    }
     return errors
 }
 
@@ -58,8 +60,12 @@ async function fetchStudyPlan(nbday: number = 50) {
 async function fetchStudyPlanValdiation(event: FormSubmitEvent<State>) {
     if (loading.value) { return }
     loading.value = true
-    console.log(event.data.nbday)
-    await fetchStudyPlan(event.data.nbday.toString() === '' ? 50 : event.data.nbday.valueOf())
+    console.log(event.data.date)
+    // get the number of day between the date and now
+    const diffTime = Math.abs(event.data.date.getTime() - new Date().getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+    await fetchStudyPlan(diffDays)
 }
 
 onMounted(async () => {
@@ -77,13 +83,11 @@ onMounted(async () => {
     >
         <UFormGroup
             name="nbday"
-            label="nbday"
+            label="Date until which the study plan will cover for competences expiration"
             type="number"
+            class="flex flex-col items-center"
         >
-            <UInput
-                v-model="state.nbday"
-                class="w-1/8 items-center"
-            />
+            <DatePickerPopover v-model="state.date" />
         </UFormGroup>
 
         <UButton
@@ -94,7 +98,7 @@ onMounted(async () => {
         />
 
         <UButton
-            label="Download Pdf"
+            label="Download Excel"
             class="mt-5 w-1/8 items-center justify-center"
             to="/studyplan/download"
             color="leather"
