@@ -9,6 +9,8 @@ const teachers : Ref<{
     name: string;
     surname: string;
     deleted: boolean;
+    phone_number: string;
+    email: string;
     Training: {
         name: string;
         id_train: number;

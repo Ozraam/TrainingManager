@@ -3,14 +3,20 @@ import type { FormError, FormSubmitEvent } from '#ui/types'
 
 const sp = useSupabaseClient()
 
+const regexMail = /^[\p{Latin}\p{Marks}\p{Cyrillic}\p{IsBasicLatin}\w-.]+@([\p{Latin}\p{Marks}\p{Cyrillic}\p{IsBasicLatin}\w-]+.)+[\p{Latin}\p{Marks}\p{Cyrillic}\p{IsBasicLatin}\w-]{2,4}$/i
+
 const state = reactive({
     name: undefined,
-    surname: undefined
+    surname: undefined,
+    phone: undefined,
+    email: undefined,
 })
 
 type State = {
     name: string | undefined,
-    surname: string | undefined
+    surname: string | undefined,
+    phone: string | undefined,
+    email: string | undefined,
 }
 
 function validate(state: State): FormError[] {
@@ -30,6 +36,30 @@ function validate(state: State): FormError[] {
         })
     }
 
+    if ((state.phone === undefined || state.phone?.trim() === '') && (state.email === undefined || state.email?.trim() === '')) {
+        errors.push({
+            path: 'phone',
+            message: 'Phone or email is required',
+        }, {
+            path: 'email',
+            message: 'Phone or email is required',
+        })
+    }
+
+    if (state.phone !== undefined && isNaN(Number(state.phone.toString().replaceAll(' ', '')))) {
+        errors.push({
+            path: 'phone',
+            message: 'Phone must be a number',
+        })
+    }
+
+    if (state.email !== undefined && regexMail.test(state.email) === false) {
+        errors.push({
+            path: 'email',
+            message: 'Email must be valid',
+        })
+    }
+
     return errors
 }
 
@@ -42,6 +72,8 @@ function onSubmit(event: FormSubmitEvent<State>) {
         {
             name: event.data.name!,
             surname: event.data.surname!,
+            phone_number: event.data.phone!,
+            email: event.data.email!,
         }
     ]
 
@@ -69,7 +101,7 @@ function onSubmit(event: FormSubmitEvent<State>) {
 <template>
     <section>
         <PageHeader
-            title="Teachers/Oraganisation"
+            title="Teachers/Organisation"
             title-link="/teacher"
             :other-links="[{
                                label: 'Add new teacher',
@@ -106,6 +138,20 @@ function onSubmit(event: FormSubmitEvent<State>) {
                     name="surname"
                 >
                     <UInput v-model="state.surname" />
+                </UFormGroup>
+
+                <UFormGroup
+                    label="Phone"
+                    name="phone"
+                >
+                    <UInput v-model="state.phone" />
+                </UFormGroup>
+
+                <UFormGroup
+                    label="Email"
+                    name="email"
+                >
+                    <UInput v-model="state.email" />
                 </UFormGroup>
 
                 <UButton
