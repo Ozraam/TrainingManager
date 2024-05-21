@@ -71,16 +71,20 @@ function download() {
         const sheet = worksheet.addWorksheet('History - ' + p.position.name)
         sheet.columns = [
             { header: 'Operator', key: 'operator', width: 20 },
-            { header: 'Date', key: 'date', width: 20 },
+            { header: 'Date registration', key: 'date', width: 20 },
             { header: 'Training', key: 'training', width: 40 },
             { header: 'State', key: 'state', width: 20 },
             { header: 'Price', key: 'price', width: 20 },
             { header: 'Frequency', key: 'frequency', width: 20 },
             { header: 'Competence', key: 'competence', width: 20 },
+            { header: 'Date training', key: 'date_training', width: 20 },
+            { header: 'Date training end', key: 'date_training_end', width: 20 }
         ]
 
         const rows : any = Object.entries(p.history).sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime()).map(([date, registrations]) => {
             return registrations.map(({ reg, training, op }) => {
+                const newDate = new Date(training.date)
+                newDate.setDate(newDate.getDate() + training.duration)
                 return {
                     operator: `${op.name} ${op.surname}`,
                     date: new Date(date).toLocaleDateString(),
@@ -89,6 +93,8 @@ function download() {
                     price: training.cost,
                     frequency: training.Competences.tmp_validity,
                     competence: training.Competences.name,
+                    date_training: new Date(training.date).toLocaleDateString(),
+                    date_training_end: newDate.toLocaleDateString()
                 }
             })
         }).flat()

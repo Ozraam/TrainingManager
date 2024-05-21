@@ -59,12 +59,14 @@ function download() {
     const sheet = worksheet.addWorksheet('History - ' + operator.value.label)
 
     sheet.columns = [
-        { header: 'Date', key: 'date', width: 20 },
+        { header: 'Date registration', key: 'date', width: 20 },
         { header: 'Training', key: 'training', width: 40 },
         { header: 'State', key: 'state', width: 20 },
         { header: 'Price', key: 'price', width: 20 },
         { header: 'Frequency', key: 'frequency', width: 20 },
         { header: 'Competence', key: 'competence', width: 20 },
+        { header: 'Date training', key: 'date_training', width: 20 },
+        { header: 'Date training end', key: 'date_training_end', width: 20 }
     ]
 
     console.log(operatorData.value)
@@ -73,13 +75,17 @@ function download() {
         .sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime())
         .map(([date, registrations]) => {
             return registrations.map((registration: any) => {
+                const newDate = new Date(registration.Training.date)
+                newDate.setDate(newDate.getDate() + registration.Training.duration)
                 return {
                     date: new Date(date).toLocaleDateString(),
                     training: registration.Training.name,
                     state: registration.State.name,
                     price: registration.Training.cost,
                     frequency: registration.Training.Competences.tmp_validity,
-                    competence: registration.Training.Competences.name
+                    competence: registration.Training.Competences.name,
+                    date_training: new Date(registration.Training.date).toLocaleDateString(),
+                    date_training_end: newDate.toLocaleDateString()
                 }
             })
         }).flat()
