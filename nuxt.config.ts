@@ -8,7 +8,7 @@ export default defineNuxtConfig({
         '@nuxtjs/i18n',
         '@sidebase/nuxt-pdf',
         'nuxt-cron',
-        '@nuxtjs/google-fonts'
+        '@nuxtjs/google-fonts',
     ],
 
     css: [
