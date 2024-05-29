@@ -9,6 +9,8 @@ const teachers : Ref<{
     name: string;
     surname: string;
     deleted: boolean;
+    phone_number: string;
+    email: string;
     Training: {
         name: string;
         id_train: number;
@@ -19,6 +21,8 @@ const organisations : Ref<{
     id_orga: number;
     name: string;
     deleted: boolean;
+    phone_number: string;
+    email: string;
     Training: {
         name: string;
         id_train: number;
@@ -36,14 +40,14 @@ const fetchTeacher = async () => {
 }
 
 const fetchOrganisation = async () => {
-    const { data, error } = await sp.from('Organisation').select('id_orga, name, deleted').order('name', { ascending: true })
+    const { data, error } = await sp.from('Organisation').select('id_orga, name, deleted, phone_number, email').order('name', { ascending: true })
     const training = (await sp.from('Training').select('id_train, name, id_orga').order('name', { ascending: true })).data ?? []
     if (error) {
         // eslint-disable-next-line no-console
         console.error(error)
     } else {
         // console.log(data)
-        organisations.value = data?.map((orga: { id_orga: number; name: string; deleted: boolean }) => {
+        organisations.value = data?.map((orga: { id_orga: number; name: string; deleted: boolean; phone_number:string; email:string }) => {
             return {
                 ...orga,
                 Training: training.filter((train: { id_orga: number }) => train.id_orga === orga.id_orga)
