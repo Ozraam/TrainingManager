@@ -58,5 +58,22 @@ fetchData()
                 @update="fetchData"
             />
         </div>
+
+        <div
+            v-else
+            class="flex flex-col items-center mt-10"
+        >
+            <p>
+                To see statistics, you need to add a year in the forcast page
+            </p>
+
+            <UButton
+                variant="link"
+                to="/forecast"
+                class="mt-3"
+            >
+                Go to forecast
+            </UButton>
+        </div>
     </section>
 </template>
