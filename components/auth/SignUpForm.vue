@@ -67,7 +67,7 @@ async function signup(event: FormSubmitEvent<State>) {
         email: event.data.mail!,
         password: event.data.password!,
         options: {
-            emailRedirectTo: '/auth/callback?signup=true'
+            emailRedirectTo: 'https://trainingmanager.onrender.com/auth/callback?signup=true'
         }
     })
 
