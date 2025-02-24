@@ -28,17 +28,6 @@ The project is built using Nuxt 3, a modern web framework for building fast and 
 
 Contributions are not open as it's an internship project.
 
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for more information.
-
-## Contact
-
-If you have any questions or need further assistance, please contact the project maintainers:
-
-- John Doe (john.doe@example.com)
-- Jane Smith (jane.smith@example.com)
-
 ## Setup
 
 Make sure to install the dependencies:
